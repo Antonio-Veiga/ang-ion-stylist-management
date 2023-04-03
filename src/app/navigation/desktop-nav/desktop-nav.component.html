@@ -1,0 +1,30 @@
+<mat-drawer-container class="w-full h-full" hasBackdrop="true">
+  <mat-drawer #NavDrawer mode="over" class="p-4" (openedStart)="leftHidden=true; fabIcon='exit-outline'"
+    (closedStart)="leftHidden=false; fabIcon='menu-outline'">
+    <p>Auto-resizing sidenav</p>
+  </mat-drawer>
+  <div class="flex h-full">
+    <!--left aligned menu -->
+    <div data-id="left-menu"
+      class="h-full shrink-0 w-[55px] flex flex-col items-center justify-start bg-white  border-r border-gray-300 z-[9999]"
+      [hidden]="leftHidden">
+
+      <div class="mt-2 pb-2 border-b border-gray-300" *ngFor="let page of primaryPages">
+        <ion-icon id="hover-trigger-menu-item-1" [routerLink]="page.url" routerLinkActive="selected"
+          class="!text-gray-600 !text-2xl flex items-center p-[0.4rem] justify-center duration-200 border border-transparent rounded-full cursor-pointer hover:bg-gray-600 hover:!text-white hover:border-gray-300"
+          [name]="page.icon" mat-raised-button #menuIcon="matTooltip" [matTooltip]="page.title"
+          matTooltipPosition="right" aria-tooltip="navlink name display"></ion-icon>
+      </div>
+    </div>
+    <ion-router-outlet [animated]="false" class="relative flex flex-1 h-full shrink-0"></ion-router-outlet>
+  </div>
+</mat-drawer-container>
+
+
+<!-- floating action button 
+<ion-fab slot="fixed" horizontal="end" vertical="bottom" class="z-[9999]">
+  <ion-fab-button class="w-10 h-10" (click)="NavDrawer.toggle();">
+    <ion-icon name="{{fabIcon}}"></ion-icon>
+  </ion-fab-button>
+</ion-fab>
+-->

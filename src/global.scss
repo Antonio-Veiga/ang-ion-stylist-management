@@ -10,17 +10,319 @@
  */
 
 /* Core CSS required for Ionic components to work properly */
-@import "~@ionic/angular/css/core.css";
+@import "@ionic/angular/css/core.css";
 
 /* Basic CSS for apps built with Ionic */
-@import "~@ionic/angular/css/normalize.css";
-@import "~@ionic/angular/css/structure.css";
-@import "~@ionic/angular/css/typography.css";
-@import '~@ionic/angular/css/display.css';
+@import "@ionic/angular/css/normalize.css";
+@import "@ionic/angular/css/structure.css";
+@import "@ionic/angular/css/typography.css";
+@import '@ionic/angular/css/display.css';
 
 /* Optional CSS utils that can be commented out */
-@import "~@ionic/angular/css/padding.css";
-@import "~@ionic/angular/css/float-elements.css";
-@import "~@ionic/angular/css/text-alignment.css";
-@import "~@ionic/angular/css/text-transformation.css";
-@import "~@ionic/angular/css/flex-utils.css";
+// @import "~@ionic/angular/css/padding.css";
+// @import "~@ionic/angular/css/float-elements.css";
+// @import "~@ionic/angular/css/text-alignment.css";
+// @import "~@ionic/angular/css/text-transformation.css";
+// @import "~@ionic/angular/css/flex-utils.css";
+
+@import 'tailwindcss/base';
+@import 'tailwindcss/components';
+@import 'tailwindcss/utilities';
+
+
+@import "@ag-grid-community/styles/ag-grid.css";
+@import "@ag-grid-community/styles/ag-theme-alpine.css";
+
+
+.fc-day {
+    background-color: white !important;
+}
+
+
+.fc-col-header-cell-cushion {
+    text-transform: uppercase;
+    font-size: 0.8em;
+    font-weight: 500;
+}
+
+
+.fc-next-button {
+    all: unset !important;
+    background: white !important;
+    color: black !important;
+    padding: 0.3rem !important;
+    border: solid !important;
+    border-width: 1px !important;
+    border-left-width: 0px !important;
+    border-color: rgb(209 213 219) !important;
+    border-top-right-radius: 0.75rem !important;
+    border-bottom-right-radius: 0.75rem !important;
+    cursor: pointer !important;
+    transition-duration: 200ms !important;
+}
+
+.fc-next-button:hover {
+    background: rgb(75 85 99) !important;
+    color: white !important;
+}
+
+
+.fc-prev-button {
+    all: unset !important;
+    background: white !important;
+    color: rgb(75 85 99) !important;
+    padding: 0.3rem !important;
+    border: solid !important;
+    border-width: 1px !important;
+    border-color: rgb(209 213 219) !important;
+    border-top-left-radius: 0.75rem !important;
+    border-bottom-left-radius: 0.75rem !important;
+    cursor: pointer !important;
+    transition-duration: 200ms !important;
+}
+
+.fc-prev-button:hover {
+    background: rgb(75 85 99) !important;
+    color: white !important;
+}
+
+
+.fc-header-toolbar {
+    margin-left: 0.8rem !important;
+    margin-right: 0.8rem !important;
+    margin-bottom: 0.8rem !important;
+}
+
+.fc-today-button {
+    all: unset !important;
+    margin-left: 0.5rem !important;
+    padding: 0.3rem !important;
+    padding-left: 0.5rem !important;
+    padding-right: 0.5rem !important;
+    background: white !important;
+    border: solid !important;
+    border-radius: 0.3rem !important;
+    border-width: 1px !important;
+    border-color: rgb(209 213 219) !important;
+    text-transform: uppercase !important;
+    font-weight: 500 !important;
+    font-size: 0.8rem !important;
+    cursor: pointer !important;
+    transition-duration: 200ms !important;
+}
+
+
+.fc-today-button:hover {
+    background: rgb(75 85 99) !important;
+    color: white !important;
+}
+
+
+.fc-today-button:disabled {
+    background-color: var(--tw-gray-100) !important;
+    cursor: no-drop !important;
+}
+
+.fc-today-button:disabled:hover {
+    background-color: var(--tw-gray-100) !important;
+    color: black !important;
+}
+
+
+.fc-toolbar-title {
+    all: unset !important;
+    text-transform: uppercase !important;
+    font-weight: 500 !important;
+}
+
+.fc-dayGridMonth-button {
+    all: unset !important;
+    padding: 0.3rem !important;
+    padding-left: 0.5rem !important;
+    padding-right: 0.5rem !important;
+    background: white !important;
+    border: solid !important;
+    border-top-left-radius: 0.3rem !important;
+    border-bottom-left-radius: 0.3rem !important;
+    border-width: 1px !important;
+    border-color: rgb(209 213 219) !important;
+    text-transform: uppercase !important;
+    font-weight: 500 !important;
+    font-size: 0.8rem !important;
+    cursor: pointer !important;
+    transition-duration: 200ms !important;
+}
+
+.fc-dayGridMonth-button:hover {
+    background: rgb(75 85 99) !important;
+    color: white !important;
+}
+
+.fc-timeGridWeek-button {
+    all: unset !important;
+    padding: 0.3rem !important;
+    padding-left: 0.5rem !important;
+    padding-right: 0.5rem !important;
+    background: white !important;
+    border: solid !important;
+    border-width: 1px !important;
+    border-left-width: 0px !important;
+    border-right-width: 0px !important;
+    border-color: rgb(209 213 219) !important;
+    text-transform: uppercase !important;
+    font-weight: 500 !important;
+    font-size: 0.8rem !important;
+    cursor: pointer !important;
+    transition-duration: 200ms !important;
+}
+
+
+.fc-timeGridWeek-button:hover {
+    background: rgb(75 85 99) !important;
+    color: white !important;
+}
+
+.fc-timeGridDay-button {
+    all: unset !important;
+    padding: 0.3rem !important;
+    padding-left: 0.5rem !important;
+    padding-right: 0.5rem !important;
+    background: white !important;
+    border: solid !important;
+    border-width: 1px !important;
+    border-color: rgb(209 213 219) !important;
+    border-top-right-radius: 0.3rem !important;
+    border-bottom-right-radius: 0.3rem !important;
+    text-transform: uppercase !important;
+    font-weight: 500 !important;
+    font-size: 0.8rem !important;
+    cursor: pointer !important;
+    transition-duration: 200ms !important;
+}
+
+.fc-timeGridDay-button:hover {
+    background: rgb(75 85 99) !important;
+    color: white !important;
+}
+
+.fc-timeGridDay-button.fc-button-active {
+    background: rgb(75 85 99) !important;
+    color: white !important;
+}
+
+.fc-timeGridWeek-button.fc-button-active {
+    background: rgb(75 85 99) !important;
+    color: white !important;
+}
+
+.fc-dayGridMonth-button.fc-button-active {
+    background: rgb(75 85 99) !important;
+    color: white !important;
+}
+
+
+.fc-timegrid-axis-cushion {
+    all: unset !important;
+    font-size: 0.8rem !important;
+    text-transform: uppercase !important;
+    text-align: center !important;
+    white-space: pre-line !important;
+}
+
+
+.not-selectable:focus {
+    border: none !important;
+}
+
+* {
+    font-family: Montserrat, Montserrat-Fixed, Avenir, "Avenir Next LT Pro", Corbel, "URW Gothic", source-sans-pro, sans-serif;
+}
+
+.ag-cell-focus,
+.ag-cell-no-focus {
+    border: none !important;
+}
+
+/* This CSS is to not apply the border for the column having 'no-border' class */
+.no-border.ag-cell:focus {
+    border: none !important;
+    outline: none;
+}
+
+.centered {
+    @apply flex w-full mt-1
+}
+
+.ag-header-cell-label {
+    @apply w-full flex items-center justify-center
+}
+
+
+
+/* Define the animation */
+@keyframes shake {
+    0% {
+        transform: translateX(0);
+    }
+
+    10%,
+    90% {
+        transform: translateX(-10px);
+    }
+
+    20%,
+    80% {
+        transform: translateX(10px);
+    }
+
+    30%,
+    50%,
+    70% {
+        transform: translateX(-10px);
+    }
+
+    40%,
+    60% {
+        transform: translateX(10px);
+    }
+
+    100% {
+        transform: translateX(0);
+    }
+}
+
+/* Define the animation */
+@keyframes valid {
+    0% {
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(1.05);
+    }
+
+    100% {
+        transform: scale(1);
+    }
+}
+
+.is-invalid {
+    @apply duration-300 ease-in-out bg-red-100 border-red-500;
+
+    animation: shake 1s;
+    animation-iteration-count: 1;
+}
+
+.is-valid {
+    @apply duration-300 ease-in-out bg-green-100 border-green-500;
+    animation: valid 0.5s;
+    animation-iteration-count: 1;
+}
+
+.is-active {
+    @apply bg-green-200 
+}
+
+.is-inactive {
+    @apply bg-red-200 
+}

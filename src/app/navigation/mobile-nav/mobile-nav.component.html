@@ -1,0 +1,34 @@
+<ion-app>
+  <ion-split-pane contentId="main-content">
+    <ion-menu contentId="main-content" type="overlay" class="border-r border-gray-300 custom-menu-width !bg-gray-50">
+      <ion-content>
+        <ion-list id="inbox-list" class="!pt-0">
+          <ion-menu-toggle auto-hide="false" *ngFor="let p of primary; let i = index">
+            <ion-item class="mx-4 my-2 !rounded-lg border border-gray-300" routerDirection="root" [routerLink]="[p.url]"
+              lines="none" detail="false" routerLinkActive="selected">
+              <ion-icon slot="start" [ios]="p.icon + '-outline'" [md]="p.icon + '-sharp'"></ion-icon>
+              <ion-label class="!text-sm uppercase font-sans tracking-wide">{{ p.title }}</ion-label>
+            </ion-item>
+          </ion-menu-toggle>
+          <mat-divider></mat-divider>
+          <ion-menu-toggle auto-hide="false" *ngFor="let p of secondary; let i = index">
+            <ion-item class="mx-4 my-2 !rounded-lg border border-gray-300" routerDirection="root" [routerLink]="[p.url]"
+              lines="none" detail="false" routerLinkActive="selected">
+              <ion-icon slot="start" [ios]="p.icon + '-outline'" [md]="p.icon + '-sharp'"></ion-icon>
+              <ion-label class="!text-sm uppercase font-sans tracking-wide">{{ p.title }}</ion-label>
+            </ion-item>
+          </ion-menu-toggle>
+        </ion-list>
+      </ion-content>
+      <ion-footer class="footer-holder">
+        <ion-toolbar color="primary">
+          <ion-text>
+            <p class="w-full text-center font-thin text-xs uppercase">Desenvolvido por <a
+                class="underline font-semibold" href="https://doctorphone.online/">@Doctorphone</a></p>
+          </ion-text>
+        </ion-toolbar>
+      </ion-footer>
+    </ion-menu>
+    <ion-router-outlet id="main-content"></ion-router-outlet>
+  </ion-split-pane>
+</ion-app>

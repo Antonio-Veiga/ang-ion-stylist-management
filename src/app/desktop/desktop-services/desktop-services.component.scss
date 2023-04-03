@@ -1,0 +1,42 @@
+.menu-btn {
+    all: none;
+    @apply w-32 text-sm uppercase text-white p-3 drop-shadow-lg rounded-md bg-gray-500 duration-150 ease-in-out
+}
+
+.lg-menu-btn {
+    all: none;
+    background-color: var(--ion-color-primary);
+    @apply w-fit text-sm uppercase text-white p-3 drop-shadow-lg rounded-md duration-150 ease-in-out hover:scale-105
+}
+
+.m-btn {
+    @apply hover:bg-blue-500 hover:scale-105 checked:bg-blue-500
+}
+
+.f-btn {
+    @apply hover:bg-pink-500 hover:scale-105
+}
+
+.l-btn {
+    @apply hover:bg-yellow-500 hover:scale-105
+}
+
+.e-btn {
+    @apply hover:bg-green-500 hover:scale-105
+}
+
+.m-btn-active{
+    @apply bg-blue-500
+}
+
+.f-btn-active{
+    @apply bg-pink-500
+}
+
+.e-btn-active{
+    @apply bg-green-500
+}
+
+.l-btn-active{
+    @apply bg-yellow-500
+}

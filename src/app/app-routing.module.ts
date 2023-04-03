@@ -1,16 +1,32 @@
 import { NgModule } from '@angular/core';
 import { PreloadAllModules, RouterModule, Routes } from '@angular/router';
+import { ClientComponent } from './pages/client/client.component';
+import { HomeComponent } from './pages/home/home.component';
+import { ServiceComponent } from './pages/service/service.component';
 
 const routes: Routes = [
   {
     path: '',
-    redirectTo: 'folder/Inbox',
+    redirectTo: 'home',
     pathMatch: 'full'
   },
   {
-    path: 'folder/:id',
-    loadChildren: () => import('./folder/folder.module').then( m => m.FolderPageModule)
-  }
+    path: 'services',
+    component: ServiceComponent
+  },
+  {
+    path: 'home',
+    component: HomeComponent
+  },
+  {
+    path: 'clients',
+    component: ClientComponent
+  },
+  {
+    path: '**',
+    redirectTo: 'home',
+    pathMatch: 'full'
+  },
 ];
 
 @NgModule({
@@ -19,4 +35,4 @@ const routes: Routes = [
   ],
   exports: [RouterModule]
 })
-export class AppRoutingModule {}
+export class AppRoutingModule { }
