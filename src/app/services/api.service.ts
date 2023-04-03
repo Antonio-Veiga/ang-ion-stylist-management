@@ -10,7 +10,7 @@ import { ServiceWrapper } from '../models/ServiceWrapper';
 import { ServiceSingletonWrapper } from '../models/ServiceSingletonWrapper';
 import { Service } from '../models/Service';
 
-const ENDPOINT = 'http://192.168.2.198:8000/api/v1/';
+const ENDPOINT = 'http://192.168.1.23:8000/api/v1/';
 const INCLUDE_LABEL = 'includeLabel=true';
 const INCLUDE_SERVICE = 'includeService=true';
 const INCLUDE_CLIENT = 'includeClient=true';

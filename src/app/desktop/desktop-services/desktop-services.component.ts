@@ -9,6 +9,7 @@ import { AgGridComService } from 'src/app/services/ag-grid-com.service';
 import { BehaviorSubject, Subscription } from 'rxjs';
 import { MatSnackBar, MatSnackBarConfig } from '@angular/material/snack-bar';
 import { InfoSnackBarComponent } from 'src/app/pieces/info-snack/info-snack.component';
+import { CellData } from 'src/app/data/AgGridCellData';
 import { Service } from 'src/app/models/Service';
 
 const moment = require('moment');
@@ -159,6 +160,7 @@ export class DesktopServicesComponent {
 export class SegementHolder implements ICellRendererAngularComp {
   public state!: 0 | 1
   public stateBehaviourSub = new BehaviorSubject<0 | 1>(this.state);
+  private updatedCellData!: CellData
 
   constructor(private agGridCom: AgGridComService) { }
 
@@ -166,7 +168,24 @@ export class SegementHolder implements ICellRendererAngularComp {
     this.state = params.value
     this.stateBehaviourSub.next(this.state)
 
-    this.stateBehaviourSub.subscribe(value => this.agGridCom.notifyActiveChanged(value));
+    this.updatedCellData = {
+      rowIdx: params.rowIndex,
+      duration: params.data['duração'],
+      price: params.data['preço'],
+      active: params.value
+    }
+
+    this.stateBehaviourSub.subscribe((value) => {
+      this.updatedCellData.active = value
+      this.agGridCom.notifyCellValueChanged(this.updatedCellData)
+    });
+
+    this.agGridCom.CellSubject.subscribe((CellData) => {
+      if (this.updatedCellData.rowIdx == CellData.rowIdx) {
+        if (CellData.active != this.updatedCellData.active) { this.state = CellData.active }
+        this.updatedCellData = CellData
+      }
+    })
   }
 
   refresh(params: ICellRendererParams<any, any>): boolean {
@@ -181,6 +200,7 @@ export class SegementHolder implements ICellRendererAngularComp {
 })
 export class PriceInputHolder implements ICellRendererAngularComp {
   validator!: FormGroup
+  private updatedCellData!: CellData
 
   constructor(private formBuilder: FormBuilder, private agGridCom: AgGridComService) { }
 
@@ -192,10 +212,23 @@ export class PriceInputHolder implements ICellRendererAngularComp {
     this.validator.setValue({ price: params.value })
     this.validator.markAllAsTouched()
 
-    this.validator.get('price')?.valueChanges.subscribe((value) => {
-      this.agGridCom.notifyPriceChanged(value);
+    this.updatedCellData = {
+      rowIdx: params.rowIndex,
+      duration: params.data['duração'],
+      price: params.value,
+      active: params.data['ativo'],
+    }
 
-      if (!this.validator.valid) { this.agGridCom.notifyValidChanged(false); }
+    this.validator.get('price')?.valueChanges.subscribe((value) => {
+      this.updatedCellData.price = value
+      this.agGridCom.notifyCellValueChanged(this.updatedCellData)
+    })
+
+    this.agGridCom.CellSubject.subscribe((CellData) => {
+      if (this.updatedCellData.rowIdx == CellData.rowIdx) {
+        if (CellData.price != this.updatedCellData.price) { this.validator.setValue({ price: CellData.price }) }
+        this.updatedCellData = CellData
+      }
     })
   }
 
@@ -211,6 +244,7 @@ export class PriceInputHolder implements ICellRendererAngularComp {
 })
 export class DurationInputHolder implements ICellRendererAngularComp {
   validator!: FormGroup
+  private updatedCellData!: CellData
 
   constructor(private formBuilder: FormBuilder, private agGridCom: AgGridComService) { }
 
@@ -222,10 +256,23 @@ export class DurationInputHolder implements ICellRendererAngularComp {
     this.validator.setValue({ duration: params.value })
     this.validator.markAllAsTouched()
 
-    this.validator.get('duration')?.valueChanges.subscribe((value) => {
-      this.agGridCom.notifyDurationChanged(value);
+    this.updatedCellData = {
+      rowIdx: params.rowIndex,
+      duration: params.value,
+      price: params.data['preço'],
+      active: params.data['ativo'],
+    }
 
-      if (!this.validator.valid) { this.agGridCom.notifyValidChanged(false); }
+    this.validator.get('duration')?.valueChanges.subscribe((value) => {
+      this.updatedCellData.duration = value
+      this.agGridCom.notifyCellValueChanged(this.updatedCellData)
+    })
+
+    this.agGridCom.CellSubject.subscribe((CellData) => {
+      if (this.updatedCellData.rowIdx == CellData.rowIdx) {
+        if (CellData.duration != this.updatedCellData.duration) { this.validator.setValue({ duration: CellData.duration }) }
+        this.updatedCellData = CellData
+      }
     })
   }
 
@@ -235,49 +282,40 @@ export class DurationInputHolder implements ICellRendererAngularComp {
 }
 
 @Component({
-  selector: 'duration-input-holder',
+  selector: 'actions-holder',
   templateUrl: './micro-components-views/action-holder.component.html',
   styleUrls: ['./desktop-services.component.scss'],
 })
 export class ActionsHolder implements ICellRendererAngularComp, OnDestroy {
-  defaultData: any
-  rowIdx: any
-  gridApi: GridApi<any> | undefined
+  private defaultCellData!: CellData
+  private updatedCellData!: CellData
+  private cellId!: number
 
-  durationSub!: Subscription
-  priceSub!: Subscription
-  activeSub!: Subscription
-
-  validFormSub!: Subscription
-
-  price?: number
-  duration?: number
-  active!: 0 | 1
-  valid: boolean = true
+  private gridApi_?: GridApi
 
   constructor(private agGridCom: AgGridComService, private _snackBar: MatSnackBar, public api: APIService) { }
 
   ngOnDestroy(): void {
-    this.durationSub.unsubscribe();
+    this.agGridCom.CellSubject.unsubscribe();
   }
 
   agInit(params: ICellRendererParams<any, any>): void {
-    this.defaultData = params.data; this.gridApi = params.api; this.rowIdx = params.rowIndex;
+    this.cellId = params.data.id
+    this.gridApi_ = params.api
 
-    this.durationSub = this.agGridCom.durationValueChanged.subscribe(value => {
-      this.duration = value
-    })
+    this.defaultCellData = {
+      rowIdx: params.rowIndex,
+      duration: params.data['duração'],
+      price: params.data['preço'],
+      active: params.data['ativo'],
+    }
 
-    this.priceSub = this.agGridCom.priceValueChanged.subscribe(value => {
-      this.price = value
-    })
+    this.updatedCellData = this.defaultCellData
 
-    this.activeSub = this.agGridCom.activeValueChanged.subscribe(value => {
-      this.active = value
-    })
-
-    this.validFormSub = this.agGridCom.validValueChanged.subscribe(value => {
-      this.valid = value
+    this.agGridCom.CellSubject.subscribe((CellData) => {
+      if (this.defaultCellData.rowIdx == CellData.rowIdx) {
+        this.updatedCellData = CellData
+      }
     })
   }
 
@@ -286,37 +324,23 @@ export class ActionsHolder implements ICellRendererAngularComp, OnDestroy {
   }
 
   reload() {
-    let node = this.gridApi?.getRowNode(this.rowIdx)
-    node?.setData(this.defaultData)
-    this.agGridCom.notifyDurationChanged(node?.data['duração']);
-    this.agGridCom.notifyPriceChanged(node?.data['preço']);
-    this.agGridCom.notifyActiveChanged(node?.data['ativo']);
+    this.agGridCom.notifyCellValueChanged(this.defaultCellData)
   }
 
   store() {
-    // validate changes on data
-    let durChanged = !this.duration || this.duration == this.defaultData['duração'] ? false : true
-    let priceChanged = !this.price || this.price == this.defaultData['preço'] ? false : true
-    let activeChanged = this.active == this.defaultData['ativo'] ? false : true
-
-    if (!durChanged && !priceChanged && !activeChanged) {
+    if (this.defaultCellData == this.updatedCellData) {
       this.openInfoSnackBar('Nenhuma valor a alterar', 'Entendido');
     } else {
-      this.gridApi?.showLoadingOverlay();
-      let service: Service = {}
+      this.gridApi_?.showLoadingOverlay();
+      let _Service: Service = {}
 
-      if (durChanged) { service.duration = this.duration }
-      if (priceChanged) { service.price = this.price }
-      if (activeChanged) { service.active = this.active }
+      if (this.defaultCellData.active != this.updatedCellData.active) { _Service.active = this.updatedCellData.active }
+      if (this.defaultCellData.duration != this.updatedCellData.duration) { _Service.duration = this.updatedCellData.duration }
+      if (this.defaultCellData.price != this.updatedCellData.price) { _Service.price = this.updatedCellData.price }
 
-      this.api.patchService(service, this.defaultData.id).subscribe((client) => {
-
-        this.defaultData['duração'] = client.data.duration
-        this.defaultData['preço'] = client.data.price
-        this.defaultData['ativo'] = client.data.active
-
+      this.api.patchService(_Service, this.cellId).subscribe(() => {
         this.openInfoSnackBar('Os valores do serviço foram alterados', 'Entendido');
-        this.gridApi?.hideOverlay();
+        this.gridApi_?.hideOverlay();
       })
     }
   }
