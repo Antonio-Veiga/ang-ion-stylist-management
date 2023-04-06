@@ -1,14 +1,14 @@
 import { Injectable } from '@angular/core';
 import { Subject } from 'rxjs';
-import { CellData } from '../data/AgGridCellData';
+import { ServiceCellData } from '../../data/AgGridServiceCellData';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AgGridComService {
-  public CellSubject = new Subject<CellData>();
+  public CellSubject = new Subject<ServiceCellData>();
 
-  public notifyCellValueChanged(data: CellData): void {
+  public notifyCellValueChanged(data: ServiceCellData): void {
     this.CellSubject.next(data);
   }
 }

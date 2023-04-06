@@ -1,68 +1,38 @@
-<div class="absolute inset-0 m-4 overflow-y-auto flex flex-col">
-  <ion-slides class="!w-full !h-full">
-    <ion-slide class="!w-full !h-full !flex !flex-col">
-      <div class="w-full flex space-x-4 my-2 justify-end">
-        <mat-chip-list>
-          <mat-chip class="!cursor-pointer" [selected]="selectedChip == 0" (click)="chip(0)">
-            <ion-icon name="checkmark-circle-outline" class="mr-1"></ion-icon>
-            Ativos</mat-chip>
-          <mat-chip class="!cursor-pointer" color="warn" [selected]="selectedChip == 1" (click)="chip(1)">
-            <ion-icon name="trash-outline" class="mr-1"></ion-icon>
-            Eliminados
-          </mat-chip>
-        </mat-chip-list>
-      </div>
-      <ag-grid-angular class="w-full h-full ag-theme-alpine" [columnDefs]="columnDefs" [defaultColDef]="defaultColDef"
-        [rowSelection]="'single'" [rowData]="rowData$ | async" [animateRows]="true" [pagination]="true"
-        (rowClicked)="onRowClicked($event)" (gridReady)="onGridReady($event)"></ag-grid-angular>
-
-      <div class="flex h-fit shrink-0 w-full mt-2 bg-white border border-gray-300">
-        <div class="w-full flex items-center p-4">
-          <h3 class="uppercase font-base text-sm text-center">Cliente selecionado: <span
-              class="text-xs font-thin">{{selectedRow.nome}}</span></h3>
+<mat-drawer-container class="h-screen">
+    <mat-drawer #drawer [mode]="drawerAction" position="end" style="width: 250px !important;">
+        POR IMPLEMENTAR
+    </mat-drawer>
+    <mat-drawer-content class="overflow-auto h-full !flex">
+        <div class="w-full min-w-[1024px] min-h-[500px] h-full flex flex-col">
+            <mat-progress-bar mode="query" [hidden]="!processing"></mat-progress-bar>
+            <div data-attr="chip-holder" class="flex w-full justify-center gap-3 xl:gap-2 uppercase my-4">
+                <button [disabled]="processing" class="menu-btn m-btn" (click)="switchMenuBtn(1)"
+                    [ngClass]="{'m-btn-active': menuSelectedBtn == 1 }">{{menuToggles[1]}}</button>
+                <button [disabled]="processing" class="menu-btn f-btn" (click)="switchMenuBtn(2)"
+                    [ngClass]="{'f-btn-active': menuSelectedBtn == 2 }">{{menuToggles[2]}}</button>
+                <mat-divider [vertical]="true"></mat-divider>
+                <button [disabled]="processing" (click)="promptCreateClient()"
+                    class=" lg-menu-btn flex justify-center items-center">
+                    <ion-icon name="add" class="mr-1"></ion-icon>
+                    Adicionar Cliente
+                </button>
+                <button [disabled]="processing" (click)="switchMenuBtn(menuSelectedBtn, true)"
+                    class=" lg-menu-btn flex justify-center items-center">
+                    <ion-icon name="reload" class="mr-1"></ion-icon>
+                    Recarregar Tabela
+                </button>
+                <mat-divider [vertical]="true"></mat-divider>
+                <button [disabled]="processing" class="toggler" (click)="drawer.toggle()" #toggleMenu="matTooltip"
+                    [matTooltip]="toggle.tooltip" matTooltipPosition="below">
+                    <ion-icon [name]="toggle.icon" class="text-white"></ion-icon>
+                </button>
+            </div>
+            <div class="flex-1 h-fit shrink-0 mx-8 mb-4">
+                <ag-grid-angular class="w-full h-full min-h-[500px] ag-theme-alpine mb-4" [columnDefs]="columnDefs"
+                    [defaultColDef]="defaultColDef" [rowSelection]="'single'" 
+                    [animateRows]="true" [pagination]="true" [paginationPageSize]="20" [localeText]="AG_GRID_PT_LANG"
+                    (gridReady)="onGridReady()"></ag-grid-angular>
+            </div>
         </div>
-        <div
-          class="py-1 px-4 w-fit flex md:flex-row flex-col items-center justify-center md:space-x-4 space-x-0 border-l border-gray-300">
-          <ion-button class="w-28" (click)="slideToCreate()" [disabled]="btnDisabled">Adicionar</ion-button>
-          <ion-button color="success" class="w-28" [disabled]="selectedRow.id === undefined || btnDisabled"
-            (click)="slideToEdit()">Editar</ion-button>
-          <ion-button (click)="promptDeleteClient()" color="danger" class="w-28"
-            [disabled]="selectedRow.id === undefined || btnDisabled">Eliminar</ion-button>
-          <ion-button color="secondary" class="w-28"
-            [disabled]="selectedRow.id === undefined || selectedRow.sexo === 'M' || btnDisabled">Consultar</ion-button>
-        </div>
-      </div>
-    </ion-slide>
-    <ion-slide class="!w-full !h-full !flex !flex-col">
-      <div class="w-full h-fit p-4 mx-2 flex items-center border-b border-gray-300">
-        <ion-icon size="large" name="arrow-back"
-          class="!text-gray-600 p-1 duration-200 ease-in-out rounded-full !w-6 !h-6 cursor-pointer border border-gray-600 hover:border-white hover:bg-gray-600 hover:!text-white"
-          (click)="return()"></ion-icon>
-        <h2 class="uppercase text-2xl ml-4 text-gray-700">{{formTitle}}</h2>
-      </div>
-      <div class="h-full w-full overflow-auto">
-        <ng-container #FormComponentRef></ng-container>
-      </div>
-    </ion-slide>
-  </ion-slides>
-</div>
-
-
-<!--
-<ion-fab slot="fixed" horizontal="start" vertical="bottom" class="z-[9999]">
-  <ion-fab-button>
-    <ion-icon name="{{fabIcon}}"></ion-icon>
-  </ion-fab-button>
-  <ion-fab-list side="top">
-    <ion-fab-button>
-      <ion-icon class="!text-gray-900" name="person-add-outline"></ion-icon>
-    </ion-fab-button>
-    <ion-fab-button>
-      <ion-icon class="!text-gray-900" name="create-outline"></ion-icon>
-    </ion-fab-button>
-    <ion-fab-button>
-      <ion-icon class="!text-gray-900" name="trash-outline"></ion-icon>
-    </ion-fab-button>
-  </ion-fab-list>
-</ion-fab>
--->
+    </mat-drawer-content>
+</mat-drawer-container>

@@ -1,0 +1,12 @@
+<div class="flex flex-col p-6 max-w-[350px]">
+    <div class="flex flex-col items-center justify-center gap-3 p-4 mb-2">
+        <ion-icon name="trash" size="large" class="!text-gray-500"></ion-icon>
+        <h2 class="font-sans font-semibold text-lg text-center">{{diagData.prompt}}
+        </h2>
+        <p class="text-sm text-gray-500 font-sans">'{{diagData.name}}'</p>
+    </div>
+    <div class="flex items-center justify-center space-x-4">
+        <ion-button (click)="onConfirmClick()"> Continuar</ion-button>
+        <ion-button (click)="onCancelClick()" color="danger">Cancelar</ion-button>
+    </div>
+</div>

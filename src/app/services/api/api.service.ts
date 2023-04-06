@@ -1,16 +1,16 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { CalendarEventWrapper } from '../models/CalendarEventWrapper';
+import { CalendarEventWrapper } from '../../models/CalendarEventWrapper';
 import { Observable } from 'rxjs';
-import { LabelSettingsWrapper } from '../models/LabelSettingsWrapper';
-import { ClientWrapper } from '../models/ClientWrapper';
-import { ClientSingletonWrapper } from '../models/ClientSingletonWrapper';
-import { Client } from '../models/Client';
-import { ServiceWrapper } from '../models/ServiceWrapper';
-import { ServiceSingletonWrapper } from '../models/ServiceSingletonWrapper';
-import { Service } from '../models/Service';
+import { LabelSettingsWrapper } from '../../models/LabelSettingsWrapper';
+import { ClientWrapper } from '../../models/ClientWrapper';
+import { ClientSingletonWrapper } from '../../models/ClientSingletonWrapper';
+import { Client } from '../../models/Client';
+import { ServiceWrapper } from '../../models/ServiceWrapper';
+import { ServiceSingletonWrapper } from '../../models/ServiceSingletonWrapper';
+import { Service } from '../../models/Service';
 
-const ENDPOINT = 'http://192.168.1.23:8000/api/v1/';
+const ENDPOINT = 'http://192.168.1.163:8000/api/v1/';
 const INCLUDE_LABEL = 'includeLabel=true';
 const INCLUDE_SERVICE = 'includeService=true';
 const INCLUDE_CLIENT = 'includeClient=true';
@@ -75,11 +75,11 @@ export class APIService {
     return this.http.post<ClientSingletonWrapper>(`${ENDPOINT}clients`, client, httpOptions)
   }
 
-  editClient(client: Client, id: number): Observable<ClientSingletonWrapper> {
+  editClient(client: Client, id?: number): Observable<ClientSingletonWrapper> {
     return this.http.patch<ClientSingletonWrapper>(`${ENDPOINT}clients/${id}`, client, httpOptions)
   }
 
-  deleteClient(id: number): Observable<ClientSingletonWrapper> {
+  deleteClient(id?: number): Observable<ClientSingletonWrapper> {
     return this.http.delete<ClientSingletonWrapper>(`${ENDPOINT}clients/${id}`, httpOptions)
   }
 
@@ -91,7 +91,11 @@ export class APIService {
     return this.http.get<ServiceWrapper>(req, httpOptions)
   }
 
-  patchService(service: Service, id: number,): Observable<ServiceSingletonWrapper> {
+  patchService(service: Service, id: number): Observable<ServiceSingletonWrapper> {
     return this.http.patch<ServiceSingletonWrapper>(`${ENDPOINT}services/${id}`, service, httpOptions)
+  }
+
+  massAssignServices(service: ServiceWrapper): Observable<ServiceWrapper> {
+    return this.http.patch<ServiceWrapper>(`${ENDPOINT}services/mass-patch`, service, httpOptions)
   }
 }

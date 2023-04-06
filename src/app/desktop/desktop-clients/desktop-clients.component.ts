@@ -1,14 +1,18 @@
-import { AfterViewInit, Component, Inject, ViewChild, ViewContainerRef } from '@angular/core';
+import { AfterViewInit, Component, HostListener, Inject, ViewChild, ViewContainerRef } from '@angular/core';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { IonSlides } from '@ionic/angular';
-import { AgGridAngular } from 'ag-grid-angular';
-import { ColDef, GridReadyEvent, RowClickedEvent } from 'ag-grid-community';
+import { MatDrawer, MatDrawerMode } from '@angular/material/sidenav';
+import { AgGridAngular, ICellRendererAngularComp } from 'ag-grid-angular';
+import { ColDef, ICellRendererParams } from 'ag-grid-community';
+import { DeleteDialogData } from 'src/app/interfaces/DeleteDialogData';
 import { AgGridUsable } from 'src/app/interfaces/Loadable';
-import { DesktopCreateEditClientModalComponent } from 'src/app/modals/desktop-create-edit-client-modal/desktop-create-edit-client-modal.component';
 import { ClientWrapper } from 'src/app/models/ClientWrapper';
-import { APIService } from 'src/app/services/api.service';
-
-const moment = require('moment');
+import { APIService } from 'src/app/services/api/api.service';
+import { Default_PT } from 'src/app/defaults/langs/pt-pt/Defaults';
+import { DesktopCreateEditClientModalComponent } from 'src/app/modals/desktop-create-edit-client-modal/desktop-create-edit-client-modal.component';
+import { ClientAgGridComService } from 'src/app/services/client-coms/client-ag-grid-com.service';
+import { ClientCellData } from 'src/app/data/AgGridClientCellData';
+import { Client } from 'src/app/models/Client';
+const moment = require('moment')
 
 @Component({
   selector: 'app-desktop-clients',
@@ -16,241 +20,260 @@ const moment = require('moment');
   styleUrls: ['./desktop-clients.component.scss'],
 })
 export class DesktopClientsComponent implements AfterViewInit, AgGridUsable {
-  public selectedRow?: any = { nome: '<vazio>' }
+  public menuSelectedBtn: 1 | 2 = 1
+  public processing = false
   public clientData!: ClientWrapper
-  public rowData$: any
-  public fabIcon = "menu-outline"
-  public component!: any
-  public formTitle?: string
-  public btnDisabled: boolean = false
-  public selectedChip = 0
+  public drawerAction: MatDrawerMode = window.innerWidth >= 1024 ? 'side' : 'over'
+  public toggle = { icon: 'menu', tooltip: Default_PT.OPEN_SIDE_MENU_TOOLTIP }
+  public AG_GRID_PT_LANG = Default_PT.AG_GRID_LOCALE_PT
+
+  public menuToggles = {
+    1: Default_PT.CLIENT_MENU_1,
+    2: Default_PT.CLIENT_MENU_2,
+  }
+
+  public defaultToggles = { ... this.menuToggles }
 
   @ViewChild(AgGridAngular) agGrid!: AgGridAngular;
-  @ViewChild(IonSlides) slider!: IonSlides;
-  @ViewChild('FormComponentRef', { read: ViewContainerRef, static: true }) public formRef!: ViewContainerRef
-
+  @ViewChild('drawer') drawer!: MatDrawer;
 
   columnDefs: ColDef[] = [
     {
-      field: 'nome',
+      field: 'name',
+      headerName: Default_PT.NAME,
       floatingFilter: true
     },
     {
-      field: 'sexo',
+      field: 'sex',
+      headerName: Default_PT.SEX,
       filter: false,
       maxWidth: 90
     },
     {
-      field: 'morada',
+      field: 'address',
+      headerName: Default_PT.ADDRESS,
       floatingFilter: true
     },
     {
-      field: 'nascimento',
+      field: 'birthdate',
+      headerName: Default_PT.BIRTHDATE,
       floatingFilter: true,
       cellRenderer: (params: any) => {
         return params.value != ('' || undefined) ? moment(params.value).format('DD/MM/YYYY') : ''
       }
     },
     {
-      field: 'telemóvel',
+      field: 'phonenumber',
+      headerName: Default_PT.PHONE_NUMBER,
       floatingFilter: true
     },
     {
       field: 'instagram',
+      headerName: Default_PT.INSTAGRAM,
       floatingFilter: true
     },
     {
       field: 'facebook',
+      headerName: Default_PT.FACEBOOK,
       floatingFilter: true
     },
+    {
+      field: 'actions',
+      headerName: Default_PT.ACTIONS,
+      maxWidth: 120,
+      filter: false,
+      resizable: false,
+      sortable: false,
+      cellRendererSelector: (params: any) => {
+        if (params.data.deleted == 0) { return { component: ClientActionsHolder } }
+
+        return { component: NoActionsHolder }
+      }
+    }
   ]
 
   defaultColDef: ColDef = {
     flex: 1,
-    resizable: true,
+    resizable: false,
     sortable: true,
     filter: true,
     editable: false,
-    cellClass: 'not-selectable'
   }
 
-  constructor(public api: APIService, public _dialog: MatDialog) { }
+  constructor(public api: APIService, public _dialog: MatDialog, public agGridCom: ClientAgGridComService) { this.menuToggles[1] = Default_PT.CLIENT_MENU_1_ACTIVE }
 
   ngAfterViewInit(): void {
-    this.slider.lockSwipes(true)
+    this.drawer.openedChange.subscribe((opened) => {
+      if (opened) { this.toggle.icon = "exit"; this.toggle.tooltip = Default_PT.CLOSE_SIDE_MENU_TOOLTIP } else { this.toggle.icon = "menu"; this.toggle.tooltip = Default_PT.OPEN_SIDE_MENU_TOOLTIP }
+    });
+
+    this.agGridCom.CellSubject.subscribe((CellData) => {
+      console.log(CellData.action)
+      CellData.action == 'delete' ? this.deleteClient(CellData.client) : this.loadContent()
+    })
   }
 
-  async loadContent() {
-    this.slider.lockSwipes(true)
-    this.selectedRow = { nome: '<vazio>' }
+  loadContent(): void {
+    this.onGridReady()
+  }
+
+  @HostListener('window:resize', ['$event'])
+  onResize(event: any) {
+    if (event.target.innerWidth >= 1024) { this.drawerAction = 'side' } else { this.drawerAction = 'over' }
+  }
+
+  onGridReady() {
+    this.menuSelectedBtn == 1 ? this.loadActiveClients() : this.loadDeletedClients()
+  }
+
+  formatData(wrapper: ClientWrapper): any[] {
+    let fdata: any[] = []
+    wrapper.data.forEach(client => {
+      fdata.push({ ...client })
+    });
+    return fdata
+  }
+
+  switchMenuBtn(id: 1 | 2, force?: boolean) {
+    if (id != this.menuSelectedBtn || force) {
+      this.menuSelectedBtn = id
+
+      this.defaultMenus()
+      this.onGridReady()
+
+      this.menuToggles[id] = Default_PT[`CLIENT_MENU_${id}_ACTIVE`]
+    }
+  }
+
+  defaultMenus() {
+    this.menuToggles = { ... this.defaultToggles }
+  }
+
+  loadActiveClients() {
+    this.processing = true
     this.agGrid.api.showLoadingOverlay()
 
-    if (this.selectedChip == 0) {
-      this.api.getActiveClients().subscribe((wrapper) => {
-        this.clientData = wrapper
-        const presenterData = this.formatData(wrapper)
-        this.agGrid.api.setRowData(presenterData)
-        this.agGrid.api.hideOverlay()
-      });
-    } else {
-      this.api.getDeletedClients().subscribe((wrapper) => {
-        this.clientData = wrapper
-        const presenterData = this.formatData(wrapper)
-        this.agGrid.api.setRowData(presenterData)
-        this.agGrid.api.hideOverlay()
-      });
-    }
+    this.api.getActiveClients().subscribe((wrapper) => {
+      const presenterData = this.formatData(wrapper)
+      this.agGrid.api.setRowData(presenterData)
+      this.agGrid.api.hideOverlay()
+      this.processing = false
+    });
   }
 
-  onGridReady(params: GridReadyEvent) {
-    if (this.selectedChip == 0) {
-      this.api.getActiveClients().subscribe((wrapper) => {
-        this.clientData = wrapper
-        const presenterData = this.formatData(wrapper)
-        this.agGrid.api.setRowData(presenterData)
-      });
-    } else {
-      this.api.getDeletedClients().subscribe((wrapper) => {
-        this.clientData = wrapper
-        const presenterData = this.formatData(wrapper)
-        this.agGrid.api.setRowData(presenterData)
-      });
-    }
-  }
-
-  onRowClicked(event: RowClickedEvent) {
-    if (this.selectedChip == 0) { this.selectedRow = event.data }
-  }
-
-  slideToCreate() {
-    if (this.component != undefined) { this.formRef.remove() }
-    this.formTitle = 'Criar Cliente'
-
-    this.component = this.formRef.createComponent(DesktopCreateEditClientModalComponent).instance
-    this.component.type = "create"
-
-    this.slider.lockSwipes(false)
-    this.slider.slideNext()
-    this.slider.lockSwipes(true)
-  }
-
-  chip(chipnr: number) {
-    if (chipnr != this.selectedChip) { this.switchChip(chipnr) }
-  }
-
-  switchChip(chip: number) {
-    this.selectedChip = chip
-    this.selectedRow = { nome: '<vazio>' }
-    this.btnDisabled = true
+  loadDeletedClients() {
+    this.processing = true
     this.agGrid.api.showLoadingOverlay()
 
-    if (this.selectedChip == 0) {
-      this.api.getActiveClients().subscribe((wrapper) => {
-        this.clientData = wrapper
-        const presenterData = this.formatData(wrapper)
-        this.agGrid.api.setRowData(presenterData)
-        this.agGrid.api.hideOverlay()
-        this.btnDisabled = false
-      });
-    } else {
-      this.api.getDeletedClients().subscribe((wrapper) => {
-        this.clientData = wrapper
-        const presenterData = this.formatData(wrapper)
-        this.agGrid.api.setRowData(presenterData)
-        this.agGrid.api.hideOverlay()
-        this.btnDisabled = false
-      });
-    }
+    this.api.getDeletedClients().subscribe((wrapper) => {
+      const presenterData = this.formatData(wrapper)
+      this.agGrid.api.setRowData(presenterData)
+      this.agGrid.api.hideOverlay()
+      this.processing = false
+    });
+  }
+
+  promptCreateClient() {
+    const CEDiagRef = this._dialog.open(DesktopCreateEditClientModalComponent, {
+      data: {
+        client: Client,
+        action: 'add'
+      }
+    });
+
+    CEDiagRef.afterClosed().subscribe(() => {
+      if (CEDiagRef.componentInstance._data.response) {
+        this.loadContent()
+      }
+    })
+  }
+
+  deleteClient(data: Client) {
+    this.processing = true
+    this.agGrid.api.showLoadingOverlay()
+
+    this.api.deleteClient(data.id).subscribe(() => {
+      this.agGrid.api.hideOverlay()
+      this.processing = false
+      this.onGridReady()
+    })
+  }
+}
+
+@Component({
+  selector: 'client-actions-holder',
+  template: `
+  <div class="w-full h-full flex items-center justify-center">
+    <ion-icon name="close-outline" color="danger"
+        class="!text-lg cursor-not-allowed duration-150 hover:scale-105 p-1.5 hover:border hover:border-gray-300 bg-white rounded-full mr-1"
+        mat-raised-button #pencilIcon="matTooltip" [matTooltip]="'Sem ações possíveis'"
+        matTooltipPosition="below"></ion-icon>
+  </div>
+`
+})
+export class NoActionsHolder implements ICellRendererAngularComp {
+  agInit(params: ICellRendererParams<any, any>): void { }
+  refresh(params: ICellRendererParams<any, any>): boolean {
+    return false;
+  }
+}
+
+@Component({
+  selector: 'client-actions-holder',
+  templateUrl: './micro-components-views/client-action-holder.component.html',
+  styleUrls: ['./desktop-clients.component.scss'],
+})
+export class ClientActionsHolder implements ICellRendererAngularComp {
+  cellData: ClientCellData = { client: {}, action: 'none' }
+
+  constructor(public _dialog: MatDialog, public agGridCom: ClientAgGridComService) { }
+
+  agInit(params: ICellRendererParams<any, any>): void { this.cellData.client = { ...params.data } }
+
+  refresh(params: ICellRendererParams<any, any>): boolean {
+    return false
+  }
+
+  promptEditClient() {
+    const CEDiagRef = this._dialog.open(DesktopCreateEditClientModalComponent, {
+      data: {
+        client: this.cellData.client,
+        action: 'edit',
+        response: false
+      }
+    });
+
+    CEDiagRef.afterClosed().subscribe(() => {
+      if (CEDiagRef.componentInstance._data.response) {
+        this.cellData.action = 'edit'
+        this.cellData.client = { ...CEDiagRef.componentInstance._data.client }
+        this.agGridCom.notifyCellValueChanged({ ...this.cellData });
+      }
+    })
   }
 
   promptDeleteClient() {
     const deleteDiagRef = this._dialog.open(DeleteDialog, {
       data: {
-        header: 'A eliminar cliente',
-        prompt: 'Deseja eliminar este cliente?',
-        name: this.selectedRow.nome
+        prompt: Default_PT.DELETE_CLIENT_PROMPT,
+        name: this.cellData.client.name
       }
     });
 
     deleteDiagRef.afterClosed().subscribe(() => {
       if (deleteDiagRef.componentInstance.diagData.response) {
-        this.deleteClient()
+        this.cellData.action = 'delete'
+        this.agGridCom.notifyCellValueChanged({ ...this.cellData });
       }
     })
   }
-
-
-  deleteClient() {
-    this.btnDisabled = true
-    this.agGrid.api.showLoadingOverlay()
-
-    this.api.deleteClient(this.selectedRow.id).subscribe((wrapper) => { this.btnDisabled = false; this.agGrid.api.hideOverlay(); this.loadContent() })
-  }
-
-  slideToEdit() {
-    if (this.component != undefined) { this.formRef.remove() }
-    this.formTitle = 'Editar Cliente'
-
-    this.component = this.formRef.createComponent(DesktopCreateEditClientModalComponent).instance
-
-
-    this.component.model = {
-      id: this.selectedRow.id,
-      name: this.selectedRow.nome,
-      phonenumber: this.selectedRow.telemóvel,
-      sex: this.selectedRow.sexo,
-      address: this.selectedRow.morada,
-      birthdate: this.selectedRow.nascimento,
-      facebook: this.selectedRow.facebook,
-      instagram: this.selectedRow.instagram
-    }
-
-    this.component.type = "edit"
-
-    this.slider.lockSwipes(false)
-    this.slider.slideNext()
-    this.slider.lockSwipes(true)
-  }
-
-  async return() {
-    this.slider.lockSwipes(false)
-    this.slider.slidePrev()
-    this.slider.lockSwipes(true)
-    await this.loadContent()
-  }
-
-  formatData(wrapper: ClientWrapper): any[] {
-    let data: any[] = []
-
-    wrapper.data.forEach(client => {
-      data.push(
-        {
-          id: client.id,
-          nome: client.name,
-          sexo: client.sex,
-          morada: client.address /*!= (null || '' || undefined) ? client.address : '<não específicado>'*/,
-          nascimento: client.birthdate /*!= (null || '') ? moment(client.birthdate).format('DD/MM/YYYY') : ''*/,
-          telemóvel: client.phonenumber /*!= (null || '') ? client.phonenumber : '<não específicado>'*/,
-          instagram: client.instagram /*!= (null || '') ? client.instagram : '<não específicado>'*/,
-          facebook: client.facebook /*!= (null || '') ? client.facebook : '<não específicado>'*/
-        }
-      )
-    });
-
-    return data
-  }
 }
 
-interface DeleteDialogData {
-  header: string
-  prompt: string
-  name: string
-  response: boolean
-}
 
 @Component({
   selector: 'delete-client-dialog',
-  templateUrl: 'delete-client.dialog.html',
+  templateUrl: 'micro-components-views/delete-client.dialog.html',
+  styleUrls: ['./desktop-clients.component.scss']
 })
 export class DeleteDialog {
   constructor(public dialogRef: MatDialogRef<DeleteDialog>, @Inject(MAT_DIALOG_DATA) public diagData: DeleteDialogData) { }

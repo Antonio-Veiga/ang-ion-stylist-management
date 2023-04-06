@@ -1,6 +1,7 @@
 import { Component, OnInit, ViewChild, ViewContainerRef } from '@angular/core';
 import { Platform } from '@ionic/angular';
 import { DesktopServicesComponent } from 'src/app/desktop/desktop-services/desktop-services.component';
+import { AgGridUsable } from 'src/app/interfaces/Loadable';
 import { MobileServicesComponent } from 'src/app/mobile/mobile-services/mobile-services.component';
 
 @Component({
@@ -11,20 +12,20 @@ import { MobileServicesComponent } from 'src/app/mobile/mobile-services/mobile-s
 export class ServiceComponent implements OnInit {
   platform!: Platform
   childCached = false
-  component!: any
+  component!: AgGridUsable
 
   @ViewChild('ChildComponentRef', { read: ViewContainerRef, static: true }) public childRef!: ViewContainerRef
 
   constructor(platform: Platform) { this.platform = platform; }
 
-  ionViewWillEnter(): void { }
+  ionViewWillEnter(): void { this.component.loadContent() }
 
   ngOnInit(): void {
     this.detectPlatform()
   }
 
   detectPlatform() {
-    if (this.platform.is('ios') || this.platform.is('android')) {
+    if ((this.platform.is('ios') && !this.platform.is('ipad')) || this.platform.is('android')) {
       this.component = this.childRef.createComponent(MobileServicesComponent).instance
       this.childCached = true
     } else {

@@ -4,7 +4,7 @@ import dayGridPlugin from '@fullcalendar/daygrid';
 import timeGridPlugin from '@fullcalendar/timegrid';
 import interactionPlugin from '@fullcalendar/interaction';
 import langPT from '@fullcalendar/core/locales/pt';
-import { APIService } from 'src/app/services/api.service';
+import { APIService } from 'src/app/services/api/api.service';
 import { CalendarEventWrapper } from 'src/app/models/CalendarEventWrapper';
 import { FCalendarUsable } from 'src/app/interfaces/Loadable';
 

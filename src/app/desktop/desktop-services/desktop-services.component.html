@@ -1,33 +1,47 @@
-<div class="absolute inset-0 overflow-auto grid grid-cols-3 xl:grid-cols-4">
-    <div class="col-span-3 min-w-[850px] h-full flex flex-col">
-        <div data-attr="chip-holder" class="flex w-full justify-center gap-3 uppercase my-4">
-            <button class="menu-btn m-btn" (click)="switchMenuBtn(1)"
-                [ngClass]="{'m-btn-active': menuSelectedBtn == 1 }">{{m}}</button>
-            <button class="menu-btn f-btn" (click)="switchMenuBtn(2)"
-                [ngClass]="{'f-btn-active': menuSelectedBtn == 2 }">{{f}}</button>
-            <button class="menu-btn l-btn" (click)="switchMenuBtn(3)"
-                [ngClass]="{'l-btn-active': menuSelectedBtn == 3 }">{{l}}</button>
-            <button class="menu-btn e-btn" (click)="switchMenuBtn(4)"
-                [ngClass]="{'e-btn-active': menuSelectedBtn == 4 }">{{e}}</button>
-            <mat-divider [vertical]="true"></mat-divider>
-            <button (click)="switchMenuBtn(menuSelectedBtn, true)" class=" lg-menu-btn flex justify-center items-center">
-                <ion-icon name="reload-outline" class="mr-2"></ion-icon>
-                Recarregar Tabela
-            </button>
-        </div>
-        <div class="flex-1 xl:h-full h-fit shrink-0 bg-red-500 xl:mr-2 xl:ml-4 mx-4 mb-4">
-            <ag-grid-angular class="w-full xl:h-full h-[500px] ag-theme-alpine" [columnDefs]="columnDefs"
-                [defaultColDef]="defaultColDef" [rowSelection]="'single'" [animateRows]="true" [pagination]="true"
-                (gridReady)="onGridReady()"></ag-grid-angular>
-        </div>
-    </div>
-    <div class="xl:col-span-1 xl:h-full col-span-3 xl:min-w-0 min-w-[850px] h-[300px] flex flex-col">
-        <div
-            class="flex-1 h-full items-center justify-center xl:ml-2 xl:mr-0 mx-4 mb-4 xl:mb-0 border border-gray-300 bg-white">
-            <div class="w-full h-fit bg-gray-100 border-b border-gray-300">
-                <h2 class="w-full text-md text-center p-3 font-[500] tracking-wide uppercase">Formulários
-                    Associados</h2>
+<mat-drawer-container class="h-screen">
+    <mat-drawer #drawer [mode]="drawerAction" position="end" style="width: 250px !important;">
+        POR IMPLEMENTAR
+    </mat-drawer>
+    <mat-drawer-content class="overflow-auto h-full !flex">
+        <div class="w-full min-w-[760px] min-h-[500px] h-full flex flex-col">
+            <mat-progress-bar mode="query" [hidden]="!processing"></mat-progress-bar>
+            <div data-attr="chip-holder"
+                class="flex flex-col xl:flex-row w-full justify-center gap-3 xl:gap-2 uppercase my-4">
+                <div class="flex w-full xl:w-fit justify-center gap-3">
+                    <button [disabled]="processing" class="menu-btn m-btn" (click)="switchMenuBtn(1)"
+                        [ngClass]="{'m-btn-active': menuSelectedBtn == 1 }">{{menuToggles[1]}}</button>
+                    <button [disabled]="processing" class="menu-btn f-btn" (click)="switchMenuBtn(2)"
+                        [ngClass]="{'f-btn-active': menuSelectedBtn == 2 }">{{menuToggles[2]}}</button>
+                    <button [disabled]="processing" class="menu-btn l-btn" (click)="switchMenuBtn(3)"
+                        [ngClass]="{'l-btn-active': menuSelectedBtn == 3 }">{{menuToggles[3]}}</button>
+                    <button [disabled]="processing" class="menu-btn e-btn" (click)="switchMenuBtn(4)"
+                        [ngClass]="{'e-btn-active': menuSelectedBtn == 4 }">{{menuToggles[4]}}</button>
+                </div>
+                <mat-divider class="!hidden xl:!block" [vertical]="true"></mat-divider>
+                <div class="flex w-full xl:w-fit justify-center gap-3">
+                    <button [disabled]="processing" (click)="switchMenuBtn(menuSelectedBtn, true)"
+                        class="lg-menu-btn flex justify-center items-center">
+                        <ion-icon name="reload-outline" class="mr-1"></ion-icon>
+                        Recarregar Tabela
+                    </button>
+                    <button [disabled]="processing || pendingChanges == undefined || pendingChanges.size === 0"
+                        (click)="saveAll()" class=" lg-menu-btn flex justify-center items-center">
+                        <ion-icon name="save-outline" class="mr-1"></ion-icon>
+                        Guardar Alterações
+                    </button>
+                    <mat-divider [vertical]="true"></mat-divider>
+                    <button [disabled]="processing" class="toggler" (click)="drawer.toggle()" #toggleMenu="matTooltip"
+                        [matTooltip]="toggle.tooltip" matTooltipPosition="below">
+                        <ion-icon [name]="toggle.icon" class="text-white"></ion-icon>
+                    </button>
+                </div>
+            </div>
+            <div class="flex-1 xl:h-full h-fit shrink-0 mx-8 mb-4">
+                <ag-grid-angular class="w-full h-full min-h-[500px] ag-theme-alpine" [columnDefs]="columnDefs"
+                    [defaultColDef]="defaultColDef" [rowSelection]="'single'" [animateRows]="true" [pagination]="true"
+                    [paginationPageSize]="20" [localeText]="AG_GRID_PT_LANG"
+                    (gridReady)="onGridReady()"></ag-grid-angular>
             </div>
         </div>
-    </div>
-</div>
+    </mat-drawer-content>
+</mat-drawer-container>

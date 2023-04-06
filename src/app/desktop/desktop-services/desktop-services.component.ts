@@ -1,154 +1,184 @@
-import { Component, OnDestroy, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, HostListener, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { APIService } from 'src/app/services/api.service';
+import { APIService } from 'src/app/services/api/api.service';
 import { AgGridAngular, ICellRendererAngularComp } from 'ag-grid-angular';
 import { ColDef, GridApi, ICellRendererParams } from 'ag-grid-community';
-import 'moment/locale/pt-br';
 import { ServiceWrapper } from '../../models/ServiceWrapper';
-import { AgGridComService } from 'src/app/services/ag-grid-com.service';
-import { BehaviorSubject, Subscription } from 'rxjs';
+import { AgGridComService } from 'src/app/services/service-coms/ag-grid-com.service';
+import { BehaviorSubject } from 'rxjs';
 import { MatSnackBar, MatSnackBarConfig } from '@angular/material/snack-bar';
-import { InfoSnackBarComponent } from 'src/app/pieces/info-snack/info-snack.component';
-import { CellData } from 'src/app/data/AgGridCellData';
+import { InfoSnackBarComponent } from 'src/app/partials/info-snack/info-snack.component';
+import { ServiceCellData } from 'src/app/data/AgGridServiceCellData';
 import { Service } from 'src/app/models/Service';
-
-const moment = require('moment');
-moment.locale('pt-br')
+import { ProcessableService } from 'src/app/services/app-coms/processable.service';
+import { MultipleChangesComService } from 'src/app/services/service-coms/multiple-changes-com.service';
+import { MatDrawer, MatDrawerMode } from '@angular/material/sidenav';
+import { Default_PT } from 'src/app/defaults/langs/pt-pt/Defaults';
+import { AgGridUsable } from 'src/app/interfaces/Loadable';
+import * as _ from 'lodash';
 
 @Component({
   selector: 'app-desktop-services',
   templateUrl: './desktop-services.component.html',
   styleUrls: ['./desktop-services.component.scss'],
 })
-export class DesktopServicesComponent {
-  public menuSelectedBtn: 1 | 2 | 3 | 4 | number = 1
+export class DesktopServicesComponent implements AfterViewInit, AgGridUsable {
+  public menuSelectedBtn: 1 | 2 | 3 | 4 = 1
+  public processing = false
+  public pendingChanges?: Map<number, ServiceCellData>
+  public toggle = { icon: 'menu', tooltip: Default_PT.OPEN_SIDE_MENU_TOOLTIP }
+  public drawerAction: MatDrawerMode = window.innerWidth >= 1024 ? 'side' : 'over'
+  public AG_GRID_PT_LANG = Default_PT.AG_GRID_LOCALE_PT
 
-  public m = 'masculino'
-  public f = 'feminino'
-  public e = 'estética'
-  public l = 'laser'
-
-  public menuMappings = {
-    1: {
-      value: 'masculino',
-      active: '♂ masculino',
-    },
-    2: {
-      value: 'feminino',
-      active: '♀ feminino',
-    },
-    3: {
-      value: 'laser',
-      active: '♨ laser',
-    },
-    4:
-    {
-      value: 'estética',
-      active: '✧ estética',
-    },
+  public menuToggles = {
+    1: Default_PT.CALENDAR_1,
+    2: Default_PT.CALENDAR_2,
+    3: Default_PT.CALENDAR_3,
+    4: Default_PT.CALENDAR_4
   }
 
+  public defaultToggles = { ... this.menuToggles }
+
+  @ViewChild('drawer') drawer!: MatDrawer;
   @ViewChild(AgGridAngular) agGrid!: AgGridAngular;
+
+  @HostListener('window:resize', ['$event'])
+  onResize(event: any) {
+    if (event.target.innerWidth >= 1024) { this.drawerAction = 'side' } else { this.drawerAction = 'over' }
+  }
+
+  defaultColDef: ColDef = {
+    flex: 1,
+    resizable: false,
+    sortable: false,
+    filter: false,
+    editable: false,
+    suppressMovable: true,
+    suppressNavigable: false,
+  }
 
   columnDefs: ColDef[] = [
     {
-      field: 'nome'
+      field: 'name',
+      headerName: Default_PT.NAME
     },
     {
-      field: 'duração',
+      field: 'duration',
+      headerName: Default_PT.DURATION,
       cellRendererSelector: (params: any) => {
         return { component: DurationInputHolder }
       }
     },
     {
-      field: 'preço',
+      field: 'price',
+      headerName: Default_PT.PRICE,
       cellRendererSelector: (params: any) => {
         return { component: PriceInputHolder }
       }
     },
     {
-      field: 'ativo',
+      field: 'active',
+      headerName: Default_PT.ACTIVE,
+      minWidth: 160,
       cellRendererSelector: (params: any) => {
         return { component: SegementHolder }
       }
     },
     {
-      field: 'Ações',
+      field: 'actions',
+      headerName: Default_PT.ACTIONS,
       maxWidth: 120,
       resizable: false,
       sortable: false,
       cellRendererSelector: (params: any) => {
-        return { component: ActionsHolder }
+        return { component: ServiceActionsHolder }
       }
     }
   ]
 
-  defaultColDef: ColDef = {
-    flex: 1,
-    resizable: true,
-    sortable: true,
-    filter: false,
-    editable: false,
-    suppressMovable: true,
-    suppressNavigable: false,
-    cellClass: 'no-border'
+  constructor(public api: APIService, public processable: ProcessableService, public mccs: MultipleChangesComService) { this.menuToggles[1] = Default_PT.CALENDAR_1_ACTIVE }
+
+  loadContent(): void {
+    this.onGridReady()
   }
 
-  constructor(public api: APIService) { this.m = this.menuMappings[1].active }
+  ngAfterViewInit(): void {
+    this.drawer.openedChange.subscribe((opened) => {
+      if (opened) { this.toggle.icon = "exit"; this.toggle.tooltip = Default_PT.CLOSE_SIDE_MENU_TOOLTIP } else { this.toggle.icon = "menu"; this.toggle.tooltip = Default_PT.OPEN_SIDE_MENU_TOOLTIP }
+    });
+
+    this.mccs.PendingMapSubject.subscribe((PendingMap) => {
+      this.pendingChanges = _.clone(PendingMap)
+    })
+
+    this.processable._Processing.subscribe((shouldProcess) => {
+      this.processing = shouldProcess
+    })
+  }
 
   onGridReady() {
-    this.api.getServices(this.menuSelectedBtn).subscribe((wrapper) => {
-      const presenterData = this.formatData(wrapper)
-      this.agGrid.api.setRowData(presenterData)
-    });
+    this.loadGrid(this.menuSelectedBtn)
   }
 
+  saveAll() {
+    if (this.pendingChanges && this.pendingChanges.size != 0) {
+      let wrapper = new ServiceWrapper
+      wrapper.data = []
+
+      this.processing = true
+      this.agGrid.api.showLoadingOverlay()
+
+      this.pendingChanges.forEach((value) => {
+        let tmpService: Service = {
+          id: value.cellId,
+          price: value.price,
+          duration: value.duration,
+          active: value.active
+        }
+        wrapper.data.push(tmpService)
+      })
+
+      this.api.massAssignServices(wrapper).subscribe(() => {
+        this.agGrid.api.hideOverlay()
+        this.loadGrid(this.menuSelectedBtn)
+      })
+    }
+  }
 
   formatData(wrapper: ServiceWrapper): any[] {
-    let services = wrapper.data
     let fdata: any[] = []
-    services.forEach((service) => {
-      fdata.push({
-        id: service.id,
-        nome: service.name,
-        'duração': service.duration,
-        'preço': service.price,
-        ativo: service.active,
-      })
+    wrapper.data.forEach((service) => {
+      fdata.push({ ...service })
     })
     return fdata
   }
 
-  switchMenuBtn(id: number, force?: boolean) {
+  switchMenuBtn(id: 1 | 2 | 3 | 4, force?: boolean) {
     if (id != this.menuSelectedBtn || force) {
-      this.defaultMenus()
+      this.menuSelectedBtn = id
 
+      this.mccs.clearPendingChanges()
+      this.defaultMenus()
       this.loadGrid(id)
 
-      if (id == 1) { this.m = this.menuMappings[1].active }
-      if (id == 2) { this.f = this.menuMappings[2].active }
-      if (id == 3) { this.l = this.menuMappings[3].active }
-      if (id == 4) { this.e = this.menuMappings[4].active }
-
-      this.menuSelectedBtn = id
+      this.menuToggles[id] = Default_PT[`CALENDAR_${id}_ACTIVE`]
     }
   }
 
+  defaultMenus() {
+    this.menuToggles = { ... this.defaultToggles }
+  }
+
   loadGrid(id: number) {
+    this.processing = true
     this.agGrid.api.showLoadingOverlay()
 
     this.api.getServices(id).subscribe((wrapper) => {
       const presenterData = this.formatData(wrapper)
       this.agGrid.api.setRowData(presenterData)
       this.agGrid.api.hideOverlay()
+      this.processing = false
     });
-  }
-
-  defaultMenus() {
-    this.m = this.menuMappings[1].value
-    this.f = this.menuMappings[2].value
-    this.l = this.menuMappings[3].value
-    this.e = this.menuMappings[4].value
   }
 }
 
@@ -160,7 +190,7 @@ export class DesktopServicesComponent {
 export class SegementHolder implements ICellRendererAngularComp {
   public state!: 0 | 1
   public stateBehaviourSub = new BehaviorSubject<0 | 1>(this.state);
-  private updatedCellData!: CellData
+  private updatedCellData!: ServiceCellData
 
   constructor(private agGridCom: AgGridComService) { }
 
@@ -169,9 +199,10 @@ export class SegementHolder implements ICellRendererAngularComp {
     this.stateBehaviourSub.next(this.state)
 
     this.updatedCellData = {
+      cellId: params.data.id,
       rowIdx: params.rowIndex,
-      duration: params.data['duração'],
-      price: params.data['preço'],
+      duration: params.data.duration,
+      price: params.data.price,
       active: params.value
     }
 
@@ -183,7 +214,7 @@ export class SegementHolder implements ICellRendererAngularComp {
     this.agGridCom.CellSubject.subscribe((CellData) => {
       if (this.updatedCellData.rowIdx == CellData.rowIdx) {
         if (CellData.active != this.updatedCellData.active) { this.state = CellData.active }
-        this.updatedCellData = CellData
+        this.updatedCellData = { ...CellData }
       }
     })
   }
@@ -200,23 +231,24 @@ export class SegementHolder implements ICellRendererAngularComp {
 })
 export class PriceInputHolder implements ICellRendererAngularComp {
   validator!: FormGroup
-  private updatedCellData!: CellData
+  private updatedCellData!: ServiceCellData
 
   constructor(private formBuilder: FormBuilder, private agGridCom: AgGridComService) { }
 
   agInit(params: ICellRendererParams<any, any>): void {
     this.validator = this.formBuilder.group({
-      price: ['', [Validators.required, Validators.pattern(/^(?!\s)(?!.*\s{2,})(.*\S)?(?<!\s)$/)]],
+      price: ['', [Validators.required, Validators.pattern(/^(0|[1-9]\d?)(\.\d{1,2})?$/)]],
     })
 
     this.validator.setValue({ price: params.value })
     this.validator.markAllAsTouched()
 
     this.updatedCellData = {
+      cellId: params.data.id,
       rowIdx: params.rowIndex,
-      duration: params.data['duração'],
+      duration: params.data.duration,
       price: params.value,
-      active: params.data['ativo'],
+      active: params.data.active,
     }
 
     this.validator.get('price')?.valueChanges.subscribe((value) => {
@@ -227,7 +259,7 @@ export class PriceInputHolder implements ICellRendererAngularComp {
     this.agGridCom.CellSubject.subscribe((CellData) => {
       if (this.updatedCellData.rowIdx == CellData.rowIdx) {
         if (CellData.price != this.updatedCellData.price) { this.validator.setValue({ price: CellData.price }) }
-        this.updatedCellData = CellData
+        this.updatedCellData = { ...CellData }
       }
     })
   }
@@ -244,7 +276,7 @@ export class PriceInputHolder implements ICellRendererAngularComp {
 })
 export class DurationInputHolder implements ICellRendererAngularComp {
   validator!: FormGroup
-  private updatedCellData!: CellData
+  private updatedCellData!: ServiceCellData
 
   constructor(private formBuilder: FormBuilder, private agGridCom: AgGridComService) { }
 
@@ -257,10 +289,11 @@ export class DurationInputHolder implements ICellRendererAngularComp {
     this.validator.markAllAsTouched()
 
     this.updatedCellData = {
+      cellId: params.data.id,
       rowIdx: params.rowIndex,
       duration: params.value,
-      price: params.data['preço'],
-      active: params.data['ativo'],
+      price: params.data.price,
+      active: params.data.active,
     }
 
     this.validator.get('duration')?.valueChanges.subscribe((value) => {
@@ -271,7 +304,7 @@ export class DurationInputHolder implements ICellRendererAngularComp {
     this.agGridCom.CellSubject.subscribe((CellData) => {
       if (this.updatedCellData.rowIdx == CellData.rowIdx) {
         if (CellData.duration != this.updatedCellData.duration) { this.validator.setValue({ duration: CellData.duration }) }
-        this.updatedCellData = CellData
+        this.updatedCellData = { ...CellData }
       }
     })
   }
@@ -282,41 +315,44 @@ export class DurationInputHolder implements ICellRendererAngularComp {
 }
 
 @Component({
-  selector: 'actions-holder',
-  templateUrl: './micro-components-views/action-holder.component.html',
+  selector: 'service-actions-holder',
+  templateUrl: './micro-components-views/service-action-holder.component.html',
   styleUrls: ['./desktop-services.component.scss'],
 })
-export class ActionsHolder implements ICellRendererAngularComp, OnDestroy {
-  private defaultCellData!: CellData
-  private updatedCellData!: CellData
+export class ServiceActionsHolder implements ICellRendererAngularComp {
+  private defaultCellData!: ServiceCellData
+  private updatedCellData!: ServiceCellData
   private cellId!: number
+  public noChanges = true
 
   private gridApi_?: GridApi
 
-  constructor(private agGridCom: AgGridComService, private _snackBar: MatSnackBar, public api: APIService) { }
-
-  ngOnDestroy(): void {
-    this.agGridCom.CellSubject.unsubscribe();
-  }
+  constructor(private agGridCom: AgGridComService, private _snackBar: MatSnackBar, public api: APIService, public processable: ProcessableService, public mccs: MultipleChangesComService) { }
 
   agInit(params: ICellRendererParams<any, any>): void {
     this.cellId = params.data.id
     this.gridApi_ = params.api
 
     this.defaultCellData = {
+      cellId: this.cellId,
       rowIdx: params.rowIndex,
-      duration: params.data['duração'],
-      price: params.data['preço'],
-      active: params.data['ativo'],
+      duration: params.data.duration,
+      price: params.data.price,
+      active: params.data.active,
     }
 
-    this.updatedCellData = this.defaultCellData
+    this.updatedCellData = { ...this.defaultCellData }
 
     this.agGridCom.CellSubject.subscribe((CellData) => {
-      if (this.defaultCellData.rowIdx == CellData.rowIdx) {
-        this.updatedCellData = CellData
+      if (this.defaultCellData.cellId == CellData.cellId) {
+        this.updatedCellData = { ...CellData }
+        this.noChanges = !this.changed()
+
+        if (this.noChanges) { this.mccs.removePedingChange(this.cellId) } else { this.mccs.addPendingChange(this.cellId, { ...this.updatedCellData }) }
       }
     })
+
+    this.mccs.clearPendingChanges()
   }
 
   refresh(params: ICellRendererParams<any, any>): boolean {
@@ -328,21 +364,42 @@ export class ActionsHolder implements ICellRendererAngularComp, OnDestroy {
   }
 
   store() {
-    if (this.defaultCellData == this.updatedCellData) {
-      this.openInfoSnackBar('Nenhuma valor a alterar', 'Entendido');
+    if (this.changed()) {
+      if (this.validateCellData(this.updatedCellData)) {
+        this.gridApi_?.showLoadingOverlay();
+        let _Service: Service = {}
+
+        if (this.defaultCellData.active != this.updatedCellData.active) { _Service.active = this.updatedCellData.active }
+        if (this.defaultCellData.duration != this.updatedCellData.duration) { _Service.duration = this.updatedCellData.duration }
+        if (this.defaultCellData.price != this.updatedCellData.price) { _Service.price = this.updatedCellData.price }
+
+        this.processable.notifyWhenProcessing(true)
+        this.api.patchService(_Service, this.cellId).subscribe(() => {
+          this.defaultCellData = { ... this.updatedCellData }
+          this.noChanges = true
+          this.mccs.removePedingChange(this.cellId)
+          this.openInfoSnackBar(Default_PT.SERVICE_VALUES_CHANGED, Default_PT.INFO_BTN);
+          this.gridApi_?.hideOverlay();
+          this.processable.notifyWhenProcessing(false)
+        })
+      } else {
+        this.openInfoSnackBar(Default_PT.INVALID_INPUT, Default_PT.INFO_BTN);
+      }
     } else {
-      this.gridApi_?.showLoadingOverlay();
-      let _Service: Service = {}
-
-      if (this.defaultCellData.active != this.updatedCellData.active) { _Service.active = this.updatedCellData.active }
-      if (this.defaultCellData.duration != this.updatedCellData.duration) { _Service.duration = this.updatedCellData.duration }
-      if (this.defaultCellData.price != this.updatedCellData.price) { _Service.price = this.updatedCellData.price }
-
-      this.api.patchService(_Service, this.cellId).subscribe(() => {
-        this.openInfoSnackBar('Os valores do serviço foram alterados', 'Entendido');
-        this.gridApi_?.hideOverlay();
-      })
+      this.openInfoSnackBar(Default_PT.NO_CHANGES, Default_PT.INFO_BTN);
     }
+  }
+
+  changed(): boolean {
+    return !(_.isEqual(this.defaultCellData, this.updatedCellData))
+  }
+
+  validateCellData(data: ServiceCellData): boolean {
+    if (/^(0|[1-9]\d?)(\.\d{1,2})?$/.test(data.price.toString())
+      && /^(?:0|[1-9]\d{0,2}|1[0-3]\d{2}|14[0-3]\d|1440)$/.test(data.duration.toString())) {
+      return true
+    }
+    return false
   }
 
   openInfoSnackBar(content: string, btnContent: string) {

@@ -1,4 +1,4 @@
-<div class="w-full h-full items-center justify-center">
+<div class="w-fit m-auto h-full items-center justify-center">
     <ion-segment value="{{state == 1 ? 'active': 'inactive'}}" mode='ios' class="centered"
         [ngClass]="{'is-active': state == 1, 'is-inactive': state == 0}">
         <ion-segment-button (click)="state = 1; stateBehaviourSub.next(state)" value="active">

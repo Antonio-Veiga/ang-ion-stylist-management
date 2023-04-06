@@ -1,0 +1,23 @@
+<div class="w-full max-w-lg min-w-fit flex flex-col gap-2 p-4">
+    <h2 class="tracking-wide font-semibold text-md p-2 text-gray-600 border-b border-gray-300 uppercase">
+        {{dialogTitle}}</h2>
+
+    <div data-attr="matchers-holder" class="flex flex-col gap-6 overflow-auto max-h-72 p-2 border-b border-gray-300">
+        <div class="flex flex-col h-full gap-1 mx-4 rounded-md border boder-gray-300"
+            *ngFor="let client of matchedClients">
+            <div data-attr="name-holder" class="flex gap-3 border-b p-1.5">
+                <p data-id="name-label" class="text-sm uppercase text-gray-600">{{nameLabel}}</p>
+                <p class="text-sm">{{client.name}}</p>
+            </div>
+            <div data-attr="pnumber-holder" class="flex gap-3 p-1.5">
+                <p data-id="pnumber-label" class="text-sm uppercase text-gray-600">{{pnumberLabel}}</p>
+                <p class="text-sm">{{client.phonenumber}}</p>
+            </div>
+        </div>
+    </div>
+
+    <div data-attr="buttons-holder" class="flex p-2 items-center justify-center gap-2">
+        <ion-button (click)="continueAction()" color="primary">{{continueBtnText}}</ion-button>
+        <ion-button (click)="cancelAction()" color="danger">{{cancelBtnText}}</ion-button>
+    </div>
+</div>

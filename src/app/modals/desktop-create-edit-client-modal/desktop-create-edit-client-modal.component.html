@@ -1,25 +1,25 @@
-<div class="flex w-full h-full items-center justify-center m-0">
+<div class="flex max-w-xl items-center justify-center m-2">
   <div class="w-full h-fit">
-    <form [formGroup]="ceForm" (ngSubmit)="submitCEForm()">
-      <div class="py-4 px-2 m-1 md:mx-6 md:my-4 bg-white rounded-lg border border-gray-300">
-        <div class="mb-6 mt-4 mx-8">
+    <form [formGroup]="ceForm" (ngSubmit)="submitForm()" class="flex flex-col justify-center items-center">
+      <div class="bg-white rounded-lg mb-4 divide-y gap-2">
+        <div class="mb-2 mt-4 mx-4">
           <label for="c-name"
-            class="block mb-2 text-start ml-2 text-[0.65rem] md:text-xs uppercase font-medium text-gray-600">Nome do
+            class="block mb-1.5 text-start ml-2 text-[0.65rem] md:text-xs uppercase font-medium text-gray-600">Nome do
             Cliente <span class="text-red-500">*</span></label>
           <input type="text" id="c-name"
             class="bg-gray-50 w-full border border-gray-300 placeholder-gray-400 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5"
-            required formControlName="name" [(ngModel)]="model.name"
+            required formControlName="name" [(ngModel)]="modelTemplate.name"
             [ngClass]="{ 'is-invalid': ceForm.get('name')!.invalid && ceForm.get('name')!.touched, 'is-valid': ceForm.get('name')!.valid && ceForm.get('name')!.touched }">
           <p class="text-[0.5em] text-start ml-2 text-gray-500 uppercase mt-1"> De 2 a 128 carateres. (campo
             obrigatório)</p>
         </div>
 
-        <div class="mb-6 mx-8 flex space-x-4">
+        <div class="mb-2 pt-3 mx-4 flex space-x-4">
           <div class="flex-1 md:flex-[2_0_0] shrink-0">
             <label for="c-address"
-              class="block mb-2 text-start ml-2 text-[0.65rem] md:text-xs uppercase font-medium text-gray-600">Morada
+              class="block mb-1.5 text-start ml-2 text-[0.65rem] md:text-xs uppercase font-medium text-gray-600">Morada
             </label>
-            <input type="text" id="c-address" [(ngModel)]="model.address"
+            <input type="text" id="c-address" [(ngModel)]="modelTemplate.address"
               class="bg-gray-50 w-full border border-gray-300 placeholder-gray-400 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5"
               formControlName="address"
               [ngClass]="{ 'is-invalid': ceForm.get('address')!.invalid && ceForm.get('address')!.touched, 'is-valid': ceForm.get('address')!.valid && ceForm.get('address')!.touched }">
@@ -28,10 +28,10 @@
           </div>
           <div class="flex-1 shrink-0">
             <label for="c-sex"
-              class="block mb-2 text-start ml-2 text-[0.65rem] md:text-xs uppercase font-medium text-gray-600">Sexo
+              class="block mb-1.5 text-start ml-2 text-[0.65rem] md:text-xs uppercase font-medium text-gray-600">Sexo
               <span class="text-red-500">*</span>
             </label>
-            <select id="c-sex" required formControlName="sex" [(ngModel)]="model.sex"
+            <select id="c-sex" required formControlName="sex" [(ngModel)]="modelTemplate.sex"
               [ngClass]="{ 'is-invalid': ceForm.get('sex')!.invalid && ceForm.get('sex')!.touched, 'is-valid': ceForm.get('sex')!.valid && ceForm.get('sex')!.touched }"
               class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 ">
               <option value='' selected disabled>--- Indefenido ---</option>
@@ -42,12 +42,13 @@
           </div>
         </div>
 
-        <div class="mb-6 mx-8 flex space-x-4">
+        <div class="mb-2 pt-3 mx-4 flex space-x-4">
           <div class="flex-1 shrink-0">
             <label for="c-number"
-              class="block mb-2 text-start ml-2 text-[0.65rem] md:text-xs uppercase font-medium text-gray-600">Número de
+              class="block mb-1.5 text-start ml-2 text-[0.65rem] md:text-xs uppercase font-medium text-gray-600">Número
+              de
               Telemóvel </label>
-            <input type="text" inputmode="numeric" id="c-number" [(ngModel)]="model.phonenumber"
+            <input type="text" inputmode="numeric" id="c-number" [(ngModel)]="modelTemplate.phonenumber"
               [ngClass]="{ 'is-invalid': ceForm.get('phonenumber')!.invalid && ceForm.get('phonenumber')!.touched, 'is-valid': ceForm.get('phonenumber')!.valid && ceForm.get('phonenumber')!.touched }"
               class="bg-gray-50 w-full border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5"
               formControlName="phonenumber">
@@ -57,22 +58,22 @@
           </div>
           <div class="flex-1 shrink-0">
             <label for="c-born"
-              class="block mb-2 text-start ml-2 text-[0.65rem] md:text-xs uppercase font-medium text-gray-600">Nascimento
+              class="block mb-1.5 text-start ml-2 text-[0.65rem] md:text-xs uppercase font-medium text-gray-600">Nascimento
             </label>
             <input type="date" id="c-born"
               [ngClass]="{ 'is-invalid': ceForm.get('birthdate')!.invalid && ceForm.get('birthdate')!.touched, 'is-valid': ceForm.get('birthdate')!.valid && ceForm.get('birthdate')!.touched }"
               class="bg-gray-50 w-full border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5"
-              formControlName="birthdate" [(ngModel)]="model.birthdate">
+              formControlName="birthdate" [(ngModel)]="modelTemplate.birthdate">
             <p class="text-[0.5em] text-start ml-2 text-gray-500 uppercase mt-1">(campo opcional)</p>
           </div>
         </div>
 
-        <div class="mb-4 mx-8 flex space-x-4">
+        <div class="mb-2 pt-3 mx-4 flex space-x-4">
           <div class="flex-1 shrink-0">
             <label for="c-instagram"
-              class="block mb-2 text-start ml-2 text-[0.65rem] md:text-xs uppercase font-medium text-gray-600">Instagram
+              class="block mb-1.5 text-start ml-2 text-[0.65rem] md:text-xs uppercase font-medium text-gray-600">Instagram
             </label>
-            <input type="text" id="c-instagram" [(ngModel)]="model.instagram"
+            <input type="text" id="c-instagram" [(ngModel)]="modelTemplate.instagram"
               [ngClass]="{ 'is-invalid': ceForm.get('instagram')!.invalid && ceForm.get('instagram')!.touched, 'is-valid': ceForm.get('instagram')!.valid && ceForm.get('instagram')!.touched }"
               class="bg-gray-50 w-full border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5"
               formControlName="instagram">
@@ -81,9 +82,9 @@
           </div>
           <div class="flex-1 shrink-0">
             <label for="c-facebook"
-              class="block mb-2 text-start ml-2 text-[0.65rem] md:text-xs uppercase font-medium text-gray-600">Facebook
+              class="block mb-1.5 text-start ml-2 text-[0.65rem] md:text-xs uppercase font-medium text-gray-600">Facebook
             </label>
-            <input type="text" id="c-facebook" [(ngModel)]="model.facebook"
+            <input type="text" id="c-facebook" [(ngModel)]="modelTemplate.facebook"
               [ngClass]="{ 'is-invalid': ceForm.get('facebook')!.invalid && ceForm.get('facebook')!.touched, 'is-valid': ceForm.get('facebook')!.valid && ceForm.get('facebook')!.touched }"
               class="bg-gray-50 w-full border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5"
               formControlName="facebook">
@@ -93,16 +94,17 @@
         </div>
       </div>
 
-      <ion-button [disabled]="ceForm.get('name')!.invalid || 
+      <ion-button [disabled]="!changed() ||
+                    ceForm.get('name')!.invalid || 
                     ceForm.get('address')!.invalid || 
                     ceForm.get('sex')!.invalid || 
                     ceForm.get('phonenumber')!.invalid || 
                     ceForm.get('birthdate')!.invalid ||
                     ceForm.get('instagram')!.invalid ||
-                    ceForm.get('facebook')!.invalid || submiting" type="submit" class="w-64">
+                    ceForm.get('facebook')!.invalid || submiting" type="submit" class="w-64 mb-4">
 
         <ion-spinner name="circles" class="relative left-0" [hidden]="!submiting"></ion-spinner>
-        <div [hidden]="submiting">{{type == 'edit' ? 'Editar Cliente': 'Criar Cliente'}}</div>
+        <div [hidden]="submiting">{{action == 'edit' ? 'Editar Cliente': 'Criar Cliente'}}</div>
       </ion-button>
     </form>
   </div>

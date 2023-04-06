@@ -1,46 +1,43 @@
-import { Component, OnInit, inject, Inject } from '@angular/core';
+import { Component, OnInit, inject, Inject, AfterViewInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { APIService } from 'src/app/services/api.service';
+import { APIService } from 'src/app/services/api/api.service';
 import { MatSnackBar, MatSnackBarConfig } from '@angular/material/snack-bar';
-import { MatDialog, MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { Client } from 'src/app/models/Client';
+import { InfoSnackBarComponent } from 'src/app/partials/info-snack/info-snack.component';
+import { ClientDialogData } from 'src/app/interfaces/ClientDialogData';
+import { Default_PT } from 'src/app/defaults/langs/pt-pt/Defaults';
 import * as jQuery from 'jquery';
-import { InfoSnackBarComponent } from 'src/app/pieces/info-snack/info-snack.component';
-
-export interface SnackBarData {
-  content: string
-  btnContent: string
-}
-
-export interface DialogData {
-  header: string
-  data?: Client
-  response?: boolean
-}
+import * as _ from 'lodash';
+import { ClientMatchersDialogData } from 'src/app/interfaces/ClientMatchersDialogData';
 
 @Component({
   selector: 'app-desktop-create-edit-client-modal',
   templateUrl: './desktop-create-edit-client-modal.component.html',
   styleUrls: ['./desktop-create-edit-client-modal.component.scss'],
 })
-export class DesktopCreateEditClientModalComponent implements OnInit {
-  ceForm!: FormGroup
-  newClient!: any
-  submiting = false
-  type!: string
+export class DesktopCreateEditClientModalComponent {
+  public ceForm!: FormGroup
+  public modelTemplate!: Client
+  public action: 'add' | 'edit' | 'none'
+  public submiting = false
+  public matchers: Client[] = []
+  public defaultClient?: Client
 
-  model: any = {
-    id: null,
-    name: '',
-    phonenumber: '',
-    sex: '',
-    birthdate: '',
-    address: '',
-    instagram: '',
-    facebook: '',
+  constructor(private formBuilder: FormBuilder,
+    @Inject(MAT_DIALOG_DATA) public _data: ClientDialogData,
+    public _self: MatDialogRef<DesktopCreateEditClientModalComponent>,
+    public _dialog: MatDialog,
+    private _snackBar: MatSnackBar,
+    private api: APIService) {
+    this.constructFormGroup()
+    this.modelTemplate = { ..._data.client }
+    this.action = _data.action
+
+    if (this.action == 'edit') { this.ceForm.markAllAsTouched(); this.defaultClient = { ...this._data.client }; this.ceForm.get('sex')?.disable() }
   }
 
-  constructor(private formBuilder: FormBuilder, public api: APIService, private _snackBar: MatSnackBar, public _dialog: MatDialog) {
+  constructFormGroup() {
     this.ceForm = this.formBuilder.group({
       name: ['', [Validators.required, Validators.minLength(2), Validators.maxLength(128), Validators.pattern(/^(?!\s)(?!.*\s{2,})(.*\S)?(?<!\s)$/)]],
       sex: ['', Validators.required],
@@ -52,108 +49,104 @@ export class DesktopCreateEditClientModalComponent implements OnInit {
     });
   }
 
-  ngOnInit() { if (this.type === "edit") { this.ceForm.markAllAsTouched(); } }
-
-  submitCEForm() {
+  async submitForm() {
     if (this.ceForm.valid) {
       this.submiting = true
-      this.ceForm.disable()
-      this.newClient = {}
+      this._self.disableClose = true
+      this.matchers = []
 
-      if (!jQuery.isEmptyObject(this.ceForm.get('name')?.value)) { this.newClient.name = this.ceForm.get('name')!.value.trim() }
-      if (!jQuery.isEmptyObject(this.ceForm.get('sex')?.value)) { this.newClient.sex = this.ceForm.get('sex')!.value.trim() }
-      if (!jQuery.isEmptyObject(this.ceForm.get('address')?.value)) { this.newClient.address = this.ceForm.get('address')!.value.trim() }
-      if (!jQuery.isEmptyObject(this.ceForm.get('phonenumber')?.value)) { this.newClient.phonenumber = this.ceForm.get('phonenumber')!.value.trim() }
-      if (!jQuery.isEmptyObject(this.ceForm.get('birthdate')?.value)) { this.newClient.birthdate = this.ceForm.get('birthdate')!.value.trim() }
-      if (!jQuery.isEmptyObject(this.ceForm.get('instagram')?.value)) { this.newClient.instagram = this.ceForm.get('instagram')!.value.trim() }
-      if (!jQuery.isEmptyObject(this.ceForm.get('facebook')?.value)) { this.newClient.facebook = this.ceForm.get('facebook')!.value.trim() }
-
-      if (this.newClient.phonenumber != undefined) {
-        this.api.getClientByPhonenumber(this.newClient.phonenumber, this.model.id).subscribe(async (wrapper) => {
-          if (wrapper.data.length === 0) { this.createClient(this.newClient); }
-          else {
-            let dialogData
-
-            wrapper.data.length === 1 ? dialogData = {
-              header: 'Existe um cliente com o mesmo número.',
-              data: wrapper.data[0]
-            } : dialogData = { header: 'Existem múltiplos clientes com este número.' }
-
-            const ref = this.openDialog(dialogData)
-
-            ref.afterClosed().subscribe(() => {
-              if (ref.componentInstance.diagData.response) {
-                this.createClient(this.newClient)
-              } else {
-                this.ceForm.enable()
-                this.submiting = false
-              }
-            })
+      if (await this.checkPNValidity() || await this.checkUserValidity()) {
+        const matchersDiagRef = this._dialog.open(MatchersDialog, {
+          data: {
+            matches: this.matchers
           }
         })
+
+        matchersDiagRef.afterClosed().subscribe(() => {
+          if (matchersDiagRef.componentInstance.diagData.response) {
+            this.handleAction()
+          } else { this.submiting = false; this._self.disableClose = false }
+        })
+
       } else {
-        this.api.getClientByName(this.newClient.name, this.model.id).subscribe(async (wrapper) => {
-          if (wrapper.data.length === 0) { this.createClient(this.newClient) }
-          else {
-            let dialogData
+        this.handleAction()
+      }
 
-            wrapper.data.length === 1 ? dialogData = {
-              header: 'Existe um cliente com o mesmo nome.',
-              data: wrapper.data[0]
-            } : dialogData = { header: 'Existem múltiplos clientes com este nome.' }
+    } else {
+      /* Should not be possible but... */
+      this.openInfoSnackBar(Default_PT.INVALID_INPUT, Default_PT.INFO_BTN)
+    }
+  }
 
-            const ref = this.openDialog(dialogData)
+  handleAction() {
+    this._data.response = true
+    if (this.action == 'add') { this.createClient() }
+    if (this.action == 'edit') { this.editClient() }
+  }
 
-            ref.afterClosed().subscribe(() => {
-              if (ref.componentInstance.diagData.response) {
-                this.createClient(this.newClient)
-              } else {
-                this.ceForm.enable()
-                this.submiting = false
-              }
-            })
+  createClient() {
+    this.api.postClient(this.modelTemplate).subscribe((singleton) => {
+      this.ceForm.reset();
+      this.ceForm.enable();
+      this.submiting = false;
+      this._self.disableClose = false
+      this.openInfoSnackBar(Default_PT.CLIENT_CREATED, Default_PT.INFO_BTN)
+    })
+  }
+
+  editClient() {
+    const filteredClient: Client = this.filterTemplate()
+    this.api.editClient(filteredClient, this.modelTemplate.id).subscribe(() => {
+      this.ceForm.enable();
+      this.submiting = false;
+      this._self.disableClose = false
+      this.openInfoSnackBar(Default_PT.CLIENT_EDITED, Default_PT.INFO_BTN)
+    })
+  }
+
+  checkPNValidity(): Promise<boolean> {
+    return new Promise<boolean>((resolve) => {
+      const pnumber = this.ceForm.get('phonenumber')?.value
+
+      if (jQuery.isEmptyObject(pnumber)) { resolve(false); } else {
+        this.api.getClientByPhonenumber(pnumber, this.modelTemplate.id).subscribe((wrapper) => {
+          if (wrapper.data.length === 0) { resolve(false) } else {
+            this.matchers = this.matchers.concat(wrapper.data)
+            resolve(true)
           }
         })
       }
-    } else { this.openInfoSnackBar('Oops algo de errado aconteceu!', 'Discartar') }
+    })
   }
 
-  openDialog(data: DialogData) {
-    const dialogRef = this._dialog.open(ConfirmDialog, {
-      data: data
-    });
+  checkUserValidity(): Promise<boolean> {
+    return new Promise<boolean>((resolve) => {
+      const cname = this.ceForm.get('name')?.value
 
-    return dialogRef
+      /* kinda of an obsolete check, since name is required parameter for submission */
+      if (jQuery.isEmptyObject(cname) || cname == undefined) { resolve(false) } else {
+        this.api.getClientByName(cname, this.modelTemplate.id).subscribe((wrapper) => {
+          if (wrapper.data.length === 0) { resolve(false) } else {
+            this.matchers = this.matchers.concat(wrapper.data)
+            resolve(true)
+          }
+        })
+      }
+    })
   }
 
-  createClient(newClient: Client) {
-    if (this.type == 'create') {
-      // create client logic
 
-      this.api.postClient(newClient).subscribe((singleton) => {
-        if (singleton.data) { this.ceForm.reset(); this.ceForm.enable(); this.submiting = false; this.openInfoSnackBar('Cliente criado com sucesso!', 'Discartar') }
-      })
-    } else {
-      // edit client logic 
+  filterTemplate(): Client {
+    let returnCl: Client = {}
 
-      this.api.editClient(newClient, this.model.id).subscribe((singleton) => {
-        let edClient = singleton.data
-        if (edClient) {
-          this.ceForm.setValue({
-            name: edClient.name,
-            sex: edClient.sex,
-            address: edClient.address,
-            phonenumber: edClient.phonenumber,
-            birthdate: edClient.birthdate,
-            instagram: edClient.instagram,
-            facebook: edClient.facebook,
-          })
-          this.ceForm.enable();
-          this.submiting = false;
-          this.openInfoSnackBar('Cliente editado com sucesso!', 'Discartar')
-        }
-      })
-    }
+    if (!jQuery.isEmptyObject(this.modelTemplate.name)) { returnCl.name = this.modelTemplate.name }
+    if (!jQuery.isEmptyObject(this.modelTemplate.address)) { returnCl.address = this.modelTemplate.address }
+    if (!jQuery.isEmptyObject(this.modelTemplate.phonenumber)) { returnCl.phonenumber = this.modelTemplate.phonenumber }
+    if (!jQuery.isEmptyObject(this.modelTemplate.birthdate)) { returnCl.birthdate = this.modelTemplate.phonenumber }
+    if (!jQuery.isEmptyObject(this.modelTemplate.facebook)) { returnCl.facebook = this.modelTemplate.facebook }
+    if (!jQuery.isEmptyObject(this.modelTemplate.instagram)) { returnCl.instagram = this.modelTemplate.instagram }
+
+    return returnCl
   }
 
   openInfoSnackBar(content: string, btnContent: string) {
@@ -161,24 +154,36 @@ export class DesktopCreateEditClientModalComponent implements OnInit {
     config.data = { content: content, btnContent: btnContent, duration: 3000 };
     this._snackBar.openFromComponent(InfoSnackBarComponent, config);
   }
-}
 
+
+  changed(): boolean {
+    return !(_.isEqual(this.defaultClient, this.modelTemplate))
+  }
+}
 
 @Component({
-  selector: 'confirm-dialog',
-  templateUrl: 'confirm-dialog.html',
+  selector: 'app-matchers-dialog',
+  templateUrl: './micro-components-views/matchers-dialog.component.html',
 })
-export class ConfirmDialog {
-  constructor(public dialogRef: MatDialogRef<ConfirmDialog>, @Inject(MAT_DIALOG_DATA) public diagData: DialogData) { }
+export class MatchersDialog {
+  public matchedClients!: Client[]
+  public dialogTitle = Default_PT.CLIENT_MATCHERS_TITLE
+  public continueBtnText = Default_PT.CONTINUE_BUTTON_TEXT
+  public cancelBtnText = Default_PT.CANCEL_BUTTON_TEXT
+  public nameLabel = Default_PT.NAME
+  public pnumberLabel = Default_PT.PHONE_NUMBER
 
-  onCancelClick() {
-    this.diagData.response = false
-    this.dialogRef.close()
+  constructor(@Inject(MAT_DIALOG_DATA) public diagData: ClientMatchersDialogData,
+    public _self: MatDialogRef<MatchersDialog>) { this.matchedClients = this.diagData.matches }
+
+
+  continueAction() {
+    this.diagData.response = true
+    this._self.close()
   }
 
-  onConfirmClick() {
-    this.diagData.response = true
-    this.dialogRef.close()
+  cancelAction() {
+    this.diagData.response = false
+    this._self.close()
   }
 }
-

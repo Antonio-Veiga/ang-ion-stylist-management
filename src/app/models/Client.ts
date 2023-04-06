@@ -1,7 +1,7 @@
 export class Client {
     id?: number
-    name!: string
-    sex!: ('M' | 'F')
+    name?: string
+    sex?: ('M' | 'F')
     address?: string
     birthdate?: string
     phonenumber?: string

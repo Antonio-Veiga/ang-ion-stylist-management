@@ -1,4 +1,5 @@
-export class CellData {
+export class ServiceCellData {
+    cellId!: number
     rowIdx!: number
     duration!: number
     price!: number

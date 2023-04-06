@@ -9,5 +9,5 @@ import { MobileNavComponent } from './navigation/mobile-nav/mobile-nav.component
 })
 export class AppComponent {
   navComponent: any
-  constructor(platform: Platform) { platform.is('ios') || platform.is('android') ? this.navComponent = MobileNavComponent : this.navComponent = DesktopNavComponent }
+  constructor(platform: Platform) { (platform.is('ios') && !platform.is('ipad')) || platform.is('android') ? this.navComponent = MobileNavComponent : this.navComponent = DesktopNavComponent }
 }

@@ -1,6 +1,6 @@
 <div [formGroup]="validator" class="flex items-center justify-center">
     <input type="number" min="0" max="1440" formControlName="duration"
         [ngClass]="{ 'is-invalid': validator.get('duration')!.invalid && validator.get('duration')!.touched, 'is-valid': validator.get('duration')!.valid && validator.get('duration')!.touched }"
-        class="bg-gray-50 w-fit border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-1 m-1">
+        class="bg-gray-50 w-[40px] border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-1 m-1">
     <p class="text-[0.8em] text-start ml-1 text-gray-500 ">[0-1440] minutos.</p>
 </div>

@@ -19,11 +19,11 @@ import { DesktopNavComponent } from './navigation/desktop-nav/desktop-nav.compon
 import { DesktopHomeComponent } from './desktop/desktop-home/desktop-home.component';
 import { MobileHomeComponent } from './mobile/mobile-home/mobile-home.component';
 import { MobileNavComponent } from './navigation/mobile-nav/mobile-nav.component';
-import { DeleteDialog, DesktopClientsComponent } from './desktop/desktop-clients/desktop-clients.component';
+import { DeleteDialog, ClientActionsHolder, DesktopClientsComponent, NoActionsHolder } from './desktop/desktop-clients/desktop-clients.component';
 import { MobileClientsComponent } from './mobile/mobile-clients/mobile-clients.component';
-import { ConfirmDialog, DesktopCreateEditClientModalComponent } from './modals/desktop-create-edit-client-modal/desktop-create-edit-client-modal.component';
-import { ActionsHolder, DesktopServicesComponent, DurationInputHolder, PriceInputHolder, SegementHolder } from './desktop/desktop-services/desktop-services.component';
-import { InfoSnackBarComponent } from './pieces/info-snack/info-snack.component';
+import { DesktopCreateEditClientModalComponent, MatchersDialog } from './modals/desktop-create-edit-client-modal/desktop-create-edit-client-modal.component';
+import { ServiceActionsHolder, DesktopServicesComponent, DurationInputHolder, PriceInputHolder, SegementHolder } from './desktop/desktop-services/desktop-services.component';
+import { InfoSnackBarComponent } from './partials/info-snack/info-snack.component';
 
 
 @NgModule({
@@ -31,8 +31,8 @@ import { InfoSnackBarComponent } from './pieces/info-snack/info-snack.component'
     AppComponent, HomeComponent,
     DesktopNavComponent, DesktopHomeComponent, DesktopClientsComponent,
     MobileNavComponent, MobileHomeComponent, MobileClientsComponent,
-    DesktopCreateEditClientModalComponent, InfoSnackBarComponent, ConfirmDialog, DeleteDialog, DesktopServicesComponent,
-    SegementHolder, PriceInputHolder, DurationInputHolder, ActionsHolder],
+    DesktopCreateEditClientModalComponent, InfoSnackBarComponent, DeleteDialog, DesktopServicesComponent,
+    SegementHolder, PriceInputHolder, DurationInputHolder, ServiceActionsHolder, ClientActionsHolder, NoActionsHolder, MatchersDialog],
   imports: [
     BrowserModule,
     AppRoutingModule,
