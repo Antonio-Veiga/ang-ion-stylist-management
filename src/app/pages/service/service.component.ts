@@ -16,9 +16,9 @@ export class ServiceComponent implements OnInit {
 
   @ViewChild('ChildComponentRef', { read: ViewContainerRef, static: true }) public childRef!: ViewContainerRef
 
-  constructor(platform: Platform) { this.platform = platform; }
+  constructor(platform: Platform) { this.platform = platform; console.log("Constructed SERVICE (1).") }
 
-  ionViewWillEnter(): void { this.component.loadContent() }
+  ionViewWillEnter(): void { if (this.childCached) { this.component.loadContent(); console.log("Cached SERVICE (2).") } }
 
   ngOnInit(): void {
     this.detectPlatform()

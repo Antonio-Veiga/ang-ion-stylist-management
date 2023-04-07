@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { AfterViewInit, Component, HostListener, Input, OnInit, ViewChild } from '@angular/core';
 import { CalendarOptions } from '@fullcalendar/core';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import timeGridPlugin from '@fullcalendar/timegrid';
@@ -7,27 +7,40 @@ import langPT from '@fullcalendar/core/locales/pt';
 import { APIService } from 'src/app/services/api/api.service';
 import { CalendarEventWrapper } from 'src/app/models/CalendarEventWrapper';
 import { FCalendarUsable } from 'src/app/interfaces/Loadable';
+import { FullCalendarComponent } from '@fullcalendar/angular';
+import { Default_PT } from 'src/app/defaults/langs/pt-pt/Defaults';
+import { MatDrawer, MatDrawerMode } from '@angular/material/sidenav';
 
 @Component({
   selector: 'app-desktop-home',
   templateUrl: './desktop-home.component.html',
   styleUrls: ['./desktop-home.component.scss'],
 })
-export class DesktopHomeComponent implements OnInit, FCalendarUsable {
-  public pageTitle: string = 'Calendário'
-  public calendarLoaded = 1;
-  public calendarLoading = false;
-  public loadingComponent!: HTMLIonLoadingElement
-  public loadedEvents!: any[]
+export class DesktopHomeComponent implements FCalendarUsable, AfterViewInit {
+  public menuSelectedBtn: 1 | 2 | 3 | 4 = 1
+  public toggle = { icon: 'menu', tooltip: Default_PT.OPEN_SIDE_MENU_TOOLTIP }
 
-  public overlay = {
-    title: 'a carregar eventos.',
-    desc: 'espere um momento enquanto os eventos são carregados.'
+  public menuToggles = {
+    1: Default_PT.CALENDAR_1,
+    2: Default_PT.CALENDAR_2,
+    3: Default_PT.CALENDAR_3,
+    4: Default_PT.CALENDAR_4
   }
 
-  @Input() public reload!: string;
+  public defaultToggles = { ... this.menuToggles }
 
-  events!: CalendarEventWrapper
+  public processing = false
+  public drawerAction: MatDrawerMode = window.innerWidth >= 1024 ? 'side' : 'over'
+  public events!: CalendarEventWrapper
+  public loadedEvents!: any[]
+
+  @ViewChild('drawer') drawer!: MatDrawer;
+  @ViewChild('fCalendar') public fCalendar!: FullCalendarComponent
+
+  public overlay = {
+    title: Default_PT.CALENDAR_LOADING_TITLE,
+    desc: Default_PT.CALENDAR_LOADING_DESC
+  }
 
   public calendarOptions: CalendarOptions = {
     plugins: [dayGridPlugin, timeGridPlugin, interactionPlugin],
@@ -61,17 +74,28 @@ export class DesktopHomeComponent implements OnInit, FCalendarUsable {
     eventClick: (data) => { }
   };
 
+
+  @HostListener('window:resize', ['$event'])
+  onResize(event: any) {
+    if (event.target.innerWidth >= 1024) { this.drawerAction = 'side' } else { this.drawerAction = 'over' }
+  }
+
   constructor(public api: APIService) {
     this.setupCalendar();
   }
 
-  ngOnInit() { }
+  ngAfterViewInit(): void {
+    this.drawer.openedChange.subscribe((opened) => {
+      if (opened) { this.toggle.icon = "exit"; this.toggle.tooltip = Default_PT.CLOSE_SIDE_MENU_TOOLTIP } else { this.toggle.icon = "menu"; this.toggle.tooltip = Default_PT.OPEN_SIDE_MENU_TOOLTIP }
+      window.dispatchEvent(new Event('resize'))
+    });
+  }
 
   async setupCalendar() {
-    this.calendarLoading = false;
+    this.processing = true;
 
     try {
-      this.api.getEvents(this.calendarLoaded).subscribe((data) => {
+      this.api.getEvents(this.menuSelectedBtn).subscribe((data) => {
         this.events = data
         this.makeCalendar()
       })
@@ -107,6 +131,22 @@ export class DesktopHomeComponent implements OnInit, FCalendarUsable {
     })
 
     window.dispatchEvent(new Event('resize'))
-    this.calendarLoading = true;
+    this.processing = false;
+  }
+
+
+  switchMenuBtn(id: 1 | 2 | 3 | 4, force?: boolean) {
+    if (id != this.menuSelectedBtn || force) {
+      this.menuSelectedBtn = id
+
+      this.defaultMenus()
+      this.setupCalendar()
+
+      this.menuToggles[id] = Default_PT[`CALENDAR_${id}_ACTIVE`]
+    }
+  }
+
+  defaultMenus() {
+    this.menuToggles = { ... this.defaultToggles }
   }
 }

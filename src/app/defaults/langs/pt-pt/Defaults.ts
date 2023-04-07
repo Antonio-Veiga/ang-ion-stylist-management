@@ -19,6 +19,8 @@ export class Default_PT {
     static CLOSE_SIDE_MENU_TOOLTIP = 'Fechar menu lateral'
     static NO_CHANGES = 'Nenhum valor a alterar'
     static INFO_BTN = 'Entendido'
+    static CALENDAR_LOADING_TITLE = "A carregar eventos"
+    static CALENDAR_LOADING_DESC = "Espere um momento enquanto os eventos são carregados..."
     static CALENDAR_1 = 'Masculino'
     static CALENDAR_1_ACTIVE = '♂ Masculino'
     static CALENDAR_2 = 'Feminino'

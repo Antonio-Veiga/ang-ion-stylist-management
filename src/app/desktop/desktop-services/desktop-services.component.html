@@ -6,7 +6,7 @@
         <div class="w-full min-w-[760px] min-h-[500px] h-full flex flex-col">
             <mat-progress-bar mode="query" [hidden]="!processing"></mat-progress-bar>
             <div data-attr="chip-holder"
-                class="flex flex-col xl:flex-row w-full justify-center gap-3 xl:gap-2 uppercase my-4">
+                class="action-holder">
                 <div class="flex w-full xl:w-fit justify-center gap-3">
                     <button [disabled]="processing" class="menu-btn m-btn" (click)="switchMenuBtn(1)"
                         [ngClass]="{'m-btn-active': menuSelectedBtn == 1 }">{{menuToggles[1]}}</button>

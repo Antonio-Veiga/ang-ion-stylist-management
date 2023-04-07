@@ -1,16 +1,47 @@
-<div class="absolute inset-0 m-4 overflow-y-auto flex">
+<mat-drawer-container class="h-screen">
+    <mat-drawer #drawer [mode]="drawerAction" position="end" style="width: 250px !important;">
+        POR IMPLEMENTAR
+    </mat-drawer>
+    <mat-drawer-content class="overflow-auto h-full !flex">
+        <div class="w-full  min-w-[768px] h-fit flex flex-col">
+            <mat-progress-bar mode="query" [hidden]="!processing"></mat-progress-bar>
+            <div data-attr="chip-holder" class="action-holder">
+                <div class="flex w-full xl:w-fit justify-center gap-3">
+                    <button [disabled]="processing" class="menu-btn m-btn" (click)="switchMenuBtn(1)"
+                        [ngClass]="{'m-btn-active': menuSelectedBtn == 1 }">{{menuToggles[1]}}</button>
+                    <button [disabled]="processing" class="menu-btn f-btn" (click)="switchMenuBtn(2)"
+                        [ngClass]="{'f-btn-active': menuSelectedBtn == 2 }">{{menuToggles[2]}}</button>
+                    <button [disabled]="processing" class="menu-btn l-btn" (click)="switchMenuBtn(3)"
+                        [ngClass]="{'l-btn-active': menuSelectedBtn == 3 }">{{menuToggles[3]}}</button>
+                    <button [disabled]="processing" class="menu-btn e-btn" (click)="switchMenuBtn(4)"
+                        [ngClass]="{'e-btn-active': menuSelectedBtn == 4 }">{{menuToggles[4]}}</button>
+                </div>
+                <div class="flex w-full xl:w-fit justify-center gap-3">
+                    <button [disabled]="processing" (click)="switchMenuBtn(menuSelectedBtn, true)"
+                        class="lg-menu-btn flex justify-center items-center">
+                        <ion-icon name="reload-outline" class="mr-1"></ion-icon>
+                        Recarregar Tabela
+                    </button>
+                    <mat-divider [vertical]="true"></mat-divider>
+                    <button [disabled]="processing" class="toggler" (click)="drawer.toggle()" #toggleMenu="matTooltip"
+                        [matTooltip]="toggle.tooltip" matTooltipPosition="below">
+                        <ion-icon [name]="toggle.icon" class="text-white"></ion-icon>
+                    </button>
+                </div>
+            </div>
+            <div class="flex-1 xl:h-full h-fit shrink-0 mx-8 mb-4">
 
-    <full-calendar class="h-full w-full rounded-md" [options]="calendarOptions" [events]="loadedEvents">
-    </full-calendar>
+                <full-calendar #fCalendar class="h-full w-full min-h-[768px]" [options]="calendarOptions"
+                    [events]="loadedEvents">
+                </full-calendar>
+
+            </div>
+        </div>
+    </mat-drawer-content>
+</mat-drawer-container>
 
 
-    <div class="w-1/5 ml-4 border border-gray-300 bg-white hidden lg:flex">
-        <!-- for now nothin' -->
-    </div>
-</div>
-
-
-<div wire:loading [hidden]="calendarLoading"
+<div wire:loading [hidden]="!processing"
     class="absolute inset-0 w-full z-[9999] overflow-hidden bg-gray-900 opacity-75 flex flex-col items-center justify-center">
     <svg aria-hidden="true" class="mr-2 w-12 h-12 animate-spin text-gray-600 fill-blue-600" viewBox="0 0 100 101"
         fill="none" xmlns="http://www.w3.org/2000/svg">

@@ -16,10 +16,10 @@ export class ClientComponent implements ViewWillEnter, OnInit {
 
   @ViewChild('ChildComponentRef', { read: ViewContainerRef, static: true }) public childRef!: ViewContainerRef
 
-  constructor(platform: Platform) { this.platform = platform; }
+  constructor(platform: Platform) { this.platform = platform; console.log("Constructed CLIENT (1).") }
 
   ionViewWillEnter(): void {
-    if (this.childCached) { this.component.loadContent() }
+    if (this.childCached) { this.component.loadContent(); console.log("Cached CLIENT (2).") }
   }
 
   ngOnInit(): void {

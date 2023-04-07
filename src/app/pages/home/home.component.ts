@@ -16,10 +16,10 @@ export class HomeComponent implements ViewWillEnter, OnInit {
 
   @ViewChild('ChildComponentRef', { read: ViewContainerRef, static: true }) public childRef!: ViewContainerRef
 
-  constructor(platform: Platform) { this.platform = platform; }
+  constructor(platform: Platform) { this.platform = platform; console.log("Constructed HOME (1).") }
 
   ionViewWillEnter(): void {
-    if (this.childCached) { this.component.setupCalendar() }
+    if (this.childCached) { this.component.setupCalendar(); console.log("Cached HOME (2).") }
   }
 
   ngOnInit(): void {

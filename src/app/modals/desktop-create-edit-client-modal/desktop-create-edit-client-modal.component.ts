@@ -98,6 +98,7 @@ export class DesktopCreateEditClientModalComponent {
     const filteredClient: Client = this.filterTemplate()
     this.api.editClient(filteredClient, this.modelTemplate.id).subscribe(() => {
       this.ceForm.enable();
+      this.ceForm.get('sex')?.disable();
       this.submiting = false;
       this._self.disableClose = false
       this.openInfoSnackBar(Default_PT.CLIENT_EDITED, Default_PT.INFO_BTN)
