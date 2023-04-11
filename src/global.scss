@@ -373,13 +373,15 @@ input[type="number"]::-webkit-outer-spin-button {
     @apply bg-gray-700 hover:scale-100 duration-150 ease-in-out
 }
 
-.toggler{
+.toggler {
     all: none;
     @apply w-10 h-10 flex items-center justify-center p-1.5 bg-blue-3880 rounded-md hover:scale-105
 }
 
+
 mat-dialog-container[id*='mat-dialog-']{
     padding: 0px !important;
+    margin: 1.5rem 0px!important;
 }
 
 .rounded-grid{
@@ -391,5 +393,27 @@ mat-dialog-container[id*='mat-dialog-']{
 }
 
 .action-holder{
- @apply flex flex-col xl:flex-row w-full drop-shadow-sm bg-white justify-center gap-3 xl:gap-2 uppercase mb-4 border-b border-slate-300 py-4
+ @apply flex flex-col xl:flex-row w-full drop-shadow-sm bg-white justify-center gap-3 xl:gap-2 uppercase border-b border-slate-300 py-4
 }
+
+.mat-menu-content {
+    padding: 0px!important;
+}
+
+
+::-webkit-scrollbar {
+    width: 0.5rem; 
+    height: 0.5rem; 
+  }
+  
+  ::-webkit-scrollbar-track {
+    background: white;
+  }
+  
+  ::-webkit-scrollbar-thumb {
+    @apply bg-slate-300 
+  }
+
+  body > div.cdk-overlay-container > div.cdk-global-overlay-wrapper{
+    overflow-y: auto;
+  }

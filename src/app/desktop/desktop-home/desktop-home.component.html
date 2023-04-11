@@ -2,39 +2,65 @@
     <mat-drawer #drawer [mode]="drawerAction" position="end" style="width: 250px !important;">
         POR IMPLEMENTAR
     </mat-drawer>
-    <mat-drawer-content class="overflow-auto h-full !flex">
-        <div class="w-full  min-w-[768px] h-fit flex flex-col">
-            <mat-progress-bar mode="query" [hidden]="!processing"></mat-progress-bar>
-            <div data-attr="chip-holder" class="action-holder">
-                <div class="flex w-full xl:w-fit justify-center gap-3">
-                    <button [disabled]="processing" class="menu-btn m-btn" (click)="switchMenuBtn(1)"
-                        [ngClass]="{'m-btn-active': menuSelectedBtn == 1 }">{{menuToggles[1]}}</button>
-                    <button [disabled]="processing" class="menu-btn f-btn" (click)="switchMenuBtn(2)"
-                        [ngClass]="{'f-btn-active': menuSelectedBtn == 2 }">{{menuToggles[2]}}</button>
-                    <button [disabled]="processing" class="menu-btn l-btn" (click)="switchMenuBtn(3)"
-                        [ngClass]="{'l-btn-active': menuSelectedBtn == 3 }">{{menuToggles[3]}}</button>
-                    <button [disabled]="processing" class="menu-btn e-btn" (click)="switchMenuBtn(4)"
-                        [ngClass]="{'e-btn-active': menuSelectedBtn == 4 }">{{menuToggles[4]}}</button>
-                </div>
-                <div class="flex w-full xl:w-fit justify-center gap-3">
+    <mat-drawer-content class="h-full !flex !flex-col">
+        <mat-progress-bar mode="query" [hidden]="!processing"></mat-progress-bar>
+        <div data-attr="chip-holder" class="action-holder">
+            <div class="flex w-full xl:w-fit justify-center gap-3">
+                <button [disabled]="processing" class="menu-btn m-btn" (click)="switchMenuBtn(1)"
+                    [ngClass]="{'m-btn-active': menuSelectedBtn == 1 }">{{menuToggles[1]}}</button>
+                <button [disabled]="processing" class="menu-btn f-btn" (click)="switchMenuBtn(2)"
+                    [ngClass]="{'f-btn-active': menuSelectedBtn == 2 }">{{menuToggles[2]}}</button>
+                <button [disabled]="processing" class="menu-btn l-btn" (click)="switchMenuBtn(3)"
+                    [ngClass]="{'l-btn-active': menuSelectedBtn == 3 }">{{menuToggles[3]}}</button>
+                <button [disabled]="processing" class="menu-btn e-btn" (click)="switchMenuBtn(4)"
+                    [ngClass]="{'e-btn-active': menuSelectedBtn == 4 }">{{menuToggles[4]}}</button>
+            </div>
+            <mat-divider class="!hidden xl:!block" [vertical]="true"></mat-divider>
+            <div class="flex flex-col items-center sm:flex-row w-full xl:w-fit justify-center gap-3">
+                <div class="flex gap-3 w-full sm:w-fit items-center justify-center">
+                    <button [disabled]="processing" (click)="createPredefinedEvent()"
+                        class=" lg-menu-btn flex justify-center items-center">
+                        <ion-icon name="add-outline" class="mr-1"></ion-icon>
+                        Criar Evento Predefinido
+                    </button>
                     <button [disabled]="processing" (click)="switchMenuBtn(menuSelectedBtn, true)"
                         class="lg-menu-btn flex justify-center items-center">
                         <ion-icon name="reload-outline" class="mr-1"></ion-icon>
-                        Recarregar Tabela
+                        Recarregar
                     </button>
-                    <mat-divider [vertical]="true"></mat-divider>
+                </div>
+                <mat-divider class="!hidden sm:!block h-full" [vertical]="true"></mat-divider>
+                <div class="flex gap-3 w-full sm:w-fit items-center justify-center">
                     <button [disabled]="processing" class="toggler" (click)="drawer.toggle()" #toggleMenu="matTooltip"
                         [matTooltip]="toggle.tooltip" matTooltipPosition="below">
                         <ion-icon [name]="toggle.icon" class="text-white"></ion-icon>
                     </button>
+                    <button [matMenuTriggerFor]="menu" [disabled]="processing" class="toggler"
+                        #settingsMenu="matTooltip" [matTooltip]="settings.tooltip" matTooltipPosition="below">
+                        <ion-icon [name]="settings.icon" class="text-white"></ion-icon>
+                    </button>
+
+                    <mat-menu #menu="matMenu" xPosition="before" yPosition="below" class="!mt-2 bg-white !rounded-md">
+                        <div
+                            class="flex items-center m-2 rounded-md text-gray-500 duration-150 cursor-pointer hover:text-white hover:bg-blue-3880 text-sm p-2 mb-1.5">
+                            <ion-icon name="settings" class="mr-2 hover:!text-white"></ion-icon>
+                            <ion-label class="uppercase">Definições do calendário</ion-label>
+                        </div>
+                        <mat-divider class="!mx-2"></mat-divider>
+                        <div
+                            class="flex items-center m-2 rounded-md text-gray-500 duration-150 cursor-pointer hover:text-white hover:bg-blue-3880 text-sm p-2 mt-1.5">
+                            <ion-icon name="cut" class="mr-2"></ion-icon>
+                            <ion-label class="uppercase">Gestor de funcionários</ion-label>
+                        </div>
+                    </mat-menu>
                 </div>
             </div>
-            <div class="flex-1 xl:h-full h-fit shrink-0 mx-8 mb-4">
-
+        </div>
+        <div class="w-full h-fit overflow-auto">
+            <div class="min-w-[768px] h-fit shrink-0 mx-8 my-4">
                 <full-calendar #fCalendar class="h-full w-full min-h-[768px]" [options]="calendarOptions"
                     [events]="loadedEvents">
                 </full-calendar>
-
             </div>
         </div>
     </mat-drawer-content>

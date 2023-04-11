@@ -2,15 +2,18 @@
     <mat-drawer #drawer [mode]="drawerAction" position="end" style="width: 250px !important;">
         POR IMPLEMENTAR
     </mat-drawer>
-    <mat-drawer-content class="overflow-auto h-full !flex">
-        <div class="w-full min-w-[1024px] min-h-[500px] h-full flex flex-col">
-            <mat-progress-bar mode="query" [hidden]="!processing"></mat-progress-bar>
-            <div data-attr="chip-holder" class="flex w-full justify-center gap-3 xl:gap-2 uppercase my-4">
+    <mat-drawer-content class="h-full !flex flex-col">
+        <mat-progress-bar mode="query" [hidden]="!processing"></mat-progress-bar>
+        <div data-attr="chip-holder"
+            class="flex flex-col md:flex-row w-full justify-center gap-3 uppercase py-4 drop-shadow-sm bg-white border-b border-slate-300">
+            <div class="flex w-full md:w-fit justify-center gap-3">
                 <button [disabled]="processing" class="menu-btn m-btn" (click)="switchMenuBtn(1)"
                     [ngClass]="{'m-btn-active': menuSelectedBtn == 1 }">{{menuToggles[1]}}</button>
                 <button [disabled]="processing" class="menu-btn f-btn" (click)="switchMenuBtn(2)"
                     [ngClass]="{'f-btn-active': menuSelectedBtn == 2 }">{{menuToggles[2]}}</button>
-                <mat-divider [vertical]="true"></mat-divider>
+            </div>
+            <mat-divider class="!hidden md:!block" [vertical]="true"></mat-divider>
+            <div class="flex gap-3 w-full md:w-fit item-center justify-center">
                 <button [disabled]="processing" (click)="promptCreateClient()"
                     class=" lg-menu-btn flex justify-center items-center">
                     <ion-icon name="add" class="mr-1"></ion-icon>
@@ -27,8 +30,11 @@
                     <ion-icon [name]="toggle.icon" class="text-white"></ion-icon>
                 </button>
             </div>
-            <div class="flex-1 h-fit shrink-0 mx-8 mb-4">
-                <ag-grid-angular class="w-full h-full min-h-[500px] ag-theme-alpine mb-4" [columnDefs]="columnDefs"
+        </div>
+
+        <div class="flex flex-row flex-1 w-full overflow-auto">
+            <div class="flex-1 min-w-[900px] min-h-[500px] mx-4 my-4">
+                <ag-grid-angular class="w-full h-full ag-theme-alpine" [columnDefs]="columnDefs"
                     [defaultColDef]="defaultColDef" [rowSelection]="'single'" [animateRows]="true" [pagination]="true"
                     [paginationPageSize]="20" [localeText]="AG_GRID_PT_LANG"
                     (gridReady)="onGridReady()"></ag-grid-angular>

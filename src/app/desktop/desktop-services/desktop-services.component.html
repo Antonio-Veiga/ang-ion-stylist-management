@@ -2,42 +2,42 @@
     <mat-drawer #drawer [mode]="drawerAction" position="end" style="width: 250px !important;">
         POR IMPLEMENTAR
     </mat-drawer>
-    <mat-drawer-content class="overflow-auto h-full !flex">
-        <div class="w-full min-w-[760px] min-h-[500px] h-full flex flex-col">
-            <mat-progress-bar mode="query" [hidden]="!processing"></mat-progress-bar>
-            <div data-attr="chip-holder"
-                class="action-holder">
-                <div class="flex w-full xl:w-fit justify-center gap-3">
-                    <button [disabled]="processing" class="menu-btn m-btn" (click)="switchMenuBtn(1)"
-                        [ngClass]="{'m-btn-active': menuSelectedBtn == 1 }">{{menuToggles[1]}}</button>
-                    <button [disabled]="processing" class="menu-btn f-btn" (click)="switchMenuBtn(2)"
-                        [ngClass]="{'f-btn-active': menuSelectedBtn == 2 }">{{menuToggles[2]}}</button>
-                    <button [disabled]="processing" class="menu-btn l-btn" (click)="switchMenuBtn(3)"
-                        [ngClass]="{'l-btn-active': menuSelectedBtn == 3 }">{{menuToggles[3]}}</button>
-                    <button [disabled]="processing" class="menu-btn e-btn" (click)="switchMenuBtn(4)"
-                        [ngClass]="{'e-btn-active': menuSelectedBtn == 4 }">{{menuToggles[4]}}</button>
-                </div>
-                <mat-divider class="!hidden xl:!block" [vertical]="true"></mat-divider>
-                <div class="flex w-full xl:w-fit justify-center gap-3">
-                    <button [disabled]="processing" (click)="switchMenuBtn(menuSelectedBtn, true)"
-                        class="lg-menu-btn flex justify-center items-center">
-                        <ion-icon name="reload-outline" class="mr-1"></ion-icon>
-                        Recarregar Tabela
-                    </button>
-                    <button [disabled]="processing || pendingChanges == undefined || pendingChanges.size === 0"
-                        (click)="saveAll()" class=" lg-menu-btn flex justify-center items-center">
-                        <ion-icon name="save-outline" class="mr-1"></ion-icon>
-                        Guardar Alterações
-                    </button>
-                    <mat-divider [vertical]="true"></mat-divider>
-                    <button [disabled]="processing" class="toggler" (click)="drawer.toggle()" #toggleMenu="matTooltip"
-                        [matTooltip]="toggle.tooltip" matTooltipPosition="below">
-                        <ion-icon [name]="toggle.icon" class="text-white"></ion-icon>
-                    </button>
-                </div>
+    <mat-drawer-content class="h-full !flex flex-col">
+        <mat-progress-bar mode="query" [hidden]="!processing"></mat-progress-bar>
+        <div data-attr="chip-holder" class="action-holder">
+            <div class="flex w-full xl:w-fit justify-center gap-3">
+                <button [disabled]="processing" class="menu-btn m-btn" (click)="switchMenuBtn(1)"
+                    [ngClass]="{'m-btn-active': menuSelectedBtn == 1 }">{{menuToggles[1]}}</button>
+                <button [disabled]="processing" class="menu-btn f-btn" (click)="switchMenuBtn(2)"
+                    [ngClass]="{'f-btn-active': menuSelectedBtn == 2 }">{{menuToggles[2]}}</button>
+                <button [disabled]="processing" class="menu-btn l-btn" (click)="switchMenuBtn(3)"
+                    [ngClass]="{'l-btn-active': menuSelectedBtn == 3 }">{{menuToggles[3]}}</button>
+                <button [disabled]="processing" class="menu-btn e-btn" (click)="switchMenuBtn(4)"
+                    [ngClass]="{'e-btn-active': menuSelectedBtn == 4 }">{{menuToggles[4]}}</button>
             </div>
-            <div class="flex-1 xl:h-full h-fit shrink-0 mx-8 mb-4">
-                <ag-grid-angular class="w-full h-full min-h-[500px] ag-theme-alpine" [columnDefs]="columnDefs"
+            <mat-divider class="!hidden xl:!block" [vertical]="true"></mat-divider>
+            <div class="flex w-full xl:w-fit justify-center gap-3">
+                <button [disabled]="processing" (click)="switchMenuBtn(menuSelectedBtn, true)"
+                    class="lg-menu-btn flex justify-center items-center">
+                    <ion-icon name="reload-outline" class="mr-1"></ion-icon>
+                    Recarregar Tabela
+                </button>
+                <button [disabled]="processing || pendingChanges == undefined || pendingChanges.size === 0"
+                    (click)="saveAll()" class=" lg-menu-btn flex justify-center items-center">
+                    <ion-icon name="save-outline" class="mr-1"></ion-icon>
+                    Guardar Alterações
+                </button>
+                <mat-divider [vertical]="true"></mat-divider>
+                <button [disabled]="processing" class="toggler" (click)="drawer.toggle()" #toggleMenu="matTooltip"
+                    [matTooltip]="toggle.tooltip" matTooltipPosition="below">
+                    <ion-icon [name]="toggle.icon" class="text-white"></ion-icon>
+                </button>
+            </div>
+        </div>
+
+        <div class="flex flex-row flex-1 w-full overflow-auto">
+            <div class="flex-1 min-w-[900px] min-h-[500px] mx-8 my-4">
+                <ag-grid-angular class="w-full h-full ag-theme-alpine" [columnDefs]="columnDefs"
                     [defaultColDef]="defaultColDef" [rowSelection]="'single'" [animateRows]="true" [pagination]="true"
                     [paginationPageSize]="20" [localeText]="AG_GRID_PT_LANG"
                     (gridReady)="onGridReady()"></ag-grid-angular>

@@ -16,6 +16,7 @@ export class Default_PT {
     static CLIENT_EDITED = 'O cliente foi editado com sucesso'
     static CLIENT_CREATED = 'O cliente foi criado com sucesso'
     static OPEN_SIDE_MENU_TOOLTIP = 'Abrir menu lateral'
+    static OPEN_SETTINGS_DROPDOWN = 'Abrir \'Drop Down\''
     static CLOSE_SIDE_MENU_TOOLTIP = 'Fechar menu lateral'
     static NO_CHANGES = 'Nenhum valor a alterar'
     static INFO_BTN = 'Entendido'

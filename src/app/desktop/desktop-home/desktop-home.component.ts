@@ -10,6 +10,8 @@ import { FCalendarUsable } from 'src/app/interfaces/Loadable';
 import { FullCalendarComponent } from '@fullcalendar/angular';
 import { Default_PT } from 'src/app/defaults/langs/pt-pt/Defaults';
 import { MatDrawer, MatDrawerMode } from '@angular/material/sidenav';
+import { MatDialog } from '@angular/material/dialog';
+import { DesktopCreateEditEventModalComponent } from 'src/app/modals/desktop-create-edit-event-modal/desktop-create-edit-event-modal.component';
 
 @Component({
   selector: 'app-desktop-home',
@@ -19,6 +21,7 @@ import { MatDrawer, MatDrawerMode } from '@angular/material/sidenav';
 export class DesktopHomeComponent implements FCalendarUsable, AfterViewInit {
   public menuSelectedBtn: 1 | 2 | 3 | 4 = 1
   public toggle = { icon: 'menu', tooltip: Default_PT.OPEN_SIDE_MENU_TOOLTIP }
+  public settings = { icon: 'settings-outline', tooltip: Default_PT.OPEN_SETTINGS_DROPDOWN }
 
   public menuToggles = {
     1: Default_PT.CALENDAR_1,
@@ -30,7 +33,7 @@ export class DesktopHomeComponent implements FCalendarUsable, AfterViewInit {
   public defaultToggles = { ... this.menuToggles }
 
   public processing = false
-  public drawerAction: MatDrawerMode = window.innerWidth >= 1024 ? 'side' : 'over'
+  public drawerAction: MatDrawerMode = window.innerWidth >= 1366 ? 'side' : 'over'
   public events!: CalendarEventWrapper
   public loadedEvents!: any[]
 
@@ -70,17 +73,17 @@ export class DesktopHomeComponent implements FCalendarUsable, AfterViewInit {
       meridiem: 'short'
     },
     handleWindowResize: true,
-    dateClick: (data) => { },
+    dateClick: (data) => { this._dialog.open(DesktopCreateEditEventModalComponent, { data: { date: data.dateStr } }) },
     eventClick: (data) => { }
   };
 
 
   @HostListener('window:resize', ['$event'])
   onResize(event: any) {
-    if (event.target.innerWidth >= 1024) { this.drawerAction = 'side' } else { this.drawerAction = 'over' }
+    if (event.target.innerWidth >= 1366) { this.drawerAction = 'side' } else { this.drawerAction = 'over' }
   }
 
-  constructor(public api: APIService) {
+  constructor(public api: APIService, public _dialog: MatDialog) {
     this.setupCalendar();
   }
 
@@ -144,6 +147,10 @@ export class DesktopHomeComponent implements FCalendarUsable, AfterViewInit {
 
       this.menuToggles[id] = Default_PT[`CALENDAR_${id}_ACTIVE`]
     }
+  }
+
+  createPredefinedEvent() {
+
   }
 
   defaultMenus() {
