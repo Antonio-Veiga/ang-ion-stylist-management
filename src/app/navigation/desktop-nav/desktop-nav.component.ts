@@ -12,8 +12,8 @@ export class DesktopNavComponent implements OnInit {
   fabIcon = "menu-outline"
   leftHidden = false;
 
-  primaryPages = PrimaryPages.pages()
-  secondaryPages = SecondaryPages.pages()
+  primaryPages = PrimaryPages.pages
+  secondaryPages = SecondaryPages.pages
 
   constructor() { }
 

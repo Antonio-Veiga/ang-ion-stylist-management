@@ -25,7 +25,7 @@ export class ServiceComponent implements OnInit {
   }
 
   detectPlatform() {
-    if ((this.platform.is('ios') && !this.platform.is('ipad')) || this.platform.is('android')) {
+    if (this.platform.is('mobile')) {
       this.component = this.childRef.createComponent(MobileServicesComponent).instance
       this.childCached = true
     } else {

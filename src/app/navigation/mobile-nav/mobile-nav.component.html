@@ -5,8 +5,8 @@
         <ion-list id="inbox-list" class="!pt-0">
           <ion-menu-toggle auto-hide="false" *ngFor="let p of primary; let i = index">
             <ion-item class="mx-4 my-2 !rounded-lg border border-gray-300" routerDirection="root" [routerLink]="[p.url]"
-              lines="none" detail="false" routerLinkActive="selected">
-              <ion-icon slot="start" [ios]="p.icon + '-outline'" [md]="p.icon + '-sharp'"></ion-icon>
+              lines="none" detail="false" routerLinkActive="selected">  
+              <ion-icon class="!text-gray-500" slot="start" [ios]="p.icon"></ion-icon>
               <ion-label class="!text-sm uppercase font-sans tracking-wide">{{ p.title }}</ion-label>
             </ion-item>
           </ion-menu-toggle>
@@ -14,7 +14,7 @@
           <ion-menu-toggle auto-hide="false" *ngFor="let p of secondary; let i = index">
             <ion-item class="mx-4 my-2 !rounded-lg border border-gray-300" routerDirection="root" [routerLink]="[p.url]"
               lines="none" detail="false" routerLinkActive="selected">
-              <ion-icon slot="start" [ios]="p.icon + '-outline'" [md]="p.icon + '-sharp'"></ion-icon>
+              <ion-icon class="!text-gray-500" slot="start" [ios]="p.icon"></ion-icon>
               <ion-label class="!text-sm uppercase font-sans tracking-wide">{{ p.title }}</ion-label>
             </ion-item>
           </ion-menu-toggle>
@@ -29,6 +29,8 @@
         </ion-toolbar>
       </ion-footer>
     </ion-menu>
-    <ion-router-outlet id="main-content"></ion-router-outlet>
+    <ion-content id="main-content">
+      <ion-router-outlet></ion-router-outlet>
+    </ion-content>
   </ion-split-pane>
 </ion-app>

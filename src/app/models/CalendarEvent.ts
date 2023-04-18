@@ -3,14 +3,14 @@ import { Label } from "./Label"
 import { Service } from "./Service"
 
 export class CalendarEvent {
-    id!: number
-    name!: string
-    time!: string
-    duration!: number
+    id?: number
+    name?: string
+    time?: string
+    duration?: number
     client?: Client
     label?: Label
     service?: Service
-    calendarId!: number
+    calendarId?: number
     createdAt?: string
     updatedAt?: string
 }

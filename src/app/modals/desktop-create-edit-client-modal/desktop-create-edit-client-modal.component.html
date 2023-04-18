@@ -1,6 +1,6 @@
 <div class="flex max-w-[42rem] overflow-auto items-center justify-center m-2">
   <div class="w-full h-fit">
-    <form [formGroup]="ceForm" (ngSubmit)="submitForm()" class="w-full flex flex-col justify-center items-center">
+    <form [formGroup]="controlGroup" (ngSubmit)="submitForm()" class="w-full flex flex-col justify-center items-center">
       <div class="bg-white rounded-lg mb-4 divide-y gap-2 w-full">
         <div class="mb-2 mt-4 mx-4">
           <label for="c-name"
@@ -9,7 +9,7 @@
           <input type="text" id="c-name"
             class="bg-gray-50 w-full border border-gray-300 placeholder-gray-400 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5"
             required formControlName="name" [(ngModel)]="modelTemplate.name"
-            [ngClass]="{ 'is-invalid': ceForm.get('name')!.invalid && ceForm.get('name')!.touched, 'is-valid': ceForm.get('name')!.valid && ceForm.get('name')!.touched }">
+            [ngClass]="{ 'is-invalid': controlGroup.get('name')!.invalid && controlGroup.get('name')!.touched, 'is-valid': controlGroup.get('name')!.valid && controlGroup.get('name')!.touched }">
           <p class="text-[0.5em] text-start ml-2 text-gray-500 uppercase mt-1"> De 2 a 128 carateres. (campo
             obrigatório)</p>
         </div>
@@ -22,7 +22,7 @@
             <input type="text" id="c-address" [(ngModel)]="modelTemplate.address"
               class="bg-gray-50 w-full border border-gray-300 placeholder-gray-400 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5"
               formControlName="address"
-              [ngClass]="{ 'is-invalid': ceForm.get('address')!.invalid && ceForm.get('address')!.touched, 'is-valid': ceForm.get('address')!.valid && ceForm.get('address')!.touched }">
+              [ngClass]="{ 'is-invalid': controlGroup.get('address')!.invalid && controlGroup.get('address')!.touched, 'is-valid': controlGroup.get('address')!.valid && controlGroup.get('address')!.touched }">
             <p class="text-[0.5em] text-start ml-2 text-gray-500 uppercase mt-1"> De 4 a 128 carateres. (campo opcional)
             </p>
           </div>
@@ -32,7 +32,7 @@
               <span class="text-red-500">*</span>
             </label>
             <select id="c-sex" required formControlName="sex" [(ngModel)]="modelTemplate.sex"
-              [ngClass]="{ 'is-invalid': ceForm.get('sex')!.invalid && ceForm.get('sex')!.touched, 'is-valid': ceForm.get('sex')!.valid && ceForm.get('sex')!.touched }"
+              [ngClass]="{ 'is-invalid': controlGroup.get('sex')!.invalid && controlGroup.get('sex')!.touched, 'is-valid': controlGroup.get('sex')!.valid && controlGroup.get('sex')!.touched }"
               class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 ">
               <option value='' selected disabled>--- Indefenido ---</option>
               <option value="M">Masculino</option>
@@ -49,7 +49,7 @@
               de
               Telemóvel </label>
             <input type="text" inputmode="numeric" id="c-number" [(ngModel)]="modelTemplate.phonenumber"
-              [ngClass]="{ 'is-invalid': ceForm.get('phonenumber')!.invalid && ceForm.get('phonenumber')!.touched, 'is-valid': ceForm.get('phonenumber')!.valid && ceForm.get('phonenumber')!.touched }"
+              [ngClass]="{ 'is-invalid': controlGroup.get('phonenumber')!.invalid && controlGroup.get('phonenumber')!.touched, 'is-valid': controlGroup.get('phonenumber')!.valid && controlGroup.get('phonenumber')!.touched }"
               class="bg-gray-50 w-full border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5"
               formControlName="phonenumber">
             <p class="text-[0.5em] text-start ml-2 text-gray-500 uppercase mt-1">Apenas números Móveis ou fixos
@@ -61,7 +61,7 @@
               class="block mb-1.5 text-start ml-2 text-[0.65rem] md:text-xs uppercase font-medium text-gray-600">Nascimento
             </label>
             <input type="date" id="c-born"
-              [ngClass]="{ 'is-invalid': ceForm.get('birthdate')!.invalid && ceForm.get('birthdate')!.touched, 'is-valid': ceForm.get('birthdate')!.valid && ceForm.get('birthdate')!.touched }"
+              [ngClass]="{ 'is-invalid': controlGroup.get('birthdate')!.invalid && controlGroup.get('birthdate')!.touched, 'is-valid': controlGroup.get('birthdate')!.valid && controlGroup.get('birthdate')!.touched }"
               class="bg-gray-50 w-full border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5"
               formControlName="birthdate" [(ngModel)]="modelTemplate.birthdate">
             <p class="text-[0.5em] text-start ml-2 text-gray-500 uppercase mt-1">(campo opcional)</p>
@@ -74,7 +74,7 @@
               class="block mb-1.5 text-start ml-2 text-[0.65rem] md:text-xs uppercase font-medium text-gray-600">Instagram
             </label>
             <input type="text" id="c-instagram" [(ngModel)]="modelTemplate.instagram"
-              [ngClass]="{ 'is-invalid': ceForm.get('instagram')!.invalid && ceForm.get('instagram')!.touched, 'is-valid': ceForm.get('instagram')!.valid && ceForm.get('instagram')!.touched }"
+              [ngClass]="{ 'is-invalid': controlGroup.get('instagram')!.invalid && controlGroup.get('instagram')!.touched, 'is-valid': controlGroup.get('instagram')!.valid && controlGroup.get('instagram')!.touched }"
               class="bg-gray-50 w-full border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5"
               formControlName="instagram">
             <p class="text-[0.5em] text-start ml-2 text-gray-500 uppercase mt-1">De 4 a 128 carateres. (campo opcional)
@@ -85,7 +85,7 @@
               class="block mb-1.5 text-start ml-2 text-[0.65rem] md:text-xs uppercase font-medium text-gray-600">Facebook
             </label>
             <input type="text" id="c-facebook" [(ngModel)]="modelTemplate.facebook"
-              [ngClass]="{ 'is-invalid': ceForm.get('facebook')!.invalid && ceForm.get('facebook')!.touched, 'is-valid': ceForm.get('facebook')!.valid && ceForm.get('facebook')!.touched }"
+              [ngClass]="{ 'is-invalid': controlGroup.get('facebook')!.invalid && controlGroup.get('facebook')!.touched, 'is-valid': controlGroup.get('facebook')!.valid && controlGroup.get('facebook')!.touched }"
               class="bg-gray-50 w-full border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5"
               formControlName="facebook">
             <p class="text-[0.5em] text-start ml-2 text-gray-500 uppercase mt-1">De 4 a 128 carateres. (campo opcional)
@@ -95,13 +95,13 @@
       </div>
 
       <ion-button [disabled]="!changed() ||
-                    ceForm.get('name')!.invalid || 
-                    ceForm.get('address')!.invalid || 
-                    ceForm.get('sex')!.invalid || 
-                    ceForm.get('phonenumber')!.invalid || 
-                    ceForm.get('birthdate')!.invalid ||
-                    ceForm.get('instagram')!.invalid ||
-                    ceForm.get('facebook')!.invalid || submiting" type="submit" class="w-64 mb-4">
+                    controlGroup.get('name')!.invalid || 
+                    controlGroup.get('address')!.invalid || 
+                    controlGroup.get('sex')!.invalid || 
+                    controlGroup.get('phonenumber')!.invalid || 
+                    controlGroup.get('birthdate')!.invalid ||
+                    controlGroup.get('instagram')!.invalid ||
+                    controlGroup.get('facebook')!.invalid || submiting" type="submit" class="w-64 mb-4">
 
         <ion-spinner name="circles" class="relative left-0" [hidden]="!submiting"></ion-spinner>
         <div [hidden]="submiting">{{action == 'edit' ? 'Editar Cliente': 'Criar Cliente'}}</div>

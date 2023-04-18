@@ -17,7 +17,7 @@ import { ClientMatchersDialogData } from 'src/app/interfaces/ClientMatchersDialo
   styleUrls: ['./desktop-create-edit-client-modal.component.scss'],
 })
 export class DesktopCreateEditClientModalComponent {
-  public ceForm!: FormGroup
+  public controlGroup!: FormGroup
   public modelTemplate!: Client
   public action: 'add' | 'edit' | 'none'
   public submiting = false
@@ -34,11 +34,11 @@ export class DesktopCreateEditClientModalComponent {
     this.modelTemplate = { ..._data.client }
     this.action = _data.action
 
-    if (this.action == 'edit') { this.ceForm.markAllAsTouched(); this.defaultClient = { ...this._data.client }; this.ceForm.get('sex')?.disable() }
+    if (this.action == 'edit') { this.controlGroup.markAllAsTouched(); this.defaultClient = { ...this._data.client }; this.controlGroup.get('sex')?.disable() }
   }
 
   constructFormGroup() {
-    this.ceForm = this.formBuilder.group({
+    this.controlGroup = this.formBuilder.group({
       name: ['', [Validators.required, Validators.minLength(2), Validators.maxLength(128), Validators.pattern(/^(?!\s)(?!.*\s{2,})(.*\S)?(?<!\s)$/)]],
       sex: ['', Validators.required],
       address: ['', [Validators.minLength(4), Validators.maxLength(128), Validators.pattern(/^(?!\s)(?!.*\s{2,})(.*\S)?(?<!\s)$/)]],
@@ -50,7 +50,7 @@ export class DesktopCreateEditClientModalComponent {
   }
 
   async submitForm() {
-    if (this.ceForm.valid) {
+    if (this.controlGroup.valid) {
       this.submiting = true
       this._self.disableClose = true
       this.matchers = []
@@ -86,8 +86,8 @@ export class DesktopCreateEditClientModalComponent {
 
   createClient() {
     this.api.postClient(this.modelTemplate).subscribe((singleton) => {
-      this.ceForm.reset();
-      this.ceForm.enable();
+      this.controlGroup.reset();
+      this.controlGroup.enable();
       this.submiting = false;
       this._self.disableClose = false
       this.openInfoSnackBar(Default_PT.CLIENT_CREATED, Default_PT.INFO_BTN)
@@ -97,8 +97,8 @@ export class DesktopCreateEditClientModalComponent {
   editClient() {
     const filteredClient: Client = this.filterTemplate()
     this.api.editClient(filteredClient, this.modelTemplate.id).subscribe(() => {
-      this.ceForm.enable();
-      this.ceForm.get('sex')?.disable();
+      this.controlGroup.enable();
+      this.controlGroup.get('sex')?.disable();
       this.submiting = false;
       this._self.disableClose = false
       this.openInfoSnackBar(Default_PT.CLIENT_EDITED, Default_PT.INFO_BTN)
@@ -107,7 +107,7 @@ export class DesktopCreateEditClientModalComponent {
 
   checkPNValidity(): Promise<boolean> {
     return new Promise<boolean>((resolve) => {
-      const pnumber = this.ceForm.get('phonenumber')?.value
+      const pnumber = this.controlGroup.get('phonenumber')?.value
 
       if (jQuery.isEmptyObject(pnumber)) { resolve(false); } else {
         this.api.getClientByPhonenumber(pnumber, this.modelTemplate.id).subscribe((wrapper) => {
@@ -122,7 +122,7 @@ export class DesktopCreateEditClientModalComponent {
 
   checkUserValidity(): Promise<boolean> {
     return new Promise<boolean>((resolve) => {
-      const cname = this.ceForm.get('name')?.value
+      const cname = this.controlGroup.get('name')?.value
 
       /* kinda of an obsolete check, since name is required parameter for submission */
       if (jQuery.isEmptyObject(cname) || cname == undefined) { resolve(false) } else {

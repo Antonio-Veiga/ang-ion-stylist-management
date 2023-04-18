@@ -9,6 +9,7 @@ import { Client } from '../../models/Client';
 import { ServiceWrapper } from '../../models/ServiceWrapper';
 import { ServiceSingletonWrapper } from '../../models/ServiceSingletonWrapper';
 import { Service } from '../../models/Service';
+import { LabelGluesWrapper } from 'src/app/models/LabelGluesWrapper';
 
 const ENDPOINT = 'http://192.168.2.198:8000/api/v1/';
 const INCLUDE_LABEL = 'includeLabel=true';
@@ -22,6 +23,7 @@ const DELETED_EQ = 'deleted[eq]=';
 const ID_DIFF = 'id[dif]=';
 const PHONE_EQ = 'phonenumber[eq]=';
 const USER_EQ = 'userId[eq]=';
+const SEX_EQ = 'sex[eq]=';
 const TIME_GT = 'time[gt]=';
 
 const httpOptions = {
@@ -38,7 +40,11 @@ export class APIService {
   constructor(private http: HttpClient) { }
 
   getEvents(calendarId: number): Observable<CalendarEventWrapper> {
-    return this.http.get<CalendarEventWrapper>(`${ENDPOINT}events?${INCLUDE_LABEL}&${INCLUDE_SERVICE}&${INCLUDE_CLIENT}&${CALENDAR_EQ}${calendarId}`, httpOptions);
+    return this.http.get<CalendarEventWrapper>(`${ENDPOINT}events?${INCLUDE_LABEL}&${INCLUDE_SERVICE}&${INCLUDE_CLIENT}&${CALENDAR_EQ}${calendarId}`, httpOptions)
+  }
+
+  getGluedLabels(calendarId: number) {
+    return this.http.get<LabelGluesWrapper>(`${ENDPOINT}labels/glue?${CALENDAR_EQ}${calendarId}`, httpOptions);
   }
 
   getLabelSettings(userId: number, withGlue: boolean): Observable<LabelSettingsWrapper> {
@@ -49,8 +55,12 @@ export class APIService {
     return this.http.get<LabelSettingsWrapper>(req, httpOptions);
   }
 
-  getActiveClients(): Observable<ClientWrapper> {
-    return this.http.get<ClientWrapper>(`${ENDPOINT}clients?${DELETED_EQ}0`, httpOptions);
+  getActiveClients(calendarId?: number): Observable<ClientWrapper> {
+    let req = `clients?${DELETED_EQ}0`
+
+    if (calendarId == 1) { req += `&${SEX_EQ}M` } else { req += `&${SEX_EQ}F` }
+
+    return this.http.get<ClientWrapper>(`${ENDPOINT}${req}`, httpOptions);
   }
 
   getDeletedClients(): Observable<ClientWrapper> {
@@ -98,4 +108,5 @@ export class APIService {
   massAssignServices(service: ServiceWrapper): Observable<ServiceWrapper> {
     return this.http.patch<ServiceWrapper>(`${ENDPOINT}services/mass-patch`, service, httpOptions)
   }
+  
 }

@@ -1,7 +1,6 @@
-import { Component, Inject } from '@angular/core';
+import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { CreateEventDialogData } from 'src/app/interfaces/CreateEventDialogData';
+import { ModalController, NavParams } from '@ionic/angular';
 import { CalendarEvent } from 'src/app/models/CalendarEvent';
 import { Service } from 'src/app/models/Service';
 import { APIService } from 'src/app/services/api/api.service';
@@ -14,11 +13,11 @@ interface CheckboxTemplate {
 }
 
 @Component({
-  selector: 'app-desktop-create-edit-event-modal',
-  templateUrl: './desktop-create-edit-event-modal.component.html',
-  styleUrls: ['./desktop-create-edit-event-modal.component.scss'],
+  selector: 'app-mobile-create-edit-event-modal',
+  templateUrl: './mobile-create-edit-event-modal.component.html',
+  styleUrls: ['./mobile-create-edit-event-modal.component.scss'],
 })
-export class DesktopCreateEditEventModalComponent {
+export class MobileCreateEditEventModalComponent {
   public modelTemplate: CalendarEvent = {}
   public clientOptions: any[] = []
   public serviceOptions: any[] = []
@@ -32,9 +31,9 @@ export class DesktopCreateEditEventModalComponent {
 
   public selectedServiceCheckboxes = new Map<number, CheckboxTemplate>();
 
-  constructor(private formBuilder: FormBuilder, @Inject(MAT_DIALOG_DATA) public _data: CreateEventDialogData, public api: APIService) {
-    this.componentTitle = _data.title
-    this.calendarID = _data.calendarID
+  constructor(private formBuilder: FormBuilder, private params: NavParams, public api: APIService, public modalController: ModalController) {
+    this.componentTitle = params.data['title']
+    this.calendarID = params.data['calendarID']
 
     this.controlGroup = this.formBuilder.group({
       name: ['', [Validators.required, Validators.minLength(2), Validators.maxLength(128), Validators.pattern(/^(?!\s)(?!.*\s{2,})(.*\S)?(?<!\s)$/)]],
@@ -97,6 +96,7 @@ export class DesktopCreateEditEventModalComponent {
     ids.forEach((id) => { duration += Number(this.selectedServiceCheckboxes.get(id)?.duration!) })
     return duration
   }
+
 
   public utilStripFn(): number[] {
     return Array.from(this.selectedServiceCheckboxes.keys()).filter(

@@ -27,7 +27,7 @@ export class ClientComponent implements ViewWillEnter, OnInit {
   }
 
   detectPlatform() {
-    if (this.platform.is('ios') || this.platform.is('android')) {
+    if (this.platform.is('mobile')) {
       this.component = this.childRef.createComponent(MobileClientsComponent).instance
       this.childCached = true
     } else {

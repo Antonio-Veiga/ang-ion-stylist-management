@@ -11,7 +11,7 @@ import { IonicModule, IonicRouteStrategy } from '@ionic/angular';
 import { MaterialModule } from './material.module';
 
 import { FullCalendarModule } from '@fullcalendar/angular';
-import { HttpClientModule } from '@angular/common/http';
+import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 
 import { AgGridModule } from 'ag-grid-angular';
 import { HomeComponent } from './pages/home/home.component';
@@ -25,18 +25,23 @@ import { DesktopCreateEditClientModalComponent, MatchersDialog } from './modals/
 import { ServiceActionsHolder, DesktopServicesComponent, DurationInputHolder, PriceInputHolder, SegementHolder } from './desktop/desktop-services/desktop-services.component';
 import { InfoSnackBarComponent } from './partials/info-snack/info-snack.component';
 
+import { Ng2SearchPipeModule } from 'ng2-search-filter';
+import { ErrorHandlingService } from './services/HTTPClient/error-handling.service';
+import { MobileCreateEditEventModalComponent } from './modals/mobile-create-edit-event-modal/mobile-create-edit-event-modal.component';
+import { DesktopCreateEditEventModalComponent } from './modals/desktop-create-edit-event-modal/desktop-create-edit-event-modal.component';
 
 @NgModule({
   declarations: [
     AppComponent, HomeComponent,
     DesktopNavComponent, DesktopHomeComponent, DesktopClientsComponent,
-    MobileNavComponent, MobileHomeComponent, MobileClientsComponent,
+    MobileNavComponent, MobileHomeComponent, MobileClientsComponent, MobileCreateEditEventModalComponent, DesktopCreateEditEventModalComponent,
     DesktopCreateEditClientModalComponent, InfoSnackBarComponent, DeleteDialog, DesktopServicesComponent,
     SegementHolder, PriceInputHolder, DurationInputHolder, ServiceActionsHolder, ClientActionsHolder, NoActionsHolder, MatchersDialog],
   imports: [
     BrowserModule,
     AppRoutingModule,
     BrowserAnimationsModule,
+    Ng2SearchPipeModule,
     IonicModule,
     MaterialModule,
     CommonModule,
@@ -47,7 +52,14 @@ import { InfoSnackBarComponent } from './partials/info-snack/info-snack.componen
     HttpClientModule,
     IonicModule.forRoot()
   ],
-  providers: [{ provide: RouteReuseStrategy, useClass: IonicRouteStrategy }],
+  providers: [
+    { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: ErrorHandlingService,
+      multi: true,
+    }
+  ],
   bootstrap: [AppComponent],
 })
 export class AppModule { }

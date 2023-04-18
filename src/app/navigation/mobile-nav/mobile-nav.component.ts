@@ -1,4 +1,6 @@
 import { Component, OnInit } from '@angular/core';
+import { Router, NavigationEnd } from '@angular/router';
+import { filter } from 'rxjs/operators';
 import { PrimaryPages, SecondaryPages } from 'src/app/data/Pages';
 
 @Component({
@@ -7,8 +9,10 @@ import { PrimaryPages, SecondaryPages } from 'src/app/data/Pages';
   styleUrls: ['./mobile-nav.component.scss'],
 })
 export class MobileNavComponent implements OnInit {
-  primary = PrimaryPages.pages()
-  secondary = SecondaryPages.pages()
+  primary = PrimaryPages.pages
+  secondary = SecondaryPages.pages
+  cpage: any
+  pageTitle?: string
 
   constructor() { }
 

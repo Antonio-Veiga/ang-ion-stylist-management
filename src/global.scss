@@ -38,14 +38,30 @@
     font-family: Montserrat, Montserrat-Fixed, Avenir, "Avenir Next LT Pro", Corbel, "URW Gothic", source-sans-pro, sans-serif;
 }
 
+
 .fc-day {
     background-color: white !important;
+}
+
+.fc-daygrid-day-top{
+    @media only screen and (max-width: 767px) {
+        font-size: 0.7rem!important;
+    }
+}
+
+.fc-timegrid-slot-label-cushion{
+    @media only screen and (max-width: 767px) {
+        font-size: 0.7rem!important;
+    }
 }
 
 .fc-col-header-cell-cushion {
     text-transform: uppercase;
     font-size: 0.8em;
     font-weight: 500;
+    @media only screen and (max-width: 767px) {
+        font-size: 0.6rem!important;
+    }
 }
 
 .fc-next-button {
@@ -61,6 +77,16 @@
     border-bottom-right-radius: 0.75rem !important;
     cursor: pointer !important;
     transition-duration: 200ms !important;
+
+    @media only screen and (max-width: 767px) {
+        padding: 0.1rem!important;
+        border-radius: 0.3rem !important;
+        display: flex!important;
+        justify-content: center!important;
+        align-items: center!important;
+        border-left-width: 1px !important;
+        border-right-width: 1px !important;
+      }
 }
 
 .fc-next-button:hover {
@@ -80,6 +106,16 @@
     border-bottom-left-radius: 0.75rem !important;
     cursor: pointer !important;
     transition-duration: 200ms !important;
+    
+    @media only screen and (max-width: 767px) {
+        padding: 0.1rem!important;
+        border-radius: 0.3rem !important;
+        display: flex!important;
+        justify-content: center!important;
+        align-items: center!important;
+        border-left-width: 1px !important;
+        border-right-width: 1px !important;
+      }
 }
 
 .fc-prev-button:hover {
@@ -91,6 +127,12 @@
     margin-left: 0.8rem !important;
     margin-right: 0.8rem !important;
     margin-bottom: 0.8rem !important;
+
+    @media only screen and (max-width: 767px) {
+        margin-left: 0.5rem !important;
+        margin-right: 0.5rem !important;
+        margin-bottom: 0.5rem !important;
+      }
 }
 
 .fc-today-button {
@@ -109,6 +151,12 @@
     font-size: 0.8rem !important;
     cursor: pointer !important;
     transition-duration: 200ms !important;
+
+    @media only screen and (max-width: 767px) {
+        margin-top: 2px!important;
+        margin-left: 0px!important;
+
+      }
 }
 
 .fc-today-button:hover {
@@ -130,6 +178,15 @@
     all: unset !important;
     text-transform: uppercase !important;
     font-weight: 500 !important;
+
+    @media only screen and (max-width: 767px) {
+        font-size: 1rem!important;
+        margin-left: 0.8rem!important;
+        margin-right: 0.8rem!important;
+        text-align: center!important;
+        white-space: wrap!important;
+        padding: 0.2rem!important;
+      }
 }
 
 .fc-dayGridMonth-button {
@@ -148,6 +205,13 @@
     font-size: 0.8rem !important;
     cursor: pointer !important;
     transition-duration: 200ms !important;
+
+    @media only screen and (max-width: 767px) {
+        border-radius: 0.3rem !important;
+        display: flex!important;
+        justify-content: center!important;
+        align-items: center!important;
+    }
 }
 
 .fc-dayGridMonth-button:hover {
@@ -171,12 +235,30 @@
     font-size: 0.8rem !important;
     cursor: pointer !important;
     transition-duration: 200ms !important;
+
+    @media only screen and (max-width: 767px) {
+        border-radius: 0.3rem !important;
+        display: flex!important;
+        justify-content: center!important;
+        align-items: center!important;
+        border-left-width: 1px !important;
+        border-right-width: 1px !important;
+    }
 }
 
 
 .fc-timeGridWeek-button:hover {
     background: rgb(75 85 99) !important;
     color: white !important;
+}
+
+.fc-button-group {
+    @media only screen and (max-width: 767px) {
+        display: flex!important;
+        flex-direction: column!important;
+        gap: 2px;
+        width: 75px!important;
+    }
 }
 
 .fc-timeGridDay-button {
@@ -195,6 +277,13 @@
     font-size: 0.8rem !important;
     cursor: pointer !important;
     transition-duration: 200ms !important;
+
+    @media only screen and (max-width: 767px) {
+        border-radius: 0.3rem !important;
+        display: flex!important;
+        justify-content: center!important;
+        align-items: center!important;
+    }
 }
 
 .fc-timeGridDay-button:hover {
@@ -381,7 +470,7 @@ input[type="number"]::-webkit-outer-spin-button {
 
 mat-dialog-container[id*='mat-dialog-']{
     padding: 0px !important;
-    margin: 1.5rem 0px!important;
+    margin: 1.5rem 0px !important;
 }
 
 .rounded-grid{
@@ -415,5 +504,5 @@ mat-dialog-container[id*='mat-dialog-']{
   }
 
   body > div.cdk-overlay-container > div.cdk-global-overlay-wrapper{
-    overflow-y: auto;
+    overflow: auto;
   }

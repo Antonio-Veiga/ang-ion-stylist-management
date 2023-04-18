@@ -13,6 +13,6 @@ import { SnackBarData } from './SnackBarData';
   ],
 })
 export class InfoSnackBarComponent {
-  constructor(@Inject(MAT_SNACK_BAR_DATA) public data: SnackBarData) { }
   snackBarRef = inject(MatSnackBarRef);
+  constructor(@Inject(MAT_SNACK_BAR_DATA) public data: SnackBarData) { }
 }

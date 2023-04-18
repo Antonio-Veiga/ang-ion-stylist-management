@@ -1,4 +1,5 @@
 export interface FCalendarUsable {
+    currentSnackBarRef: any
     setupCalendar(): void
 }
 

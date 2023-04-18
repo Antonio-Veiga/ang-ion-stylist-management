@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, HostListener, Input, OnInit, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, HostListener, OnDestroy, ViewChild } from '@angular/core';
 import { CalendarOptions } from '@fullcalendar/core';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import timeGridPlugin from '@fullcalendar/timegrid';
@@ -12,6 +12,10 @@ import { Default_PT } from 'src/app/defaults/langs/pt-pt/Defaults';
 import { MatDrawer, MatDrawerMode } from '@angular/material/sidenav';
 import { MatDialog } from '@angular/material/dialog';
 import { DesktopCreateEditEventModalComponent } from 'src/app/modals/desktop-create-edit-event-modal/desktop-create-edit-event-modal.component';
+import { MatSnackBar, MatSnackBarConfig, MatSnackBarRef } from '@angular/material/snack-bar';
+import { InfoSnackBarComponent } from 'src/app/partials/info-snack/info-snack.component';
+
+const moment = require('moment');
 
 @Component({
   selector: 'app-desktop-home',
@@ -22,6 +26,7 @@ export class DesktopHomeComponent implements FCalendarUsable, AfterViewInit {
   public menuSelectedBtn: 1 | 2 | 3 | 4 = 1
   public toggle = { icon: 'menu', tooltip: Default_PT.OPEN_SIDE_MENU_TOOLTIP }
   public settings = { icon: 'settings-outline', tooltip: Default_PT.OPEN_SETTINGS_DROPDOWN }
+  public currentSnackBarRef: MatSnackBarRef<InfoSnackBarComponent> | undefined
 
   public menuToggles = {
     1: Default_PT.CALENDAR_1,
@@ -73,7 +78,7 @@ export class DesktopHomeComponent implements FCalendarUsable, AfterViewInit {
       meridiem: 'short'
     },
     handleWindowResize: true,
-    dateClick: (data) => { this._dialog.open(DesktopCreateEditEventModalComponent, { data: { date: data.dateStr } }) },
+    dateClick: (data) => { this._dialog.open(DesktopCreateEditEventModalComponent, { data: { date: data.dateStr, calendarID: this.menuSelectedBtn, title: `${Default_PT.CREATE_EVENT} - ${moment(data.dateStr).format('DD/MM/YYYY')}` } }) },
     eventClick: (data) => { }
   };
 
@@ -83,7 +88,7 @@ export class DesktopHomeComponent implements FCalendarUsable, AfterViewInit {
     if (event.target.innerWidth >= 1366) { this.drawerAction = 'side' } else { this.drawerAction = 'over' }
   }
 
-  constructor(public api: APIService, public _dialog: MatDialog) {
+  constructor(public api: APIService, public _dialog: MatDialog, private _snackBar: MatSnackBar) {
     this.setupCalendar();
   }
 
@@ -97,22 +102,21 @@ export class DesktopHomeComponent implements FCalendarUsable, AfterViewInit {
   async setupCalendar() {
     this.processing = true;
 
-    try {
-      this.api.getEvents(this.menuSelectedBtn).subscribe((data) => {
-        this.events = data
-        this.makeCalendar()
-      })
-    } catch (_) {
-      console.error(_)
-    }
+    this.api.getEvents(this.menuSelectedBtn).subscribe((data) => {
+      this.events = data
+      this.makeCalendar()
+    }, (error) => {
+      this.openInfoSnackBar(error, 'recarregar', false, true)
+    })
   }
 
   makeCalendar() {
     this.loadedEvents = []
 
     this.events.data.forEach((event) => {
-      const finalTime = new Date(event.time)
-      finalTime.setMinutes(finalTime.getMinutes() + event.duration)
+      const finalTime = new Date(event.time!)
+      finalTime.setHours(finalTime.getHours() + Math.floor(event.duration! / 60));
+      finalTime.setMinutes(finalTime.getMinutes() + (event.duration! % 60));
 
       this.loadedEvents.push({
         id: event.id,
@@ -155,5 +159,20 @@ export class DesktopHomeComponent implements FCalendarUsable, AfterViewInit {
 
   defaultMenus() {
     this.menuToggles = { ... this.defaultToggles }
+  }
+
+  openInfoSnackBar(content: string, btnContent: string, duration?: boolean, afterDismissedFn?: boolean) {
+    const config = new MatSnackBarConfig();
+    config.data = { content: content, btnContent: btnContent };
+
+    if (duration) {
+      config.data.duration = 3000
+    }
+
+    this.currentSnackBarRef = this._snackBar.openFromComponent(InfoSnackBarComponent, config)
+
+    if (afterDismissedFn) {
+      this.currentSnackBarRef.onAction().subscribe(async () => { await this.setupCalendar() });
+    }
   }
 }
