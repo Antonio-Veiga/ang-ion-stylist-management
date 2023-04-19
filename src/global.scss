@@ -479,6 +479,17 @@ mat-dialog-container[id*='mat-dialog-']{
 
 .ag-root-wrapper{
     border-radius: 0.375rem!important;
+
+    @media only screen and (max-width: 767px) {
+        border-radius: 0px !important;
+    }
+}
+
+
+.ag-paging-row-summary-panel, .ag-paging-page-summary-panel{
+    @media only screen and (max-width: 767px) {
+        font-size: small!important;
+    }
 }
 
 .action-holder{

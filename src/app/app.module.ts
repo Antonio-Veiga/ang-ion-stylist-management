@@ -29,13 +29,14 @@ import { Ng2SearchPipeModule } from 'ng2-search-filter';
 import { ErrorHandlingService } from './services/HTTPClient/error-handling.service';
 import { MobileCreateEditEventModalComponent } from './modals/mobile-create-edit-event-modal/mobile-create-edit-event-modal.component';
 import { DesktopCreateEditEventModalComponent } from './modals/desktop-create-edit-event-modal/desktop-create-edit-event-modal.component';
+import { MobileCreateEditClientModalComponent } from './modals/mobile-create-edit-client-modal/mobile-create-edit-client-modal.component';
 
 @NgModule({
   declarations: [
     AppComponent, HomeComponent,
     DesktopNavComponent, DesktopHomeComponent, DesktopClientsComponent,
     MobileNavComponent, MobileHomeComponent, MobileClientsComponent, MobileCreateEditEventModalComponent, DesktopCreateEditEventModalComponent,
-    DesktopCreateEditClientModalComponent, InfoSnackBarComponent, DeleteDialog, DesktopServicesComponent,
+    DesktopCreateEditClientModalComponent, InfoSnackBarComponent, DeleteDialog, DesktopServicesComponent, MobileCreateEditClientModalComponent,
     SegementHolder, PriceInputHolder, DurationInputHolder, ServiceActionsHolder, ClientActionsHolder, NoActionsHolder, MatchersDialog],
   imports: [
     BrowserModule,

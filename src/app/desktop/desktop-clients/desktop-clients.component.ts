@@ -40,22 +40,26 @@ export class DesktopClientsComponent implements AfterViewInit, AgGridUsable {
   columnDefs: ColDef[] = [
     {
       field: 'name',
+      cellClass: 'flex items-center justify-start',
       headerName: Default_PT.NAME,
       floatingFilter: true
     },
     {
       field: 'sex',
+      cellClass: 'flex items-center justify-center',
       headerName: Default_PT.SEX,
       filter: false,
       maxWidth: 90
     },
     {
       field: 'address',
+      cellClass: 'flex items-center justify-center',
       headerName: Default_PT.ADDRESS,
       floatingFilter: true
     },
     {
       field: 'birthdate',
+      cellClass: 'flex items-center justify-center',
       headerName: Default_PT.BIRTHDATE,
       floatingFilter: true,
       cellRenderer: (params: any) => {
@@ -64,16 +68,19 @@ export class DesktopClientsComponent implements AfterViewInit, AgGridUsable {
     },
     {
       field: 'phonenumber',
+      cellClass: 'flex items-center justify-center',
       headerName: Default_PT.PHONE_NUMBER,
       floatingFilter: true
     },
     {
       field: 'instagram',
+      cellClass: 'flex items-center justify-center',
       headerName: Default_PT.INSTAGRAM,
       floatingFilter: true
     },
     {
       field: 'facebook',
+      cellClass: 'flex items-center justify-center',
       headerName: Default_PT.FACEBOOK,
       floatingFilter: true
     },

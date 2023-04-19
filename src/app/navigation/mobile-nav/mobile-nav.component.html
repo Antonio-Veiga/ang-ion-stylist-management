@@ -1,20 +1,20 @@
 <ion-app>
   <ion-split-pane contentId="main-content">
-    <ion-menu contentId="main-content" type="overlay" class="border-r border-gray-300 custom-menu-width !bg-gray-50">
+    <ion-menu contentId="main-content" type="overlay" class="border-r border-gray-500 custom-menu-width !bg-gray-50">
       <ion-content>
         <ion-list id="inbox-list" class="!pt-0">
           <ion-menu-toggle auto-hide="false" *ngFor="let p of primary; let i = index">
-            <ion-item class="mx-4 my-2 !rounded-lg border border-gray-300" routerDirection="root" [routerLink]="[p.url]"
-              lines="none" detail="false" routerLinkActive="selected">  
-              <ion-icon class="!text-gray-500" slot="start" [ios]="p.icon"></ion-icon>
+            <ion-item class="mx-4 my-2 !rounded-lg border border-gray-500" routerDirection="root" [routerLink]="[p.url]"
+              lines="none" detail="false" routerLinkActive="selected">
+              <ion-icon class="!text-gray-500" slot="start" [ios]="p.icon" [md]="p.icon"></ion-icon>
               <ion-label class="!text-sm uppercase font-sans tracking-wide">{{ p.title }}</ion-label>
             </ion-item>
           </ion-menu-toggle>
           <mat-divider></mat-divider>
           <ion-menu-toggle auto-hide="false" *ngFor="let p of secondary; let i = index">
-            <ion-item class="mx-4 my-2 !rounded-lg border border-gray-300" routerDirection="root" [routerLink]="[p.url]"
+            <ion-item class="mx-4 my-2 !rounded-lg border border-gray-500" routerDirection="root" [routerLink]="[p.url]"
               lines="none" detail="false" routerLinkActive="selected">
-              <ion-icon class="!text-gray-500" slot="start" [ios]="p.icon"></ion-icon>
+              <ion-icon class="!text-gray-500" slot="start" [ios]="p.icon" [md]="p.icon"></ion-icon>
               <ion-label class="!text-sm uppercase font-sans tracking-wide">{{ p.title }}</ion-label>
             </ion-item>
           </ion-menu-toggle>

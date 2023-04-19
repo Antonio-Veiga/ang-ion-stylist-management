@@ -38,7 +38,7 @@ export class SecondaryPages {
     static pages: Page[] = [
         {
             url: '../settings',
-            icon: 'settings',
+            icon: 'settings-outline',
             title: 'Definições'
         }
     ]

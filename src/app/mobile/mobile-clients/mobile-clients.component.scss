@@ -1,0 +1,9 @@
+ion-toolbar {
+    --box-shadow: none;
+}
+
+.ag-theme-alpine {
+    @media only screen and (max-width: 767px) {
+        --ag-font-size: 0.7rem;
+    }
+}

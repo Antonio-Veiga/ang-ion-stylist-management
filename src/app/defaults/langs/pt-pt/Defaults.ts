@@ -13,6 +13,8 @@ export class Default_PT {
     static CLIENT_MATCHERS_TITLE = "Existem alguns clientes com dados iguais"
     static SERVICE_VALUES_CHANGED = 'Os valores do serviço foram alterados'
     static INVALID_INPUT = 'Os valores introduzidos são inválidos'
+    static CREATE_CLIENT = 'A criar cliente'
+    static EDIT_CLIENT = 'A editar cliente'
     static CLIENT_EDITED = 'O cliente foi editado com sucesso'
     static CLIENT_CREATED = 'O cliente foi criado com sucesso'
     static CREATE_EVENT = 'Criar Evento'
@@ -28,6 +30,7 @@ export class Default_PT {
     static ERROR_ON_SERVER = "O pedido falhou no servidor com o código"
     static ERROR_ON_CLIENT = "O pedido falhou no cliente"
     static CALENDAR_PAGE_TITLE = 'Calendário'
+    static CLIENT_PAGE_TITLE = 'Gestão de Clientes'
     static CALENDAR_1 = 'Masculino'
     static CALENDAR_1_ACTIVE = '♂ Masculino'
     static CALENDAR_2 = 'Feminino'

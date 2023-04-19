@@ -1,3 +1,79 @@
-<p>
-  mobile-clients works!
-</p>
+<ion-header>
+  <ion-toolbar class="h-[52px]">
+    <ion-buttons slot="start">
+      <ion-menu-button></ion-menu-button>
+    </ion-buttons>
+    <ion-title class="text-sm uppercase">{{pageTitle}}</ion-title>
+    <ion-buttons slot="end">
+      <ion-icon [name]="clientIcon" [ngClass]="
+      {
+        'bg-blue-500': menuSelectedBtn == 1,
+        'bg-red-500': menuSelectedBtn == 2
+      }" class="text-xl p-1 text-white border-gray-300 rounded-lg border mr-1 shrink-0">
+      </ion-icon>
+      <ion-icon [name]="currEyeState.icon" (click)="triggerOptionsBtn()" [matTooltip]="currEyeState.tooltip"
+        class="!text-xl p-1 text-gray-500 border-gray-400 rounded-full border mx-1"></ion-icon>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+<mat-progress-bar mode="query" [hidden]="!processing"></mat-progress-bar>
+
+<div class="absolute inset-0 top-[52px] p-0 md:p-4 bg-gray-50 overflow-auto flex flex-col">
+  <ag-grid-angular class="w-full h-full min-h-[480px] ag-theme-alpine" [suppressPaginationPanel]="true"
+    [columnDefs]="columnDefs" [defaultColDef]="defaultColDef" [rowSelection]="'single'" [animateRows]="true"
+    [pagination]="true" [paginationPageSize]="20" [localeText]="AG_GRID_PT_LANG"
+    (gridReady)="onGridReady()"></ag-grid-angular>
+  <div [hidden]="processing"
+    class="h-fit py-3 sm:border sm:mt-3 sm:border-gray-400 sm:rounded-md sm:bg-white flex items-center justify-center divide-x divide-gray-400">
+    <p class="p-2 w-full text-center text-xs text-gray-500">A visualizar página
+      <b>{{agGrid ? agGrid.api.paginationGetCurrentPage() + 1 : '(Processando)'}}</b> de <b>{{agGrid ?
+        agGrid.api.paginationGetTotalPages() : '(Processando)'}}</b>.
+    </p>
+    <div class="h-full w-fit p-1 px-4 flex items-center justify-center gap-1">
+      <ion-skeleton-text [hidden]="!processing" class="w-[26px] h-[26px] rounded-full"></ion-skeleton-text>
+      <ion-skeleton-text [hidden]="!processing" class="w-[26px] h-[26px] rounded-full"></ion-skeleton-text>
+      <div (click)="loadPreviousPage()"
+        class="relative w-[26px] h-[26px] ripple-parent p-1 ion-activatable ion-focusable flex items-center justify-center border rounded-full border-gray-300">
+        <ion-icon [hidden]="processing"
+          [name]="agGrid && agGrid.api.paginationGetCurrentPage() + 1 == 1 ? 'ban-outline' : 'caret-back-outline'"
+          class="!text-gray-500"></ion-icon>
+        <ion-ripple-effect class="rounded-full"></ion-ripple-effect>
+      </div>
+      <div (click)="loadNextPage()"
+        class="relative w-[26px] h-[26px] ripple-parent p-1 ion-activatable ion-focusable flex items-center justify-center border rounded-full border-gray-300">
+        <ion-icon [hidden]="processing"
+          [name]="agGrid && agGrid.api.paginationGetCurrentPage() + 1 == agGrid.api.paginationGetTotalPages() ? 'ban-outline' : 'caret-forward-outline'"
+          class="!text-gray-500"></ion-icon>
+        <ion-ripple-effect class="rounded-full"></ion-ripple-effect>
+      </div>
+    </div>
+  </div>
+  <ion-fab cdkDrag [hidden]="currEyeState.status" vertical="bottom" horizontal="end" slot="fixed"
+    (cdkDragMoved)="fabMoving($event)">
+    <ion-fab-button>
+      <ion-icon name="clipboard-outline"></ion-icon>
+    </ion-fab-button>
+    <ion-fab-list [side]="xAxisOpener">
+      <ion-fab-button (click)="switchMenuBtn(1)">
+        <ion-icon name="checkmark-circle-outline"></ion-icon>
+      </ion-fab-button>
+      <ion-fab-button (click)="switchMenuBtn(2)">
+        <ion-icon name="trash-bin-outline"></ion-icon>
+      </ion-fab-button>
+    </ion-fab-list>
+    <ion-fab-list [side]="yAxisOpener">
+      <ion-fab-button (click)="editClient()" [hidden]="menuSelectedBtn == 2 || !selectedClient">
+        <ion-icon name="create-outline"></ion-icon>
+      </ion-fab-button>
+      <ion-fab-button (click)="promptDeleteClient()" [hidden]="menuSelectedBtn == 2 || !selectedClient">
+        <ion-icon name="person-remove-outline"></ion-icon>
+      </ion-fab-button>
+      <ion-fab-button (click)="createClient()">
+        <ion-icon name="person-add-outline"></ion-icon>
+      </ion-fab-button>
+      <ion-fab-button (click)="visualizeClient()" [hidden]="!selectedClient">
+        <ion-icon name="eye-outline"></ion-icon>
+      </ion-fab-button>
+    </ion-fab-list>
+  </ion-fab>
+</div>

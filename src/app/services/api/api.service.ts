@@ -58,7 +58,7 @@ export class APIService {
   getActiveClients(calendarId?: number): Observable<ClientWrapper> {
     let req = `clients?${DELETED_EQ}0`
 
-    if (calendarId == 1) { req += `&${SEX_EQ}M` } else { req += `&${SEX_EQ}F` }
+    if (calendarId == 1) { req += `&${SEX_EQ}M` } else if (calendarId) { req += `&${SEX_EQ}F` }
 
     return this.http.get<ClientWrapper>(`${ENDPOINT}${req}`, httpOptions);
   }
@@ -108,5 +108,5 @@ export class APIService {
   massAssignServices(service: ServiceWrapper): Observable<ServiceWrapper> {
     return this.http.patch<ServiceWrapper>(`${ENDPOINT}services/mass-patch`, service, httpOptions)
   }
-  
+
 }

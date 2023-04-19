@@ -31,7 +31,7 @@ export class MobileCreateEditEventModalComponent {
 
   public selectedServiceCheckboxes = new Map<number, CheckboxTemplate>();
 
-  constructor(private formBuilder: FormBuilder, private params: NavParams, public api: APIService, public modalController: ModalController) {
+  constructor(private formBuilder: FormBuilder, params: NavParams, public api: APIService, public modalController: ModalController) {
     this.componentTitle = params.data['title']
     this.calendarID = params.data['calendarID']
 

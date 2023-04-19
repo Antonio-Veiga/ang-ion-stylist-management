@@ -1,0 +1,121 @@
+<div class="absolute inset-0 overflow-auto">
+  <div class="flex flex-col justify-center m-2 shrink">
+    <div class="flex px-4 py-2 w-full uppercase text-gray-500 border-b border-gray-300 items-center space-x-2">
+      <ion-icon name="arrow-back-outline" class="!text-xl" (click)="modalController.dismiss()"></ion-icon>
+      <h2 class="w-full">
+        {{componentTitle}}
+      </h2>
+    </div>
+    <div class="w-full h-fit">
+      <form [formGroup]="controlGroup" (ngSubmit)="submitForm()"
+        class="w-full flex flex-col justify-center items-center">
+        <div class="bg-white rounded-lg mb-4 divide-y gap-2 w-full">
+          <div class="mb-2 mt-4 mx-4">
+            <label for="c-name"
+              class="block mb-1.5 text-start ml-2 text-[0.65rem] md:text-xs uppercase font-medium text-gray-600">Nome do
+              Cliente <span class="text-red-500">*</span></label>
+            <input type="text" id="c-name"
+              class="bg-gray-50 w-full border border-gray-300 placeholder-gray-400 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5"
+              required formControlName="name" [(ngModel)]="modelTemplate.name"
+              [ngClass]="{ 'is-invalid': controlGroup.get('name')!.invalid && controlGroup.get('name')!.touched, 'is-valid': controlGroup.get('name')!.valid && controlGroup.get('name')!.touched }">
+            <p class="text-[0.5em] text-start ml-2 text-gray-500 uppercase mt-1"> De 2 a 128 carateres. (campo
+              obrigatório)</p>
+          </div>
+
+          <div class="mb-2 pt-3 mx-4 flex space-x-4">
+            <div class="flex-1 md:flex-[2_0_0] shrink-0">
+              <label for="c-address"
+                class="block mb-1.5 text-start ml-2 text-[0.65rem] md:text-xs uppercase font-medium text-gray-600">Morada
+              </label>
+              <input type="text" id="c-address" [(ngModel)]="modelTemplate.address"
+                class="bg-gray-50 w-full border border-gray-300 placeholder-gray-400 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5"
+                formControlName="address"
+                [ngClass]="{ 'is-invalid': controlGroup.get('address')!.invalid && controlGroup.get('address')!.touched, 'is-valid': controlGroup.get('address')!.valid && controlGroup.get('address')!.touched }">
+              <p class="text-[0.5em] text-start ml-2 text-gray-500 uppercase mt-1"> De 4 a 128 carateres. (campo
+                opcional)
+              </p>
+            </div>
+            <div class="flex-1 shrink-0">
+              <label for="c-sex"
+                class="block mb-1.5 text-start ml-2 text-[0.65rem] md:text-xs uppercase font-medium text-gray-600">Sexo
+                <span class="text-red-500">*</span>
+              </label>
+              <select id="c-sex" required formControlName="sex" [(ngModel)]="modelTemplate.sex"
+                [ngClass]="{ 'is-invalid': controlGroup.get('sex')!.invalid && controlGroup.get('sex')!.touched, 'is-valid': controlGroup.get('sex')!.valid && controlGroup.get('sex')!.touched }"
+                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 ">
+                <option value='' selected disabled>--- Indefenido ---</option>
+                <option value="M">Masculino</option>
+                <option value="F">Feminino</option>
+              </select>
+              <p class="text-[0.5em] text-start ml-2 text-gray-500 uppercase mt-1">(campo obrigatório)</p>
+            </div>
+          </div>
+
+          <div class="mb-2 pt-3 mx-4 flex space-x-4">
+            <div class="flex-1 shrink-0">
+              <label for="c-number"
+                class="block mb-1.5 text-start ml-2 text-[0.65rem] md:text-xs uppercase font-medium text-gray-600">Número
+                de
+                Telemóvel </label>
+              <input type="text" inputmode="numeric" id="c-number" [(ngModel)]="modelTemplate.phonenumber"
+                [ngClass]="{ 'is-invalid': controlGroup.get('phonenumber')!.invalid && controlGroup.get('phonenumber')!.touched, 'is-valid': controlGroup.get('phonenumber')!.valid && controlGroup.get('phonenumber')!.touched }"
+                class="bg-gray-50 w-full border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5"
+                formControlName="phonenumber">
+              <p class="text-[0.5em] text-start ml-2 text-gray-500 uppercase mt-1">Apenas números Móveis ou fixos
+                portugueses.
+                (campo opcional)</p>
+            </div>
+            <div class="flex-1 shrink-0">
+              <label for="c-born"
+                class="block mb-1.5 text-start ml-2 text-[0.65rem] md:text-xs uppercase font-medium text-gray-600">Nascimento
+              </label>
+              <input type="date" id="c-born"
+                [ngClass]="{ 'is-invalid': controlGroup.get('birthdate')!.invalid && controlGroup.get('birthdate')!.touched, 'is-valid': controlGroup.get('birthdate')!.valid && controlGroup.get('birthdate')!.touched }"
+                class="bg-gray-50 w-full border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5"
+                formControlName="birthdate" [(ngModel)]="modelTemplate.birthdate">
+              <p class="text-[0.5em] text-start ml-2 text-gray-500 uppercase mt-1">(campo opcional)</p>
+            </div>
+          </div>
+
+          <div class="mb-2 pt-3 mx-4">
+            <label for="c-instagram"
+              class="block mb-1.5 text-start ml-2 text-[0.65rem] md:text-xs uppercase font-medium text-gray-600">Instagram
+            </label>
+            <input type="text" id="c-instagram" [(ngModel)]="modelTemplate.instagram"
+              [ngClass]="{ 'is-invalid': controlGroup.get('instagram')!.invalid && controlGroup.get('instagram')!.touched, 'is-valid': controlGroup.get('instagram')!.valid && controlGroup.get('instagram')!.touched }"
+              class="bg-gray-50 w-full border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5"
+              formControlName="instagram">
+            <p class="text-[0.5em] text-start ml-2 text-gray-500 uppercase mt-1">De 4 a 128 carateres. (campo
+              opcional)
+            </p>
+          </div>
+
+          <div class="mb-2 pt-3 mx-4">
+            <label for="c-facebook"
+              class="block mb-1.5 text-start ml-2 text-[0.65rem] md:text-xs uppercase font-medium text-gray-600">Facebook
+            </label>
+            <input type="text" id="c-facebook" [(ngModel)]="modelTemplate.facebook"
+              [ngClass]="{ 'is-invalid': controlGroup.get('facebook')!.invalid && controlGroup.get('facebook')!.touched, 'is-valid': controlGroup.get('facebook')!.valid && controlGroup.get('facebook')!.touched }"
+              class="bg-gray-50 w-full border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5"
+              formControlName="facebook">
+            <p class="text-[0.5em] text-start ml-2 text-gray-500 uppercase mt-1">De 4 a 128 carateres. (campo
+              opcional)
+            </p>
+          </div>
+        </div>
+
+        <ion-button [disabled]="!changed() ||
+                    controlGroup.get('name')!.invalid || 
+                    controlGroup.get('address')!.invalid || 
+                    controlGroup.get('sex')!.invalid || 
+                    controlGroup.get('phonenumber')!.invalid || 
+                    controlGroup.get('birthdate')!.invalid ||
+                    controlGroup.get('instagram')!.invalid ||
+                    controlGroup.get('facebook')!.invalid || submiting" type="submit" class="w-64 mb-4">
+
+          <ion-spinner name="circles" class="relative left-0" [hidden]="!submiting"></ion-spinner>
+          <div [hidden]="submiting">{{action == 'edit' ? 'Editar Cliente': 'Criar Cliente'}}</div>
+        </ion-button>
+      </form>
+    </div>
+  </div>
