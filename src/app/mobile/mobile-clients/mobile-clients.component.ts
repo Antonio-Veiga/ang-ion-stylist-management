@@ -1,14 +1,16 @@
 import { CdkDrag } from '@angular/cdk/drag-drop';
 import { Component, OnInit, ViewChild } from '@angular/core';
+import { MatSnackBar, MatSnackBarConfig } from '@angular/material/snack-bar';
 import { AlertController, ModalController } from '@ionic/angular';
 import { AgGridAngular } from 'ag-grid-angular';
-import { ColDef, GridApi, GridOptions } from 'ag-grid-community';
+import { ColDef } from 'ag-grid-community';
 import { Default_PT } from 'src/app/defaults/langs/pt-pt/Defaults';
-import { ClientActionsHolder, NoActionsHolder } from 'src/app/desktop/desktop-clients/desktop-clients.component';
 import { AgGridUsable } from 'src/app/interfaces/Loadable';
 import { MobileCreateEditClientModalComponent } from 'src/app/modals/mobile-create-edit-client-modal/mobile-create-edit-client-modal.component';
+import { MobileViewClientModalComponent } from 'src/app/modals/mobile-view-client-modal/mobile-view-client-modal.component';
 import { Client } from 'src/app/models/Client';
 import { ClientWrapper } from 'src/app/models/ClientWrapper';
+import { InfoSnackBarComponent } from 'src/app/partials/info-snack/info-snack.component';
 import { APIService } from 'src/app/services/api/api.service';
 
 const moment = require('moment')
@@ -115,7 +117,7 @@ export class MobileClientsComponent implements OnInit, AgGridUsable {
     onCellClicked: (client) => { this.selectedClient = client.data }
   }
 
-  constructor(public api: APIService, private alertController: AlertController, private modalController: ModalController) { }
+  constructor(public api: APIService, private alertController: AlertController, private modalController: ModalController, public _snackBar: MatSnackBar) { }
 
   ngOnInit() { }
 
@@ -172,6 +174,10 @@ export class MobileClientsComponent implements OnInit, AgGridUsable {
     });
 
     await modal.present();
+
+    const { data, role } = await modal.onDidDismiss();
+
+    if (!data || role == 'backdrop') { this.onGridReady() }
   }
 
   async editClient() {
@@ -185,18 +191,33 @@ export class MobileClientsComponent implements OnInit, AgGridUsable {
     });
 
     await modal.present();
+
+    const { data, role } = await modal.onDidDismiss();
+
+    if (!data || role == 'backdrop') { this.onGridReady() }
   }
 
   async visualizeClient() {
+    const modal = await this.modalController.create({
+      component: MobileViewClientModalComponent,
+      mode: 'ios',
+      breakpoints: [0, +(426 / window.innerHeight).toFixed(2)],
+      initialBreakpoint: +(426 / window.innerHeight).toFixed(2),
+      backdropDismiss: true,
+      showBackdrop: true,
+      componentProps: {
+        client: this.selectedClient,
+      }
+    });
 
+    await modal.present();
   }
-
 
   async promptDeleteClient() {
     const alert = await this.alertController.create({
-      header: 'A eliminar cliente',
-      message: `Deseja eliminar ${this.selectedClient!.name}?`,
-      buttons: ['Cancelar', 'Confirmar'],
+      header: Default_PT.DELETE_CLIENT_TITLE,
+      message: `${Default_PT.DELETE_CLIENT_MOBILE_PROMPT} ${this.selectedClient!.name}?`,
+      buttons: [{ text: Default_PT.CANCEL_BUTTON_TEXT }, { text: Default_PT.CONTINUE_BUTTON_TEXT, handler: () => { this.deleteClient(this.selectedClient!) } }],
       mode: 'ios'
     });
 
@@ -213,6 +234,19 @@ export class MobileClientsComponent implements OnInit, AgGridUsable {
     this.processing = true;
     this.agGrid.api.paginationGoToPreviousPage();
     this.processing = false;
+  }
+
+  deleteClient(data: Client) {
+    this.processing = true
+    this.agGrid.api.showLoadingOverlay()
+    this.selectedClient = undefined
+
+    this.api.deleteClient(data.id).subscribe(() => {
+      this.agGrid.api.hideOverlay()
+      this.processing = false
+      this.onGridReady()
+      this.openInfoSnackBar(Default_PT.DELETE_CLIENT_SUCCESS, Default_PT.INFO_BTN)
+    })
   }
 
   fabMoving(event: any) {
@@ -233,6 +267,12 @@ export class MobileClientsComponent implements OnInit, AgGridUsable {
     else { this.currEyeState = this.eyeStates.inactive }
   }
 
+
+  openInfoSnackBar(content: string, btnContent: string) {
+    const config = new MatSnackBarConfig();
+    config.data = { content: content, btnContent: btnContent, duration: 3000 };
+    this._snackBar.openFromComponent(InfoSnackBarComponent, config);
+  }
 
   formatData(wrapper: ClientWrapper): any[] {
     let fdata: any[] = []

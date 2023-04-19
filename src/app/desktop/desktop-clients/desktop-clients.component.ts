@@ -12,6 +12,8 @@ import { DesktopCreateEditClientModalComponent } from 'src/app/modals/desktop-cr
 import { ClientAgGridComService } from 'src/app/services/client-coms/client-ag-grid-com.service';
 import { ClientCellData } from 'src/app/data/AgGridClientCellData';
 import { Client } from 'src/app/models/Client';
+import { MatSnackBar, MatSnackBarConfig } from '@angular/material/snack-bar';
+import { InfoSnackBarComponent } from 'src/app/partials/info-snack/info-snack.component';
 const moment = require('moment')
 
 @Component({
@@ -107,7 +109,7 @@ export class DesktopClientsComponent implements AfterViewInit, AgGridUsable {
     editable: false,
   }
 
-  constructor(public api: APIService, public _dialog: MatDialog, public agGridCom: ClientAgGridComService) { this.menuToggles[1] = Default_PT.CLIENT_MENU_1_ACTIVE }
+  constructor(public api: APIService, public _dialog: MatDialog, public agGridCom: ClientAgGridComService, public _snackBar: MatSnackBar) { this.menuToggles[1] = Default_PT.CLIENT_MENU_1_ACTIVE }
 
   ngAfterViewInit(): void {
     this.drawer.openedChange.subscribe((opened) => {
@@ -203,7 +205,15 @@ export class DesktopClientsComponent implements AfterViewInit, AgGridUsable {
       this.agGrid.api.hideOverlay()
       this.processing = false
       this.onGridReady()
+      this.openInfoSnackBar(Default_PT.DELETE_CLIENT_SUCCESS, Default_PT.INFO_BTN)
     })
+  }
+
+
+  openInfoSnackBar(content: string, btnContent: string) {
+    const config = new MatSnackBarConfig();
+    config.data = { content: content, btnContent: btnContent, duration: 3000 };
+    this._snackBar.openFromComponent(InfoSnackBarComponent, config);
   }
 }
 

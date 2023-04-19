@@ -10,7 +10,9 @@ export class Default_PT {
     static FACEBOOK = "Facebook"
     static ACTIONS = "Ações"
     static PHONE_NUMBER = "Nº Telemóvel"
+    static UNDEFINED = "<INDEFENIDO>"
     static CLIENT_MATCHERS_TITLE = "Existem alguns clientes com dados iguais"
+    static CONTINUE_QUESTION = "Deseja continuar mesmo assim?"
     static SERVICE_VALUES_CHANGED = 'Os valores do serviço foram alterados'
     static INVALID_INPUT = 'Os valores introduzidos são inválidos'
     static CREATE_CLIENT = 'A criar cliente'
@@ -43,7 +45,10 @@ export class Default_PT {
     static CLIENT_MENU_1_ACTIVE = '✓ Ativos'
     static CLIENT_MENU_2 = 'Eliminados'
     static CLIENT_MENU_2_ACTIVE = 'x Eliminados'
+    static DELETE_CLIENT_TITLE = 'A Eliminar cliente'
     static DELETE_CLIENT_PROMPT = 'Tem a certeza que pretende eliminar o cliente ?'
+    static DELETE_CLIENT_MOBILE_PROMPT = 'Deseja eliminar'
+    static DELETE_CLIENT_SUCCESS = 'Cliente eliminado com sucesso'
     static CONTINUE_BUTTON_TEXT = "Continuar"
     static CANCEL_BUTTON_TEXT = "Cancelar"
     static AG_GRID_LOCALE_PT = {

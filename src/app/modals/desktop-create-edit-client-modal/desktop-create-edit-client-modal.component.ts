@@ -23,7 +23,7 @@ export class DesktopCreateEditClientModalComponent {
   public submiting = false
   public matchers: Client[] = []
   public defaultClient?: Client
-
+  
   constructor(private formBuilder: FormBuilder,
     @Inject(MAT_DIALOG_DATA) public _data: ClientDialogData,
     public _self: MatDialogRef<DesktopCreateEditClientModalComponent>,
@@ -52,6 +52,7 @@ export class DesktopCreateEditClientModalComponent {
   async submitForm() {
     if (this.controlGroup.valid) {
       this.submiting = true
+      this.controlGroup.disable()
       this._self.disableClose = true
       this.matchers = []
 
@@ -143,7 +144,7 @@ export class DesktopCreateEditClientModalComponent {
     if (!jQuery.isEmptyObject(this.modelTemplate.name)) { returnCl.name = this.modelTemplate.name }
     if (!jQuery.isEmptyObject(this.modelTemplate.address)) { returnCl.address = this.modelTemplate.address }
     if (!jQuery.isEmptyObject(this.modelTemplate.phonenumber)) { returnCl.phonenumber = this.modelTemplate.phonenumber }
-    if (!jQuery.isEmptyObject(this.modelTemplate.birthdate)) { returnCl.birthdate = this.modelTemplate.phonenumber }
+    if (!jQuery.isEmptyObject(this.modelTemplate.birthdate)) { returnCl.birthdate = this.modelTemplate.birthdate }
     if (!jQuery.isEmptyObject(this.modelTemplate.facebook)) { returnCl.facebook = this.modelTemplate.facebook }
     if (!jQuery.isEmptyObject(this.modelTemplate.instagram)) { returnCl.instagram = this.modelTemplate.instagram }
 

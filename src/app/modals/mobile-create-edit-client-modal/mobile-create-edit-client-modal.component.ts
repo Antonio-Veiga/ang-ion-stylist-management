@@ -1,12 +1,13 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatSnackBar, MatSnackBarConfig } from '@angular/material/snack-bar';
-import { ModalController, NavParams } from '@ionic/angular';
-import * as _ from 'lodash';
+import { AlertController, ModalController, NavParams } from '@ionic/angular';
 import { Default_PT } from 'src/app/defaults/langs/pt-pt/Defaults';
 import { Client } from 'src/app/models/Client';
 import { InfoSnackBarComponent } from 'src/app/partials/info-snack/info-snack.component';
 import { APIService } from 'src/app/services/api/api.service';
+import * as jQuery from 'jquery';
+import * as _ from 'lodash';
 
 @Component({
   selector: 'app-mobile-create-edit-client-modal',
@@ -22,12 +23,14 @@ export class MobileCreateEditClientModalComponent {
   public matchers: Client[] = []
   public defaultClient?: Client
   public componentTitle?: string
+  public unchanged = true
 
   constructor(private formBuilder: FormBuilder,
     public params: NavParams,
     private _snackBar: MatSnackBar,
     private api: APIService,
-    public modalController: ModalController) {
+    public modalController: ModalController,
+    public alertController: AlertController) {
     this.constructFormGroup()
     this.modelTemplate = { ...params.data['client'] }
     this.action = params.data['action']
@@ -49,44 +52,41 @@ export class MobileCreateEditClientModalComponent {
   }
 
   async submitForm() {
-    /*
     if (this.controlGroup.valid) {
+
       this.submiting = true
-      this.matchers = []
+      this.controlGroup.disable()
+
       if (await this.checkPNValidity() || await this.checkUserValidity()) {
-        const matchersDiagRef = this._dialog.open(MatchersDialog, {
-          data: {
-            matches: this.matchers
-          }
-        })
-  
-        matchersDiagRef.afterClosed().subscribe(() => {
-          if (matchersDiagRef.componentInstance.diagData.response) {
-            this.handleAction()
-          } else { this.submiting = false; this._self.disableClose = false }
-        })
-  
+        const alert = await this.alertController.create({
+          header: Default_PT.CLIENT_MATCHERS_TITLE,
+          message: Default_PT.CONTINUE_QUESTION,
+          buttons: [{ text: Default_PT.CANCEL_BUTTON_TEXT, handler: () => { this.controlGroup.enable(); this.submiting = false } },
+          { text: Default_PT.CONTINUE_BUTTON_TEXT, handler: () => { this.handleAction() } }],
+          mode: 'ios'
+        });
+
+        await alert.present();
+
       } else {
         this.handleAction()
       }
-  
     } else {
       this.openInfoSnackBar(Default_PT.INVALID_INPUT, Default_PT.INFO_BTN)
     }
-          /* Should not be possible but... */
   }
 
   handleAction() {
-    this.params.data['response'] = true
     if (this.action == 'add') { this.createClient() }
     if (this.action == 'edit') { this.editClient() }
   }
 
   createClient() {
-    this.api.postClient(this.modelTemplate).subscribe((singleton) => {
+    this.api.postClient(this.modelTemplate).subscribe(() => {
       this.controlGroup.reset();
       this.controlGroup.enable();
       this.submiting = false;
+      if (this.unchanged) { this.unchanged = false }
       this.openInfoSnackBar(Default_PT.CLIENT_CREATED, Default_PT.INFO_BTN)
     })
   }
@@ -97,6 +97,7 @@ export class MobileCreateEditClientModalComponent {
       this.controlGroup.enable();
       this.controlGroup.get('sex')?.disable();
       this.submiting = false;
+      if (this.unchanged) { this.unchanged = false }
       this.openInfoSnackBar(Default_PT.CLIENT_EDITED, Default_PT.INFO_BTN)
     })
   }
@@ -139,7 +140,7 @@ export class MobileCreateEditClientModalComponent {
     if (!jQuery.isEmptyObject(this.modelTemplate.name)) { returnCl.name = this.modelTemplate.name }
     if (!jQuery.isEmptyObject(this.modelTemplate.address)) { returnCl.address = this.modelTemplate.address }
     if (!jQuery.isEmptyObject(this.modelTemplate.phonenumber)) { returnCl.phonenumber = this.modelTemplate.phonenumber }
-    if (!jQuery.isEmptyObject(this.modelTemplate.birthdate)) { returnCl.birthdate = this.modelTemplate.phonenumber }
+    if (!jQuery.isEmptyObject(this.modelTemplate.birthdate)) { returnCl.birthdate = this.modelTemplate.birthdate }
     if (!jQuery.isEmptyObject(this.modelTemplate.facebook)) { returnCl.facebook = this.modelTemplate.facebook }
     if (!jQuery.isEmptyObject(this.modelTemplate.instagram)) { returnCl.instagram = this.modelTemplate.instagram }
 
