@@ -1,0 +1,5 @@
+<div class="flex gap-1">
+    <div [hidden]="noChanges" class="text-red-500 text-md" mat-raised-button #changed="matTooltip"
+        [matTooltip]="'Alterações pendentes'" matTooltipPosition="below">(*)</div>
+    <p class="text-xs sm:text-md flex items-center justify-start break-words p-2"> {{serviceName}}</p>
+</div>

@@ -22,6 +22,10 @@ export class MultipleChangesComService {
     if (this.PendingChanges.has(cellId)) { this.PendingChanges.delete(cellId); this.notifyPendingMapChanged(this.PendingChanges); }
   }
 
+  public getPendingValue(cellId: number): ServiceCellData | undefined {
+    return this.PendingChanges.get(cellId);
+  }
+
   public clearPendingChanges() {
     this.PendingChanges.clear()
     this.notifyPendingMapChanged(this.PendingChanges)

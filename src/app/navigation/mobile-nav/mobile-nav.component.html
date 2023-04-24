@@ -1,6 +1,6 @@
 <ion-app>
   <ion-split-pane contentId="main-content">
-    <ion-menu contentId="main-content" type="overlay" class="border-r border-gray-500 custom-menu-width !bg-gray-50">
+    <ion-menu content-id="main-content" [type]="'push'" type="overlay" class="border-r border-gray-500 !bg-gray-50">
       <ion-content>
         <ion-list id="inbox-list" class="!pt-0">
           <ion-menu-toggle auto-hide="false" *ngFor="let p of primary; let i = index">

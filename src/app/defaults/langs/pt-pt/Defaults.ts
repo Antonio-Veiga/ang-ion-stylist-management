@@ -11,6 +11,9 @@ export class Default_PT {
     static ACTIONS = "Ações"
     static PHONE_NUMBER = "Nº Telemóvel"
     static UNDEFINED = "<INDEFENIDO>"
+    static MINUTES = "Minuto(s)"
+    static EURO = "€"
+    static CHANGE_BTN = "Guardar Alterações"
     static CLIENT_MATCHERS_TITLE = "Existem alguns clientes com dados iguais"
     static CONTINUE_QUESTION = "Deseja continuar mesmo assim?"
     static SERVICE_VALUES_CHANGED = 'Os valores do serviço foram alterados'
@@ -33,6 +36,7 @@ export class Default_PT {
     static ERROR_ON_CLIENT = "O pedido falhou no cliente"
     static CALENDAR_PAGE_TITLE = 'Calendário'
     static CLIENT_PAGE_TITLE = 'Gestão de Clientes'
+    static SERVICE_PAGE_TITLE = 'Gestão de Serviços'
     static CALENDAR_1 = 'Masculino'
     static CALENDAR_1_ACTIVE = '♂ Masculino'
     static CALENDAR_2 = 'Feminino'

@@ -31,14 +31,17 @@ import { MobileCreateEditEventModalComponent } from './modals/mobile-create-edit
 import { DesktopCreateEditEventModalComponent } from './modals/desktop-create-edit-event-modal/desktop-create-edit-event-modal.component';
 import { MobileCreateEditClientModalComponent } from './modals/mobile-create-edit-client-modal/mobile-create-edit-client-modal.component';
 import { MobileViewClientModalComponent } from './modals/mobile-view-client-modal/mobile-view-client-modal.component';
+import { MobileServicesComponent, ServiceNameHolder } from './mobile/mobile-services/mobile-services.component';
+import { MobileViewServiceModalComponent } from './modals/mobile-view-service-modal/mobile-view-service-modal.component';
+import { MobileChangeServiceModalComponent } from './modals/mobile-change-service-modal/mobile-change-service-modal.component';
 
 @NgModule({
   declarations: [
     AppComponent, HomeComponent,
-    DesktopNavComponent, DesktopHomeComponent, DesktopClientsComponent, MobileViewClientModalComponent,
+    DesktopNavComponent, DesktopHomeComponent, DesktopClientsComponent, MobileViewClientModalComponent, MobileServicesComponent, MobileViewServiceModalComponent,
     MobileNavComponent, MobileHomeComponent, MobileClientsComponent, MobileCreateEditEventModalComponent, DesktopCreateEditEventModalComponent,
-    DesktopCreateEditClientModalComponent, InfoSnackBarComponent, DeleteDialog, DesktopServicesComponent, MobileCreateEditClientModalComponent,
-    SegementHolder, PriceInputHolder, DurationInputHolder, ServiceActionsHolder, ClientActionsHolder, NoActionsHolder, MatchersDialog],
+    DesktopCreateEditClientModalComponent, InfoSnackBarComponent, DeleteDialog, DesktopServicesComponent, MobileCreateEditClientModalComponent, ServiceNameHolder,
+    SegementHolder, PriceInputHolder, DurationInputHolder, ServiceActionsHolder, ClientActionsHolder, NoActionsHolder, MatchersDialog, MobileChangeServiceModalComponent],
   imports: [
     BrowserModule,
     AppRoutingModule,

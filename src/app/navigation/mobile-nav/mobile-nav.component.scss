@@ -6,3 +6,15 @@ ion-item.selected {
 ion-item.selected>ion-icon {
     color: var(--ion-color-primary) !important;
 }
+
+ion-menu {
+    --width: 240px;
+    --max-width: 240px;
+    --min-width: 240px;
+}
+
+.split-pane-ios.split-pane-visible>.split-pane-side,
+.split-pane-md.split-pane-visible>.split-pane-side {
+    max-width: 240px;
+    min-width: 240px;
+}

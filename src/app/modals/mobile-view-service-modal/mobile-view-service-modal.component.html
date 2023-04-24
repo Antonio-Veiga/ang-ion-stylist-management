@@ -1,0 +1,30 @@
+<div class="py-8 px-4 flex flex-col gap-4">
+  <div class="flex gap-2 items-center justify-start">
+    <ion-icon name="build-outline" class="p-2 !text-gray-500 shrink-0 rounded-full border border-gray-500"></ion-icon>
+    <ion-label
+      class="text-sm uppercase text-gray-700 p-2 border rounded-md border-gray-500 w-full whitespace-nowrap truncate">{{modalService.name}}</ion-label>
+  </div>
+  <div class="flex gap-2 items-center justify-start">
+    <ion-icon name="timer-outline" class="p-2 !text-gray-500 shrink-0 rounded-full border border-gray-500"></ion-icon>
+    <ion-label
+      class="text-sm uppercase text-gray-700 p-2 border rounded-md border-gray-500 w-full">{{modalService.duration}}
+      {{minutesText}}</ion-label>
+  </div>
+  <div class="flex gap-2 items-center justify-start">
+    <ion-icon name="cash-outline" class="p-2 !text-gray-500 shrink-0 rounded-full border border-gray-500"></ion-icon>
+    <ion-label
+      class="text-sm uppercase text-gray-700 p-2 border rounded-md border-gray-500 w-full whitespace-nowrap truncate">{{modalService.price}}
+      {{priceText}}</ion-label>
+  </div>
+  <div class="flex gap-2 items-center justify-start">
+    <ion-icon name="add-circle-outline"
+      class="p-2 !text-gray-500 shrink-0 rounded-full border border-gray-500"></ion-icon>
+    <ion-label
+      class="text-sm uppercase text-gray-700 p-2 border rounded-md border-gray-500 w-full whitespace-nowrap truncate">{{modalService.createdAt}}</ion-label>
+  </div>
+  <div class="flex gap-2 items-center justify-start">
+    <ion-icon name="create-outline" class="p-2 !text-gray-500 shrink-0 rounded-full border border-gray-500"></ion-icon>
+    <ion-label
+      class="text-sm uppercase text-gray-700 p-2 border rounded-md border-gray-500 w-full whitespace-nowrap truncate">{{modalService.updatedAt}}</ion-label>
+  </div>
+</div>
