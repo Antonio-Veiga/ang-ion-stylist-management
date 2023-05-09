@@ -59,7 +59,7 @@ export class MobileCreateEditEventModalComponent {
   }
 
   getServiceOptions() {
-    this.api.getServices(this.calendarID).subscribe((wrapper) => {
+    this.api.getServices(this.calendarID, true).subscribe((wrapper) => {
       this.serviceOptions = wrapper.data.map((service) => {
         return { id: service.id, name: service.name };
       })

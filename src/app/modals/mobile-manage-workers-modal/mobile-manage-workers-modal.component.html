@@ -1,0 +1,19 @@
+<div class="flex min-w-[584px] flex-col justify-center m-2 shrink p-2">
+  <div class="flex px-4 py-2 w-full uppercase text-gray-500 border-b border-gray-300 items-center space-x-2">
+    <ion-icon name="arrow-back-outline" class="!text-xl" (click)="modalController.dismiss()"></ion-icon>
+    <h2 class="w-full">
+      {{componentTitle}}
+    </h2>
+  </div>
+
+  <div class="flex-1 h-fit m-2 p-1.5 mb-4">
+    <ag-grid-angular class="w-full h-[418px] ag-theme-alpine" [columnDefs]="columnDefs" [defaultColDef]="defaultColDef"
+      [rowSelection]="'single'" [animateRows]="true" [pagination]="true" [localeText]="AG_GRID_PT_LANG"
+      (gridReady)="onGridReady()"></ag-grid-angular>
+  </div>
+
+  <div class="flex items-center justify-center border-t border-gray-300 p-4">
+    <ion-button>
+      Adicionar novo funcionário</ion-button>
+  </div>
+</div>

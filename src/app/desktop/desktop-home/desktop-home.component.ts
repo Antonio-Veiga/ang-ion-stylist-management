@@ -14,8 +14,31 @@ import { MatDialog } from '@angular/material/dialog';
 import { DesktopCreateEditEventModalComponent } from 'src/app/modals/desktop-create-edit-event-modal/desktop-create-edit-event-modal.component';
 import { MatSnackBar, MatSnackBarConfig, MatSnackBarRef } from '@angular/material/snack-bar';
 import { InfoSnackBarComponent } from 'src/app/partials/info-snack/info-snack.component';
-
+import { CalendarEvent } from 'src/app/models/CalendarEvent';
+import { DesktopViewEventModalComponent } from 'src/app/modals/desktop-view-event-modal/desktop-view-event-modal.component';
+import { Client } from 'src/app/models/Client';
+import { Label } from 'src/app/models/Label';
+import { Service } from 'src/app/models/Service';
+import * as jQuery from 'jquery';
+import { DesktopManageWorkersModalComponent } from 'src/app/modals/desktop-manage-workers-modal/desktop-manage-workers-modal.component';
 const moment = require('moment');
+
+export type MockupEvent = {
+  evt_id: number
+  evt_client_id: number
+  evt_title: string,
+  evt_start: Date,
+  evt_end: Date,
+  evt_client: Client,
+  evt_label_id: number,
+  evt_label: Label,
+  evt_duration: number,
+  evt_services: Service[],
+  evt_commment: string | null,
+  evt_created_at: Date | null,
+  evt_updated_at: Date | null,
+  evt_is_predefined: boolean
+}
 
 @Component({
   selector: 'app-desktop-home',
@@ -79,8 +102,8 @@ export class DesktopHomeComponent implements FCalendarUsable, AfterViewInit {
     },
     handleWindowResize: true,
     dateClick: (data) => { this._dialog.open(DesktopCreateEditEventModalComponent, { data: { date: data.dateStr, calendarID: this.menuSelectedBtn, title: `${Default_PT.CREATE_EVENT} - ${moment(data.dateStr).format('DD/MM/YYYY')}` } }) },
-    eventClick: (data) => { }
-  };
+    eventClick: (data) => { this._dialog.open(DesktopViewEventModalComponent, { data: { event: { ...data.event.extendedProps }, title: `${Default_PT.VISUALIZE_EVENT} - ${moment(data.event.extendedProps['evt_start']).format('DD/MM/YYYY')} - ${data.event.extendedProps['evt_client']}` } }) }
+  }
 
 
   @HostListener('window:resize', ['$event'])
@@ -112,27 +135,31 @@ export class DesktopHomeComponent implements FCalendarUsable, AfterViewInit {
 
   makeCalendar() {
     this.loadedEvents = []
-
     this.events.data.forEach((event) => {
-      const finalTime = new Date(event.time!)
-      finalTime.setHours(finalTime.getHours() + Math.floor(event.duration! / 60));
-      finalTime.setMinutes(finalTime.getMinutes() + (event.duration! % 60));
+
+      let evtDuration = this.calculateEventDuration(event)
 
       this.loadedEvents.push({
         id: event.id,
         title: event.name,
         start: event.time,
-        end: finalTime,
+        color: event.label!.color_hex_value,
+        end: evtDuration[1],
         extendedProps: {
-          title: event.id,
-          client_id: event.client!.id,
-          client: event.client!.name,
-          label_id: event.label!.id,
-          label: event.label!.name,
-          duration: event.duration,
-          service_id: event.service == null ? null : event.service.id,
-          service: event.service == null ? null : event.service.name,
-          predefined: false
+          evt_id: event.id,
+          evt_client_id: event.client!.id,
+          evt_title: event.name,
+          evt_start: event.time,
+          evt_end: evtDuration[1],
+          evt_client: event.client!.name,
+          evt_label_id: event.label!.id,
+          evt_label: event.label!.name,
+          evt_duration: evtDuration[0],
+          evt_services: event.services!,
+          evt_commment: event.comment,
+          evt_created_at: moment(event.created_at).format('DD-MM-YYYY HH:mm:ss'),
+          evt_updated_at: moment(event.updated_at).format('DD-MM-YYYY HH:mm:ss'),
+          evt_is_predefined: false
         }
       })
     })
@@ -140,7 +167,6 @@ export class DesktopHomeComponent implements FCalendarUsable, AfterViewInit {
     window.dispatchEvent(new Event('resize'))
     this.processing = false;
   }
-
 
   switchMenuBtn(id: 1 | 2 | 3 | 4, force?: boolean) {
     if (id != this.menuSelectedBtn || force) {
@@ -157,8 +183,41 @@ export class DesktopHomeComponent implements FCalendarUsable, AfterViewInit {
 
   }
 
+  calculateEventDuration(event: CalendarEvent): [number, Date] {
+    let finalTime = null
+    let duration: number = 0
+    event.services!.forEach((service) => {
+      duration += service.duration!
+    })
+
+    finalTime = new Date(event.time!)
+    finalTime.setHours(finalTime.getHours() + Math.floor(duration / 60));
+    finalTime.setMinutes(finalTime.getMinutes() + (duration % 60));
+
+    return [duration, moment(finalTime).format('YYYY-MM-DD HH:mm:ss')]
+  }
+
+  makeProperEvent(event: MockupEvent): CalendarEvent {
+    return {
+      id: event.evt_id,
+      name: event.evt_title,
+      time: event.evt_start.toString(),
+      label: event.evt_label,
+      client: event.evt_client,
+      comment: jQuery.isEmptyObject(event.evt_commment) ? '' : event.evt_commment!,
+      services: event.evt_services,
+      created_at: jQuery.isEmptyObject(event.evt_created_at) ? '' : event.evt_created_at?.toString(),
+      updated_at: jQuery.isEmptyObject(event.evt_updated_at) ? '' : event.evt_updated_at?.toString(),
+    }
+  }
+
   defaultMenus() {
     this.menuToggles = { ... this.defaultToggles }
+  }
+
+
+  manageWorkers() {
+    this._dialog.open(DesktopManageWorkersModalComponent)
   }
 
   openInfoSnackBar(content: string, btnContent: string, duration?: boolean, afterDismissedFn?: boolean) {

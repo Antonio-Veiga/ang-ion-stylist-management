@@ -8,6 +8,6 @@ export class Client {
     instagram?: string
     facebook?: string
     deleted?: (0 | 1)
-    createdAt?: string
-    updatedAt?: string
+    created_at?: string
+    updated_at?: string
 }

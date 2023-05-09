@@ -1,0 +1,12 @@
+<div class="w-full h-full flex items-center justify-center">
+    <ion-icon (click)="reload()" name="reload-outline" color="primary"
+        class="!text-lg cursor-pointer duration-150 hover:scale-105 p-1.5 hover:border hover:border-gray-300 bg-white rounded-full mr-1"
+        mat-raised-button #reloadIcon="matTooltip" [matTooltip]="'Recarregar fila'"
+        matTooltipPosition="below"></ion-icon>
+    <ion-icon (click)="save()" name="save-outline" color="primary"
+        class="!text-lg cursor-pointer duration-150 hover:scale-105 p-1.5 hover:border hover:border-gray-300 bg-white rounded-full mr-1"
+        mat-raised-button #saveIcon="matTooltip" [matTooltip]="'Guardar alterações'"
+        matTooltipPosition="below"></ion-icon>
+    <div [hidden]="!changed()" class="text-red-500 text-md" mat-raised-button #ChangedTt="matTooltip"
+        [matTooltip]="'Alterações pendentes'" matTooltipPosition="below">(*)</div>
+</div>

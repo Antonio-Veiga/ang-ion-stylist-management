@@ -43,6 +43,7 @@
     "jquery": "^3.6.4",
     "lodash": "^4.17.21",
     "moment": "^2.29.4",
+    "moment-range": "^4.0.2",
     "ng2-search-filter": "^0.5.1",
     "ngx-select-ex": "^8.0.1",
     "rxjs": "~7.5.0",

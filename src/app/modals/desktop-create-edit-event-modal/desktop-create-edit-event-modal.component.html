@@ -11,7 +11,7 @@
           Evento <span class="text-red-500">*</span></label>
         <input type="text" id="e-title"
           class="bg-gray-50 border w-full border-gray-300 placeholder-gray-400 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5"
-          required formControlName="name" [(ngModel)]="modelTemplate.name"
+          required formControlName="name"
           [ngClass]="{ 'is-invalid': controlGroup.get('name')!.invalid && controlGroup.get('name')!.touched, 'is-valid': controlGroup.get('name')!.valid && controlGroup.get('name')!.touched }">
         <p class="text-[0.5em] text-start ml-2 text-gray-500 uppercase mt-1"> De 2 a 128 carateres. (campo
           obrigatório)</p>
@@ -24,7 +24,7 @@
             Evento <span class="text-red-500">*</span></label>
           <input type="time" min="7:00" max="21:00" id="e-time"
             class="bg-gray-50 w-full border border-gray-300 placeholder-gray-400 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5"
-            required formControlName="time" [(ngModel)]="modelTemplate.time"
+            required formControlName="time"
             [ngClass]="{ 'is-invalid': controlGroup.get('time')!.invalid && controlGroup.get('time')!.touched, 'is-valid': controlGroup.get('time')!.valid && controlGroup.get('time')!.touched }">
           <p class="text-[0.5em] text-start ml-2 text-gray-500 uppercase mt-1"> Digite um tempo entre 7:00 e 21:00.
             (campo
@@ -35,16 +35,20 @@
             class="block mb-1.5 text-start ml-2 text-[0.65rem] md:text-xs uppercase font-medium text-gray-600">Selecione
             um Cliente<span class="text-red-500">*</span></label>
 
-          <ion-skeleton-text [animated]="true" [hidden]="cOptionsLoaded"
-            class="h-[41px] w-full rounded-md"></ion-skeleton-text>
+          <div class="flex gap-2 items-center justify-center">
+            <ion-skeleton-text [animated]="true" [hidden]="cOptionsLoaded"
+              class="h-[41px] w-full rounded-md"></ion-skeleton-text>
 
-          <select [hidden]="!cOptionsLoaded" id="e-client" required formControlName="clientID"
-            [(ngModel)]="modelTemplate.client"
-            [ngClass]="{ 'is-invalid': controlGroup.get('clientID')!.invalid && controlGroup.get('clientID')!.touched, 'is-valid': controlGroup.get('clientID')!.valid && controlGroup.get('clientID')!.touched }"
-            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 ">
-            <option value='' selected disabled>--- Selecione um cliente ---</option>
-            <option *ngFor="let option of clientOptions" value=" {{option.id}}">{{option.name}}</option>
-          </select>
+            <ng-select class="w-full" [hidden]="!cOptionsLoaded" id="e-client" required formControlName="client" [compareWith]="compareFn"
+              [searchFn]="clientSearchFn" placeholder="--- Selecione um cliente ---"
+              [ngClass]="{ 'is-invalid-select': controlGroup.get('client')!.invalid && controlGroup.get('client')!.touched, 'is-valid-select': controlGroup.get('client')!.valid && controlGroup.get('client')!.touched }">
+              <ng-option *ngFor="let option of clientOptions" [value]="option">{{option.name}}</ng-option>
+            </ng-select>
+
+            <ion-icon name="add-outline" (click)="openCEClientModal()" matTooltip="Adicionar Cliente"
+              matTooltipPosition="below"
+              class="p-1 !text-xl border cursor-pointer drop-shadow-md border-transparent rounded-md bg-blue-3880 !text-white duration-150 hover:bg-white hover:!text-blue-3880 hover:!border-blue-3880 shrink-0"></ion-icon>
+          </div>
           <p class="text-[0.5em] text-start ml-2 text-gray-500 uppercase mt-1">(campo obrigatório)</p>
         </div>
       </div>
@@ -106,7 +110,6 @@
           class="h-[41px] w-full rounded-md"></ion-skeleton-text>
 
         <select [hidden]="!wOptionsLoaded" id="e-worker" required formControlName="workerID"
-          [(ngModel)]="modelTemplate.label"
           [ngClass]="{ 'is-invalid': controlGroup.get('workerID')!.invalid && controlGroup.get('workerID')!.touched, 'is-valid': controlGroup.get('workerID')!.valid && controlGroup.get('workerID')!.touched }"
           class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 ">
           <option value='' selected disabled>--- Selecione um funcionário ---</option>
@@ -120,7 +123,7 @@
           class="block mb-1.5 text-start ml-2 text-[0.65rem] md:text-xs uppercase font-medium text-gray-600">Adicione
           uma nota sobre o evento</label>
         <textarea id="comment-zone" rows="4"
-          class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500">
+          class="block p-2.5 w-full min-h-[100px] text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500">
         </textarea>
         <p class="text-[0.5em] text-start ml-2 text-gray-500 uppercase mt-1">(campo opcional)</p>
       </div>
@@ -128,7 +131,7 @@
     <ion-button [disabled]="utilStripFn().length === 0 ||
                             controlGroup.get('name')!.invalid || 
                             controlGroup.get('time')!.invalid || 
-                            controlGroup.get('clientID')!.invalid || 
+                            controlGroup.get('client')!.invalid || 
                             controlGroup.get('workerID')!.invalid || 
                             submiting" type="submit" class="w-64 mb-4">
 

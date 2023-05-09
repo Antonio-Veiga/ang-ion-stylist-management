@@ -1,4 +1,4 @@
-import { Component, OnInit, inject, Inject, AfterViewInit } from '@angular/core';
+import { Component, Inject } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { APIService } from 'src/app/services/api/api.service';
 import { MatSnackBar, MatSnackBarConfig } from '@angular/material/snack-bar';
@@ -19,11 +19,14 @@ import { ClientMatchersDialogData } from 'src/app/interfaces/ClientMatchersDialo
 export class DesktopCreateEditClientModalComponent {
   public controlGroup!: FormGroup
   public modelTemplate!: Client
-  public action: 'add' | 'edit' | 'none'
+  public action: 'add' | 'edit' | 'fast-add'
   public submiting = false
   public matchers: Client[] = []
   public defaultClient?: Client
-  
+  public componentTitle?: string
+
+  public fastAddedClient?: Client
+
   constructor(private formBuilder: FormBuilder,
     @Inject(MAT_DIALOG_DATA) public _data: ClientDialogData,
     public _self: MatDialogRef<DesktopCreateEditClientModalComponent>,
@@ -34,7 +37,8 @@ export class DesktopCreateEditClientModalComponent {
     this.modelTemplate = { ..._data.client }
     this.action = _data.action
 
-    if (this.action == 'edit') { this.controlGroup.markAllAsTouched(); this.defaultClient = { ...this._data.client }; this.controlGroup.get('sex')?.disable() }
+    if (this.action == 'edit') { this.controlGroup.markAllAsTouched(); this.defaultClient = { ...this._data.client }; this.controlGroup.get('sex')?.disable(); this.componentTitle = Default_PT.EDIT_CLIENT } else { this.componentTitle = Default_PT.CREATE_CLIENT }
+    if (this.action == 'fast-add') { this.controlGroup.get('sex')?.setValue(_data.predefined_sex!); this.modelTemplate.sex = _data.predefined_sex; this.controlGroup.get('sex')?.disable(); }
   }
 
   constructFormGroup() {
@@ -83,15 +87,19 @@ export class DesktopCreateEditClientModalComponent {
     this._data.response = true
     if (this.action == 'add') { this.createClient() }
     if (this.action == 'edit') { this.editClient() }
+    if (this.action == 'fast-add') { this.createClient(true) }
   }
 
-  createClient() {
+  createClient(afterClose: boolean = false) {
     this.api.postClient(this.modelTemplate).subscribe((singleton) => {
+      if (this.action == 'fast-add') { this.fastAddedClient = singleton.data }
       this.controlGroup.reset();
       this.controlGroup.enable();
       this.submiting = false;
       this._self.disableClose = false
       this.openInfoSnackBar(Default_PT.CLIENT_CREATED, Default_PT.INFO_BTN)
+
+      if (afterClose) { this._self.close() }
     })
   }
 
@@ -156,7 +164,6 @@ export class DesktopCreateEditClientModalComponent {
     config.data = { content: content, btnContent: btnContent, duration: 3000 };
     this._snackBar.openFromComponent(InfoSnackBarComponent, config);
   }
-
 
   changed(): boolean {
     return !(_.isEqual(this.defaultClient, this.modelTemplate))

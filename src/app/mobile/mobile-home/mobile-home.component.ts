@@ -9,11 +9,15 @@ import { CalendarEventWrapper } from 'src/app/models/CalendarEventWrapper';
 import { FCalendarUsable } from 'src/app/interfaces/Loadable';
 import { Default_PT } from 'src/app/defaults/langs/pt-pt/Defaults';
 import { MatDialog } from '@angular/material/dialog';
-import { MatSnackBar, MatSnackBarConfig, MatSnackBarRef } from '@angular/material/snack-bar';
+import { MatSnackBar, MatSnackBarConfig } from '@angular/material/snack-bar';
 import { InfoSnackBarComponent } from 'src/app/partials/info-snack/info-snack.component';
-import { IonFab, IonModal, LoadingController, ModalController } from '@ionic/angular';
+import { ModalController, NavController } from '@ionic/angular';
 import { MobileCreateEditEventModalComponent } from 'src/app/modals/mobile-create-edit-event-modal/mobile-create-edit-event-modal.component';
 import { CdkDrag } from '@angular/cdk/drag-drop';
+import { CalendarEvent } from 'src/app/models/CalendarEvent';
+import { MockupEvent } from 'src/app/desktop/desktop-home/desktop-home.component';
+import { MobileViewEventModalComponent } from 'src/app/modals/mobile-view-event-modal/mobile-view-event-modal.component';
+import { MobileManageWorkersModalComponent } from 'src/app/modals/mobile-manage-workers-modal/mobile-manage-workers-modal.component';
 
 const moment = require('moment');
 
@@ -27,6 +31,7 @@ export class MobileHomeComponent implements FCalendarUsable, AfterViewInit {
   public pageTitle: string = Default_PT.CALENDAR_PAGE_TITLE
   public currentSnackBarRef: any;
   public events!: CalendarEventWrapper
+  public isSmallScreen = window.matchMedia("(max-width: 600px)").matches;
   public loadedEvents!: any[]
   public optionsEye = false
   public processing = false
@@ -85,7 +90,10 @@ export class MobileHomeComponent implements FCalendarUsable, AfterViewInit {
     },
     handleWindowResize: true,
     dateClick: async (data) => { await this.openCEModal(data) },
-    eventClick: (data) => { }
+    eventClick: async (data) => {
+      const evt: MockupEvent = { ...data.event.extendedProps } as MockupEvent
+      await this.openViewModal(evt)
+    }
   };
 
   constructor(public _dialog: MatDialog,
@@ -94,7 +102,6 @@ export class MobileHomeComponent implements FCalendarUsable, AfterViewInit {
     private modalController: ModalController) {
     this.setupCalendar();
   }
-
 
   ngAfterViewInit(): void {
     window.dispatchEvent(new Event('resize'))
@@ -112,37 +119,67 @@ export class MobileHomeComponent implements FCalendarUsable, AfterViewInit {
     })
   }
 
-
   makeCalendar() {
     this.loadedEvents = []
-
     this.events.data.forEach((event) => {
-      const finalTime = new Date(event.time!)
-      finalTime.setHours(finalTime.getHours() + Math.floor(event.duration! / 60));
-      finalTime.setMinutes(finalTime.getMinutes() + (event.duration! % 60));
+
+      let evtDuration = this.calculateEventDuration(event)
 
       this.loadedEvents.push({
         id: event.id,
         title: event.name,
         start: event.time,
-        end: finalTime,
+        color: event.label!.color_hex_value,
+        end: evtDuration[1],
         extendedProps: {
-          title: event.id,
-          client_id: event.client!.id,
-          client: event.client!.name,
-          label_id: event.label!.id,
-          label: event.label!.name,
-          duration: event.duration,
-          service_id: event.service == null ? null : event.service.id,
-          service: event.service == null ? null : event.service.name,
-          predefined: false
+          evt_id: event.id,
+          evt_client_id: event.client!.id,
+          evt_title: event.name,
+          evt_start: event.time,
+          evt_end: evtDuration[1],
+          evt_client: event.client!.name,
+          evt_label_id: event.label!.id,
+          evt_label: event.label!.name,
+          evt_duration: evtDuration[0],
+          evt_services: event.services!,
+          evt_commment: event.comment,
+          evt_created_at: moment(event.created_at).format('DD-MM-YYYY HH:mm:ss'),
+          evt_updated_at: moment(event.updated_at).format('DD-MM-YYYY HH:mm:ss'),
+          evt_is_predefined: false
         }
       })
     })
 
     window.dispatchEvent(new Event('resize'))
-
     this.processing = false;
+  }
+
+  calculateEventDuration(event: CalendarEvent): [number, Date] {
+    let finalTime = null
+    let duration: number = 0
+    event.services!.forEach((service) => {
+      duration += Number.parseFloat(service.duration! as unknown as string)
+    })
+
+    finalTime = new Date(event.time!)
+    finalTime.setHours(finalTime.getHours() + Math.floor(duration / 60));
+    finalTime.setMinutes(finalTime.getMinutes() + (duration % 60));
+
+    return [duration, finalTime]
+  }
+
+  makeProperEvent(event: MockupEvent): CalendarEvent {
+    return {
+      id: event.evt_id,
+      name: event.evt_title,
+      time: event.evt_start.toString(),
+      label: event.evt_label,
+      client: event.evt_client,
+      comment: jQuery.isEmptyObject(event.evt_commment) ? '' : event.evt_commment!,
+      services: event.evt_services,
+      created_at: jQuery.isEmptyObject(event.evt_created_at) ? '' : event.evt_created_at?.toString(),
+      updated_at: jQuery.isEmptyObject(event.evt_updated_at) ? '' : event.evt_updated_at?.toString(),
+    }
   }
 
 
@@ -182,6 +219,33 @@ export class MobileHomeComponent implements FCalendarUsable, AfterViewInit {
         date: eventData.dateStr,
         title: `${Default_PT.CREATE_EVENT} - ${moment(eventData.dateStr).format('DD/MM/YYYY')}`,
       }
+    });
+
+    await modal.present();
+  }
+
+  async openViewModal(evt: MockupEvent) {
+
+    const modal = await this.modalController.create({
+      component: MobileViewEventModalComponent,
+      mode: 'ios',
+      backdropDismiss: true,
+      showBackdrop: true,
+      componentProps: {
+        event: evt,
+        title: `${Default_PT.VISUALIZE_EVENT} - ${moment(evt.evt_start).format('DD/MM/YYYY')} - ${evt.evt_client}`
+      }
+    });
+
+    await modal.present();
+  }
+
+  async manageWorkers() {
+    const modal = await this.modalController.create({
+      component: MobileManageWorkersModalComponent,
+      mode: 'ios',
+      backdropDismiss: true,
+      showBackdrop: true,
     });
 
     await modal.present();

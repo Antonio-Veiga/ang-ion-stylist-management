@@ -26,12 +26,13 @@ export class MobileChangeServiceModalComponent implements AfterViewInit {
 
     this.validator = this.formBuilder.group({
       duration: ['', [Validators.required, Validators.pattern(/^(?:0|[1-9]\d{0,2}|1[0-3]\d{2}|14[0-3]\d|1440)$/)]],
-      price: ['', [Validators.required, Validators.pattern(/^(?:[0-9]|[1-9][0-9]|[1-9][0-9]{2})$/)]],
+      price: ['', [Validators.required, Validators.pattern(/^(0|[1-9]\d{0,2})((\.|,)\d{1,2})?$/)]],
     });
 
     this.validator.setValue({ duration: this.dataTemplate.duration, price: this.dataTemplate.price })
     this.validator.markAllAsTouched()
   }
+
 
   ngAfterViewInit(): void {
     this.validator.get('duration')?.valueChanges.subscribe((value) => {
@@ -40,7 +41,11 @@ export class MobileChangeServiceModalComponent implements AfterViewInit {
         this.validator.patchValue({ duration: value })
         this.dataTemplate.duration = value
 
-        this.agGridCom.notifyCellValueChanged({ ...this.dataTemplate })
+        if (this.validator.valid) {
+          const dataToSend = { ...this.dataTemplate };
+          delete dataToSend.name;
+          this.agGridCom.notifyCellValueChanged(dataToSend);
+        }
       }
     })
 
@@ -50,7 +55,11 @@ export class MobileChangeServiceModalComponent implements AfterViewInit {
         this.validator.patchValue({ price: value })
         this.dataTemplate.price = value
 
-        this.agGridCom.notifyCellValueChanged({ ...this.dataTemplate })
+        if (this.validator.valid) {
+          const dataToSend = { ...this.dataTemplate };
+          delete dataToSend.name;
+          this.agGridCom.notifyCellValueChanged(dataToSend);
+        }
       }
     })
   }

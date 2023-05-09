@@ -6,11 +6,11 @@ export class CalendarEvent {
     id?: number
     name?: string
     time?: string
-    duration?: number
     client?: Client
     label?: Label
-    service?: Service
-    calendarId?: number
-    createdAt?: string
-    updatedAt?: string
+    comment?: string
+    services?: Service[]
+    calendar_id?: number
+    created_at?: string
+    updated_at?: string
 }

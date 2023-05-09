@@ -33,9 +33,11 @@
 @import "@ag-grid-community/styles/ag-grid.css";
 @import "@ag-grid-community/styles/ag-theme-alpine.css";
 
+@import "@ng-select/ng-select/themes/default.theme.css";
+
 
 * {
-    font-family: Montserrat, Montserrat-Fixed, Avenir, "Avenir Next LT Pro", Corbel, "URW Gothic", source-sans-pro, sans-serif;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
 }
 
 
@@ -44,13 +46,13 @@
 }
 
 .fc-daygrid-day-top{
-    @media only screen and (max-width: 767px) {
+    @media only screen and (max-width: 600px) {
         font-size: 0.7rem!important;
     }
 }
 
 .fc-timegrid-slot-label-cushion{
-    @media only screen and (max-width: 767px) {
+    @media only screen and (max-width: 600px) {
         font-size: 0.7rem!important;
     }
 }
@@ -59,7 +61,7 @@
     text-transform: uppercase;
     font-size: 0.8em;
     font-weight: 500;
-    @media only screen and (max-width: 767px) {
+    @media only screen and (max-width: 600px) {
         font-size: 0.6rem!important;
     }
 }
@@ -78,7 +80,7 @@
     cursor: pointer !important;
     transition-duration: 200ms !important;
 
-    @media only screen and (max-width: 767px) {
+    @media only screen and (max-width: 600px) {
         padding: 0.1rem!important;
         border-radius: 0.3rem !important;
         display: flex!important;
@@ -107,7 +109,7 @@
     cursor: pointer !important;
     transition-duration: 200ms !important;
     
-    @media only screen and (max-width: 767px) {
+    @media only screen and (max-width: 600px) {
         padding: 0.1rem!important;
         border-radius: 0.3rem !important;
         display: flex!important;
@@ -128,7 +130,7 @@
     margin-right: 0.8rem !important;
     margin-bottom: 0.8rem !important;
 
-    @media only screen and (max-width: 767px) {
+    @media only screen and (max-width: 600px) {
         margin-left: 0.5rem !important;
         margin-right: 0.5rem !important;
         margin-bottom: 0.5rem !important;
@@ -152,7 +154,7 @@
     cursor: pointer !important;
     transition-duration: 200ms !important;
 
-    @media only screen and (max-width: 767px) {
+    @media only screen and (max-width: 600px) {
         margin-top: 2px!important;
         margin-left: 0px!important;
 
@@ -179,7 +181,7 @@
     text-transform: uppercase !important;
     font-weight: 500 !important;
 
-    @media only screen and (max-width: 767px) {
+    @media only screen and (max-width: 600px) {
         font-size: 1rem!important;
         margin-left: 0.8rem!important;
         margin-right: 0.8rem!important;
@@ -206,7 +208,7 @@
     cursor: pointer !important;
     transition-duration: 200ms !important;
 
-    @media only screen and (max-width: 767px) {
+    @media only screen and (max-width: 600px) {
         border-radius: 0.3rem !important;
         display: flex!important;
         justify-content: center!important;
@@ -236,7 +238,7 @@
     cursor: pointer !important;
     transition-duration: 200ms !important;
 
-    @media only screen and (max-width: 767px) {
+    @media only screen and (max-width: 600px) {
         border-radius: 0.3rem !important;
         display: flex!important;
         justify-content: center!important;
@@ -253,7 +255,7 @@
 }
 
 .fc-button-group {
-    @media only screen and (max-width: 767px) {
+    @media only screen and (max-width: 600px) {
         display: flex!important;
         flex-direction: column!important;
         gap: 2px;
@@ -278,7 +280,7 @@
     cursor: pointer !important;
     transition-duration: 200ms !important;
 
-    @media only screen and (max-width: 767px) {
+    @media only screen and (max-width: 600px) {
         border-radius: 0.3rem !important;
         display: flex!important;
         justify-content: center!important;
@@ -467,6 +469,13 @@ input[type="number"]::-webkit-outer-spin-button {
     @apply w-10 h-10 flex items-center justify-center p-1.5 bg-blue-3880 rounded-md hover:scale-105
 }
 
+.fc-daygrid-day-frame{
+    @media only screen and (max-width: 600px) {
+        font-size: 0.75rem!important; 
+        line-height: 1rem!important;
+    }
+}
+
 
 mat-dialog-container[id*='mat-dialog-']{
     padding: 0px !important;
@@ -480,14 +489,14 @@ mat-dialog-container[id*='mat-dialog-']{
 .ag-root-wrapper{
     border-radius: 0.375rem!important;
 
-    @media only screen and (max-width: 767px) {
+    @media only screen and (max-width: 600px) {
         border-radius: 0px !important;
     }
 }
 
 
 .ag-paging-row-summary-panel, .ag-paging-page-summary-panel{
-    @media only screen and (max-width: 767px) {
+    @media only screen and (max-width: 600px) {
         font-size: small!important;
     }
 }
@@ -517,3 +526,84 @@ mat-dialog-container[id*='mat-dialog-']{
   body > div.cdk-overlay-container > div.cdk-global-overlay-wrapper{
     overflow: auto;
   }
+
+
+
+
+
+
+/*
+*
+*
+* THIS SECTION IS FOR STYLING INPUTS
+*
+*/
+
+input[type=color]::-webkit-color-swatch-wrapper {
+    border: none;
+    border-radius: 50%;
+    padding: 0;
+}
+
+
+input[type=color]::-webkit-color-swatch {
+    border: none;
+    border-radius: 50%;
+    padding: 0;
+}
+
+
+/*
+*
+*
+* THIS SECTION IS FOR STYLING NG SELECTS
+*
+*/
+
+ng-select div.ng-select-container{
+    background-color: rgb(249 250 251)!important;
+    border-width: 1px!important;
+    width: 100%!important;
+    border-color: rgb(209 213 219)!important;
+    color: rgb(156 163 175)!important;
+    border-radius: 0.5rem/* 8px */!important;
+    border-color: rgb(59 130 246)!important;
+}
+
+div.ng-input{
+    top: 10px!important;
+    bottom: 10px!important;
+}
+
+div.ng-input input, div.ng-placeholder{
+    font-size: 0.875rem!important;
+    line-height: 1.25rem!important;
+}
+
+.ng-select.ng-select-single .ng-select-container{
+    height: 43px!important;
+}
+
+span.ng-value-label{
+    color: rgb(17 24 39)!important;
+    font-size: 0.875rem!important;
+    line-height: 1.25rem!important;
+}
+
+ng-select.is-valid-select div.ng-select-container{
+    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1)!important;
+    transition-duration: 300ms!important;
+    border-color: rgb(34 197 94)!important;
+    background-color: rgb(220 252 231)!important;
+    animation: valid 0.5s!important;
+    animation-iteration-count: 1!important;
+}
+
+ng-select.is-invalid-select div.ng-select-container{
+    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1)!important;
+    transition-duration: 300ms!important;
+    background-color: rgb(254 226 226 / var(--tw-bg-opacity))!important;
+    border-color: rgb(239 68 68 / var(--tw-border-opacity))!important;
+    animation: shake 1s!important;
+    animation-iteration-count: 1!important;
+}

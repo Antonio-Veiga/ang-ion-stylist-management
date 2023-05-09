@@ -1,0 +1,5 @@
+<div [formGroup]="validator" class="w-full h-full flex items-center justify-center">
+    <input type="text" formControlName="name"
+        [ngClass]="{ 'is-invalid': validator.get('name')!.invalid && validator.get('name')!.touched, 'is-valid': validator.get('name')!.valid && validator.get('name')!.touched }"
+        class="bg-gray-50 w-full border border-gray-300 text-gray-900 text-xs rounded-lg focus:ring-blue-500 focus:border-blue-500 block px-1 py-1.5 m-1">
+</div>

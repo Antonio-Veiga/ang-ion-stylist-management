@@ -34,6 +34,12 @@ import { MobileViewClientModalComponent } from './modals/mobile-view-client-moda
 import { MobileServicesComponent, ServiceNameHolder } from './mobile/mobile-services/mobile-services.component';
 import { MobileViewServiceModalComponent } from './modals/mobile-view-service-modal/mobile-view-service-modal.component';
 import { MobileChangeServiceModalComponent } from './modals/mobile-change-service-modal/mobile-change-service-modal.component';
+import { MobileViewEventModalComponent } from './modals/mobile-view-event-modal/mobile-view-event-modal.component';
+import { DesktopViewEventModalComponent } from './modals/desktop-view-event-modal/desktop-view-event-modal.component';
+import { DesktopManageWorkersModalComponent, WorkerActionsHolder, WorkerNameInputSelector, WorkersCalendarSelector, WorkersColorSelector } from './modals/desktop-manage-workers-modal/desktop-manage-workers-modal.component';
+import { MobileManageWorkersModalComponent } from './modals/mobile-manage-workers-modal/mobile-manage-workers-modal.component';
+import { PendingChangesComponent } from './modals/desktop-manage-workers-modal/sub-components/pending-changes/pending-changes.component';
+import { NgSelectModule } from '@ng-select/ng-select';
 
 @NgModule({
   declarations: [
@@ -41,7 +47,9 @@ import { MobileChangeServiceModalComponent } from './modals/mobile-change-servic
     DesktopNavComponent, DesktopHomeComponent, DesktopClientsComponent, MobileViewClientModalComponent, MobileServicesComponent, MobileViewServiceModalComponent,
     MobileNavComponent, MobileHomeComponent, MobileClientsComponent, MobileCreateEditEventModalComponent, DesktopCreateEditEventModalComponent,
     DesktopCreateEditClientModalComponent, InfoSnackBarComponent, DeleteDialog, DesktopServicesComponent, MobileCreateEditClientModalComponent, ServiceNameHolder,
-    SegementHolder, PriceInputHolder, DurationInputHolder, ServiceActionsHolder, ClientActionsHolder, NoActionsHolder, MatchersDialog, MobileChangeServiceModalComponent],
+    SegementHolder, PriceInputHolder, DurationInputHolder, ServiceActionsHolder, ClientActionsHolder, NoActionsHolder, MatchersDialog, MobileChangeServiceModalComponent,
+    MobileViewEventModalComponent, DesktopViewEventModalComponent, DesktopManageWorkersModalComponent, MobileManageWorkersModalComponent, WorkerActionsHolder, WorkerNameInputSelector,
+    WorkersColorSelector, WorkersCalendarSelector, PendingChangesComponent],
   imports: [
     BrowserModule,
     AppRoutingModule,
@@ -54,6 +62,7 @@ import { MobileChangeServiceModalComponent } from './modals/mobile-change-servic
     ReactiveFormsModule,
     FullCalendarModule,
     AgGridModule,
+    NgSelectModule,
     HttpClientModule,
     IonicModule.forRoot()
   ],

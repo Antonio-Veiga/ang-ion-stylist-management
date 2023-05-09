@@ -69,6 +69,7 @@ export class MobileServicesComponent implements OnInit, AgGridUsable {
       this.selectedService = {
         rowIdx: service.rowIndex,
         cellId: service.data.id,
+        name: service.data.name,
         duration: service.data.duration,
         price: service.data.price,
         active: service.data.active
@@ -310,7 +311,6 @@ export class ServiceNameHolder implements ICellRendererAngularComp {
       active: params.data.active,
     }
 
-
     this.agGridCom.CellSubject.subscribe((CellData) => {
       if (this.defaultCellData.cellId == CellData.cellId) {
         this.updatedCellData = { ...CellData }
@@ -322,6 +322,8 @@ export class ServiceNameHolder implements ICellRendererAngularComp {
   }
 
   changed(): boolean {
+    console.log(this.defaultCellData)
+    console.log(this.updatedCellData)
     return !(_.isEqual(this.defaultCellData, this.updatedCellData))
   }
 

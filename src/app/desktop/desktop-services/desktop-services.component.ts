@@ -237,7 +237,7 @@ export class PriceInputHolder implements ICellRendererAngularComp {
 
   agInit(params: ICellRendererParams<any, any>): void {
     this.validator = this.formBuilder.group({
-      price: ['', [Validators.required, Validators.pattern(/^(?:[0-9]|[1-9][0-9]|[1-9][0-9]{2})$/)]],
+      price: ['', [Validators.required, Validators.pattern(/^(0|[1-9]\d{0,2})((\.|,)\d{1,2})?$/)]],
     })
 
     this.validator.setValue({ price: params.value })
@@ -396,7 +396,7 @@ export class ServiceActionsHolder implements ICellRendererAngularComp {
   }
 
   validateCellData(data: ServiceCellData): boolean {
-    if (/^(?:[0-9]|[1-9][0-9]|[1-9][0-9]{2})$/.test(data.price.toString())
+    if (/^(0|[1-9]\d{0,2})((\.|,)\d{1,2})?$/.test(data.price.toString())
       && /^(?:0|[1-9]\d{0,2}|1[0-3]\d{2}|14[0-3]\d|1440)$/.test(data.duration.toString())) {
       return true
     }

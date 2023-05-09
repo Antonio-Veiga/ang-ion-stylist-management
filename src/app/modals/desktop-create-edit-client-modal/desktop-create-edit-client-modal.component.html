@@ -1,5 +1,8 @@
 <div class="flex max-w-[42rem] overflow-auto items-center justify-center m-2">
   <div class="w-full h-fit">
+    <h2 class="mx-2 px-4 py-2 uppercase text-gray-500 border-b border-gray-300">
+      {{componentTitle}}
+    </h2>
     <form [formGroup]="controlGroup" (ngSubmit)="submitForm()" class="w-full flex flex-col justify-center items-center">
       <div class="bg-white rounded-lg mb-4 divide-y gap-2 w-full">
         <div class="mb-2 mt-4 mx-4">
