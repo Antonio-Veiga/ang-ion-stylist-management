@@ -3,6 +3,7 @@ import { Platform, ViewWillEnter } from '@ionic/angular';
 import { DesktopClientsComponent } from 'src/app/desktop/desktop-clients/desktop-clients.component';
 import { AgGridUsable } from 'src/app/interfaces/Loadable';
 import { MobileClientsComponent } from 'src/app/mobile/mobile-clients/mobile-clients.component';
+import { PlaceholderComponent } from 'src/app/placeholder/placeholder.component';
 
 @Component({
   selector: 'app-client',
@@ -11,15 +12,16 @@ import { MobileClientsComponent } from 'src/app/mobile/mobile-clients/mobile-cli
 })
 export class ClientComponent implements ViewWillEnter, OnInit {
   platform!: Platform
-  component!: AgGridUsable
+  // component!: AgGridUsable
+  component!: any
   childCached = false
 
   @ViewChild('ChildComponentRef', { read: ViewContainerRef, static: true }) public childRef!: ViewContainerRef
 
-  constructor(platform: Platform) { this.platform = platform; console.log("Constructed CLIENT (1).") }
+  constructor(platform: Platform) { this.platform = platform }
 
   ionViewWillEnter(): void {
-    if (this.childCached) { this.component.loadContent(); console.log("Cached CLIENT (2).") }
+    if (this.childCached) { this.component.loadContent() }
   }
 
   ngOnInit(): void {
@@ -31,8 +33,10 @@ export class ClientComponent implements ViewWillEnter, OnInit {
       this.component = this.childRef.createComponent(MobileClientsComponent).instance
       this.childCached = true
     } else {
-      this.component = this.childRef.createComponent(DesktopClientsComponent).instance
-      this.childCached = true
+      this.component = this.childRef.createComponent(PlaceholderComponent).instance
+
+      // this.component = this.childRef.createComponent(DesktopClientsComponent).instance
+      // this.childCached = true
     }
   }
 }

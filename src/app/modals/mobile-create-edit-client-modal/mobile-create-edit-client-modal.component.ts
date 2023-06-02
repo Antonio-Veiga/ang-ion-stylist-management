@@ -18,12 +18,14 @@ export class MobileCreateEditClientModalComponent {
 
   public controlGroup!: FormGroup
   public modelTemplate!: Client
-  public action: 'add' | 'edit' | 'none'
+  public action: 'add' | 'edit' | 'fast-add'
   public submiting = false
   public matchers: Client[] = []
   public defaultClient?: Client
   public componentTitle?: string
   public unchanged = true
+
+  public fastAddedClient?: Client
 
   constructor(private formBuilder: FormBuilder,
     public params: NavParams,
@@ -37,17 +39,18 @@ export class MobileCreateEditClientModalComponent {
 
     this.componentTitle = params.data['title']
     if (this.action == 'edit') { this.controlGroup.markAllAsTouched(); this.defaultClient = { ...params.data['client'] }; this.controlGroup.get('sex')?.disable(); }
+    if (this.action == 'fast-add') { this.controlGroup.get('sex')?.setValue(params.data['predefined_sex']); this.modelTemplate.sex = params.data['predefined_sex']; this.controlGroup.get('sex')?.disable(); }
   }
 
   constructFormGroup() {
     this.controlGroup = this.formBuilder.group({
-      name: ['', [Validators.required, Validators.minLength(2), Validators.maxLength(128), Validators.pattern(/^(?!\s)(?!.*\s{2,})(.*\S)?(?<!\s)$/)]],
+      name: ['', [Validators.required, Validators.minLength(2), Validators.maxLength(128), Validators.pattern(/^\S(.*\S)?$/)]],
       sex: ['', Validators.required],
-      address: ['', [Validators.minLength(4), Validators.maxLength(128), Validators.pattern(/^(?!\s)(?!.*\s{2,})(.*\S)?(?<!\s)$/)]],
-      phonenumber: ['', Validators.pattern(/^(9[1236]\d{7}|2(?:[12]\\d|3[1-8]|41|49|5[1-689]|6[1256]|7[1-35-8]|9[12])\d{6})|999999999$/)],
+      address: ['', [Validators.minLength(4), Validators.maxLength(128), Validators.pattern(/^\S(.*\S)?$/)]],
+      phonenumber: ['', [Validators.required, Validators.pattern(/^(9[1236]\d{7}|2(?:[12]\\d|3[1-8]|41|49|5[1-689]|6[1256]|7[1-35-8]|9[12])\d{6})|999999999$/)]],
       birthdate: ['', [Validators.minLength(10), Validators.maxLength(10), Validators.pattern(/^(19[0-9]{2}|20[0-9]{2}|21[0-1][0-9])-(0[1-9]|1[0-2])-(0[1-9]|[12][0-9]|3[01])$/)]],
-      instagram: ['', [Validators.minLength(4), Validators.maxLength(128), Validators.pattern(/^(?!\s)(?!.*\s{2,})(.*\S)?(?<!\s)$/)]],
-      facebook: ['', [Validators.minLength(4), Validators.maxLength(128), Validators.pattern(/^(?!\s)(?!.*\s{2,})(.*\S)?(?<!\s)$/)]]
+      instagram: ['', [Validators.minLength(4), Validators.maxLength(128), Validators.pattern(/^\S(.*\S)?$/)]],
+      facebook: ['', [Validators.minLength(4), Validators.maxLength(128), Validators.pattern(/^\S(.*\S)?$/)]]
     });
   }
 
@@ -79,15 +82,19 @@ export class MobileCreateEditClientModalComponent {
   handleAction() {
     if (this.action == 'add') { this.createClient() }
     if (this.action == 'edit') { this.editClient() }
+    if (this.action == 'fast-add') { this.createClient(true) }
   }
 
-  createClient() {
-    this.api.postClient(this.modelTemplate).subscribe(() => {
+  createClient(afterClose: boolean = false) {
+    this.api.postClient(this.modelTemplate).subscribe((singleton) => {
+      if (this.action == 'fast-add') { this.fastAddedClient = singleton.data }
       this.controlGroup.reset();
       this.controlGroup.enable();
       this.submiting = false;
       if (this.unchanged) { this.unchanged = false }
       this.openInfoSnackBar(Default_PT.CLIENT_CREATED, Default_PT.INFO_BTN)
+
+      if (afterClose) { this.modalController.dismiss(this.fastAddedClient) }
     })
   }
 

@@ -8,8 +8,8 @@
       <ion-icon [name]="serviceIcon" [ngClass]="
       {'bg-blue-500': menuSelectedBtn == 1,
       'bg-pink-500': menuSelectedBtn == 2,
-      'bg-green-500': menuSelectedBtn == 3,
-      'bg-yellow-500': menuSelectedBtn == 4
+      'bg-yellow-500': menuSelectedBtn == 3,
+      'bg-green-500': menuSelectedBtn == 4
       }" class="text-xl p-1 text-white border-gray-300 rounded-lg border mr-1 shrink-0">
       </ion-icon>
       <ion-icon [name]="currEyeState.icon" (click)="triggerOptionsBtn()" [matTooltip]="currEyeState.tooltip"
@@ -63,10 +63,10 @@
           <ion-icon name="woman-outline"></ion-icon>
         </ion-fab-button>
         <ion-fab-button (click)="switchMenuBtn(3)">
-          <ion-icon name="color-fill-outline"></ion-icon>
+          <ion-icon name="flash-outline"></ion-icon>
         </ion-fab-button>
         <ion-fab-button (click)="switchMenuBtn(4)">
-          <ion-icon name="flash-outline"></ion-icon>
+          <ion-icon name="color-fill-outline"></ion-icon>
         </ion-fab-button>
       </ion-fab-list>
       <ion-fab-list [side]="yAxisOpener">

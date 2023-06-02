@@ -7,9 +7,8 @@ import { Client } from 'src/app/models/Client';
 import { InfoSnackBarComponent } from 'src/app/partials/info-snack/info-snack.component';
 import { ClientDialogData } from 'src/app/interfaces/ClientDialogData';
 import { Default_PT } from 'src/app/defaults/langs/pt-pt/Defaults';
-import * as jQuery from 'jquery';
-import * as _ from 'lodash';
 import { ClientMatchersDialogData } from 'src/app/interfaces/ClientMatchersDialogData';
+import { isEqual } from 'lodash';
 
 @Component({
   selector: 'app-desktop-create-edit-client-modal',
@@ -43,13 +42,13 @@ export class DesktopCreateEditClientModalComponent {
 
   constructFormGroup() {
     this.controlGroup = this.formBuilder.group({
-      name: ['', [Validators.required, Validators.minLength(2), Validators.maxLength(128), Validators.pattern(/^(?!\s)(?!.*\s{2,})(.*\S)?(?<!\s)$/)]],
+      name: ['', [Validators.required, Validators.minLength(2), Validators.maxLength(128), Validators.pattern(/^\S(.*\S)?$/)]],
       sex: ['', Validators.required],
-      address: ['', [Validators.minLength(4), Validators.maxLength(128), Validators.pattern(/^(?!\s)(?!.*\s{2,})(.*\S)?(?<!\s)$/)]],
-      phonenumber: ['', Validators.pattern(/^(9[1236]\d{7}|2(?:[12]\\d|3[1-8]|41|49|5[1-689]|6[1256]|7[1-35-8]|9[12])\d{6})|999999999$/)],
-      birthdate: ['', [Validators.minLength(10), Validators.maxLength(10), Validators.pattern(/^(19[0-9]{2}|20[0-9]{2}|21[0-1][0-9])-(0[1-9]|1[0-2])-(0[1-9]|[12][0-9]|3[01])$/)]],
-      instagram: ['', [Validators.minLength(4), Validators.maxLength(128), Validators.pattern(/^(?!\s)(?!.*\s{2,})(.*\S)?(?<!\s)$/)]],
-      facebook: ['', [Validators.minLength(4), Validators.maxLength(128), Validators.pattern(/^(?!\s)(?!.*\s{2,})(.*\S)?(?<!\s)$/)]]
+      address: ['', [Validators.minLength(4), Validators.maxLength(128), Validators.pattern(/^\S(.*\S)?$/)]],
+      phonenumber: ['', Validators.pattern(/^(9[1236]\d{7}|2(?:[1-9]\d|3[1-8]|4[19]|5[1-689]|6[1256]|7[1-35-8]|9[12])\d{6})$|999999999/)],
+      birthdate: ['', [Validators.minLength(10), Validators.maxLength(10), Validators.pattern(/^(19|20|21[0-1])\d{2}-(0[1-9]|1[0-2])-(0[1-9]|[12][0-9]|3[01])$/)]],
+      instagram: ['', [Validators.minLength(4), Validators.maxLength(128), Validators.pattern(/^\S(.*\S)?$/)]],
+      facebook: ['', [Validators.minLength(4), Validators.maxLength(128), Validators.pattern(/^\S(.*\S)?$/)]]
     });
   }
 
@@ -166,7 +165,7 @@ export class DesktopCreateEditClientModalComponent {
   }
 
   changed(): boolean {
-    return !(_.isEqual(this.defaultClient, this.modelTemplate))
+    return !(isEqual(this.defaultClient, this.modelTemplate))
   }
 }
 

@@ -21,9 +21,22 @@
 </ion-header>
 
 
-<div class="absolute inset-0 top-[52px] p-0 pt-2 md:p-4 bg-gray-50 overflow-auto">
-    <full-calendar #fCalendar class="h-full w-full min-h-[560px]" [options]="calendarOptions"
-        [events]="loadedEvents"></full-calendar>
+<div class="absolute inset-0 top-[52px] bg-gray-50 overflow-auto flex flex-col">
+    <div class="p-0 pt-2 md:p-4 flex-1 w-full min-h-[620px]">
+        <full-calendar #fCalendar class="h-full w-full" [options]="calendarOptions"
+            [events]="loadedEvents"></full-calendar>
+    </div>
+
+
+    <!--
+    <div id="open-forms-holder" [hidden]="emptyForms.length === 0"
+        class="h-fit p-2 bg-white border-t border-gray-700 flex gap-2 overflow-x-auto">
+        <span *ngFor="let form of emptyForms" (click)="fillForm(form.id)"
+            class="bg-blue-100 whitespace-nowrap text-blue-800 text-xs font-medium mr-2 px-2.5 py-0.5 rounded border border-blue-400">
+            FORMULÁRIO POR PREENCHER - ({{form.title}}) {{form.missed_by}}</span>
+    </div>
+    -->
+
     <ion-fab cdkDrag [hidden]="currEyeState.status" vertical="bottom" horizontal="end" slot="fixed"
         (cdkDragMoved)="fabMoving($event)">
         <ion-fab-button>
@@ -44,13 +57,10 @@
             </ion-fab-button>
         </ion-fab-list>
         <ion-fab-list [side]="yAxisOpener">
-            <ion-fab-button>
-                <ion-icon (click)="manageWorkers()" name="cut-outline"></ion-icon>
+            <ion-fab-button (click)="manageWorkers()">
+                <ion-icon name="cut-outline"></ion-icon>
             </ion-fab-button>
-            <ion-fab-button>
-                <ion-icon name="person-add-outline"></ion-icon>
-            </ion-fab-button>
-            <ion-fab-button>
+            <ion-fab-button (click)="openCEPredefinedEventModal() ">
                 <ion-icon name="add-outline"></ion-icon>
             </ion-fab-button>
         </ion-fab-list>

@@ -41,10 +41,10 @@ export class DesktopCreateEditEventModalComponent {
     this.calendarID = _data.calendarID
 
     this.controlGroup = this.formBuilder.group({
-      name: ['', [Validators.required, Validators.minLength(2), Validators.maxLength(128), Validators.pattern(/^(?!\s)(?!.*\s{2,})(.*\S)?(?<!\s)$/)]],
+      name: ['', [Validators.required, Validators.minLength(2), Validators.maxLength(128), Validators.pattern(/^\S(.*\S)?$/)]],
       time: ['', [Validators.required, Validators.pattern(/^(0[7-9]|1\d|2[0-1]):[0-5]\d$/)]],
       client: [undefined, Validators.required],
-      workerID: ['', Validators.required],
+      workerID: [undefined, Validators.required],
     });
 
     this.getClientOptions()
@@ -115,7 +115,11 @@ export class DesktopCreateEditEventModalComponent {
   }
 
   clientSearchFn(term: string, item: any) {
-    return item.name.includes(term) || item.phonenumber.includes(term)
+    const searchTerm = term.toLowerCase();
+    const itemName = item.name.toLowerCase();
+    const itemPhoneNumber = item.phonenumber.toLowerCase();
+
+    return itemName.includes(searchTerm) || itemPhoneNumber.includes(searchTerm);
   }
 
   compareFn(a: any, b: any) {

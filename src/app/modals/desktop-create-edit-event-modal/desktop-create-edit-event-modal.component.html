@@ -39,8 +39,8 @@
             <ion-skeleton-text [animated]="true" [hidden]="cOptionsLoaded"
               class="h-[41px] w-full rounded-md"></ion-skeleton-text>
 
-            <ng-select class="w-full" [hidden]="!cOptionsLoaded" id="e-client" required formControlName="client" [compareWith]="compareFn"
-              [searchFn]="clientSearchFn" placeholder="--- Selecione um cliente ---"
+            <ng-select class="w-full" [hidden]="!cOptionsLoaded" id="e-client" required formControlName="client"
+              [compareWith]="compareFn" [searchFn]="clientSearchFn" placeholder="--- Selecione um cliente ---"
               [ngClass]="{ 'is-invalid-select': controlGroup.get('client')!.invalid && controlGroup.get('client')!.touched, 'is-valid-select': controlGroup.get('client')!.valid && controlGroup.get('client')!.touched }">
               <ng-option *ngFor="let option of clientOptions" [value]="option">{{option.name}}</ng-option>
             </ng-select>
@@ -109,12 +109,11 @@
         <ion-skeleton-text [animated]="true" [hidden]="wOptionsLoaded"
           class="h-[41px] w-full rounded-md"></ion-skeleton-text>
 
-        <select [hidden]="!wOptionsLoaded" id="e-worker" required formControlName="workerID"
-          [ngClass]="{ 'is-invalid': controlGroup.get('workerID')!.invalid && controlGroup.get('workerID')!.touched, 'is-valid': controlGroup.get('workerID')!.valid && controlGroup.get('workerID')!.touched }"
-          class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 ">
-          <option value='' selected disabled>--- Selecione um funcionário ---</option>
-          <option *ngFor="let option of workersOptions" value=" {{option.id}}">{{option.name}}</option>
-        </select>
+        <ng-select class="w-full" id="pe-worker" [hidden]="!wOptionsLoaded" id="pe-worker" required
+          formControlName="workerID" [compareWith]="compareFn" placeholder="--- Selecione um funcionário ---"
+          [ngClass]="{ 'is-invalid-select': controlGroup.get('workerID')!.invalid && controlGroup.get('workerID')!.touched, 'is-valid-select': controlGroup.get('workerID')!.valid && controlGroup.get('workerID')!.touched }">
+          <ng-option *ngFor="let option of workersOptions" [value]="option.id">{{option.name}}</ng-option>
+        </ng-select>
         <p class="text-[0.5em] text-start ml-2 text-gray-500 uppercase mt-1">(campo obrigatório)</p>
       </div>
 

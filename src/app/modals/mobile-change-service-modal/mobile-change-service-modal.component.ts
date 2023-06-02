@@ -55,6 +55,7 @@ export class MobileChangeServiceModalComponent implements AfterViewInit {
         this.validator.patchValue({ price: value })
         this.dataTemplate.price = value
 
+
         if (this.validator.valid) {
           const dataToSend = { ...this.dataTemplate };
           delete dataToSend.name;

@@ -63,6 +63,11 @@ export class WorkerPendingChangesComService {
     }
   }
 
+  removeAll() {
+    this.PendingChanges = []
+    this.notifyValueChanged(this.PendingChanges)
+  }
+
   public findValue(worker_id: number) {
     return this.PendingChanges.find((data) => { return data.worker_id == worker_id })
   }

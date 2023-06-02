@@ -3,6 +3,7 @@ import { Platform } from '@ionic/angular';
 import { DesktopServicesComponent } from 'src/app/desktop/desktop-services/desktop-services.component';
 import { AgGridUsable } from 'src/app/interfaces/Loadable';
 import { MobileServicesComponent } from 'src/app/mobile/mobile-services/mobile-services.component';
+import { PlaceholderComponent } from 'src/app/placeholder/placeholder.component';
 
 @Component({
   selector: 'app-service',
@@ -12,13 +13,14 @@ import { MobileServicesComponent } from 'src/app/mobile/mobile-services/mobile-s
 export class ServiceComponent implements OnInit {
   platform!: Platform
   childCached = false
-  component!: AgGridUsable
+  // component!: AgGridUsable
+  component!: any
 
   @ViewChild('ChildComponentRef', { read: ViewContainerRef, static: true }) public childRef!: ViewContainerRef
 
-  constructor(platform: Platform) { this.platform = platform; console.log("Constructed SERVICE (1).") }
+  constructor(platform: Platform) { this.platform = platform }
 
-  ionViewWillEnter(): void { if (this.childCached) { this.component.loadContent(); console.log("Cached SERVICE (2).") } }
+  ionViewWillEnter(): void { if (this.childCached) { this.component.loadContent() } }
 
   ngOnInit(): void {
     this.detectPlatform()
@@ -29,8 +31,9 @@ export class ServiceComponent implements OnInit {
       this.component = this.childRef.createComponent(MobileServicesComponent).instance
       this.childCached = true
     } else {
-      this.component = this.childRef.createComponent(DesktopServicesComponent).instance
-      this.childCached = true
+      this.component = this.childRef.createComponent(PlaceholderComponent).instance
+      // this.component = this.childRef.createComponent(DesktopServicesComponent).instance
+      // this.childCached = true
     }
   }
 }

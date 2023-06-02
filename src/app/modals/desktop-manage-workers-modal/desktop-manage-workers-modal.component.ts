@@ -1,7 +1,7 @@
 import { Component, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatSnackBar, MatSnackBarConfig } from '@angular/material/snack-bar';
-import { IonSelect } from '@ionic/angular';
+import { IonSelect, ModalController } from '@ionic/angular';
 import { AgGridAngular, ICellRendererAngularComp } from 'ag-grid-angular';
 import { ColDef, GridApi, ICellRendererParams } from 'ag-grid-community';
 import { WorkerCellData } from 'src/app/data/AgGridWorkerCellData';
@@ -20,6 +20,9 @@ import { LabelGluePayload } from 'src/app/models/payloads/HandleMassPostLabelGlu
 import { ProcessingWorkerComService } from 'src/app/services/worker-coms/processing-worker-com.service';
 import { WorkerMultipleChangesComService } from 'src/app/services/worker-coms/worker-multiple-changes-com.service';
 import { WorkerNormalizedData } from 'src/app/data/WorkerNormalizedChanges';
+import { MatDialog } from '@angular/material/dialog';
+import { DesktopCreateWorkerModalComponent } from '../desktop-create-worker-modal/desktop-create-worker-modal.component';
+import { ManageWorkerHelperViewComponent } from '../mobile-manage-workers-modal/small-screen-helper-components/manage-worker-helper-view/manage-worker-helper-view.component';
 
 @Component({
   selector: 'app-desktop-manage-workers-modal',
@@ -36,7 +39,6 @@ export class DesktopManageWorkersModalComponent {
   public componentTitle = Default_PT.MANAGE_WORKERS
   public pedingChangesTitle = Default_PT.CALENDAR_PENDING_CHANGES
   public AG_GRID_PT_LANG = Default_PT.AG_GRID_LOCALE_PT
-  public processing = false
   PendingChangesComponent = PendingChangesComponent
   public hasCalendarChanges: boolean = false
   public isProcessing: boolean = false
@@ -92,7 +94,8 @@ export class DesktopManageWorkersModalComponent {
     public wpc: WorkerPendingChangesComService,
     public wmc: WorkerMultipleChangesComService,
     public ps: ProcessingWorkerComService,
-    public _snackBar: MatSnackBar
+    public _snackBar: MatSnackBar,
+    public _dialog: MatDialog
   ) {
 
     this.ps.processing.subscribe((isProcessing) => {
@@ -109,17 +112,22 @@ export class DesktopManageWorkersModalComponent {
   }
 
   addWorker() {
-    
+    const CWDiagRef = this._dialog.open(DesktopCreateWorkerModalComponent)
+    CWDiagRef.afterClosed().subscribe(async () => {
+      if (CWDiagRef.componentInstance.createdWorker) {
+        this.onGridReady()
+      }
+    })
   }
 
   onGridReady() {
-    this.processing = true
+    this.ps.notifyWhenProcessing(true)
     this.agGrid.api.showLoadingOverlay()
 
     this.api.getLabels().subscribe((wrapper) => {
       this.agGrid.api.setRowData(wrapper.data)
       this.agGrid.api.hideOverlay()
-      this.processing = false
+      this.ps.notifyWhenProcessing(false)
     })
   }
 
@@ -222,7 +230,7 @@ export class WorkerNameInputSelector implements ICellRendererAngularComp {
 
   agInit(params: ICellRendererParams<any, any>): void {
     this.validator = this.formBuilder.group({
-      name: ['', [Validators.required, Validators.minLength(2), Validators.maxLength(128), Validators.pattern(/^(?!\s)(?!.*\s{2,})(.*\S)?(?<!\s)$/)]],
+      name: ['', [Validators.required, Validators.minLength(2), Validators.maxLength(128), Validators.pattern(/^\S(.*\S)?$/)]],
     })
 
     this.validator.setValue({ name: params.value })
@@ -536,13 +544,16 @@ export class WorkerActionsHolder implements ICellRendererAngularComp {
   public defaultCellData!: WorkerCellData
   private gridApi_?: GridApi
 
+  public isSmallScreen = window.matchMedia("(max-width: 600px)").matches;
+
   constructor(private agGridCom: WorkerAgGridComService,
     private storedCom: NotifyValueStoredComService,
     public wpc: WorkerPendingChangesComService,
     public _snackBar: MatSnackBar,
     public api: APIService,
     public ps: ProcessingWorkerComService,
-    public wmc: WorkerMultipleChangesComService) { }
+    public wmc: WorkerMultipleChangesComService,
+    public modalController: ModalController) { }
 
   agInit(params: ICellRendererParams<any, any>): void {
     this.gridApi_ = params.api
@@ -585,6 +596,26 @@ export class WorkerActionsHolder implements ICellRendererAngularComp {
         }
       }
     })
+  }
+
+  async manage() {
+    const modal = await this.modalController.create({
+      component: ManageWorkerHelperViewComponent,
+      breakpoints: [0, 1],
+      cssClass: 'mobile-create',
+      initialBreakpoint: 1,
+      mode: 'ios',
+      backdropDismiss: true,
+      showBackdrop: true,
+      componentProps: {
+        ...this.updatedCellData,
+        assoc_calendars: [...this.updatedCellData.assoc_calendars],
+        wpc: this.wpc,
+        agGridCom: this.agGridCom,
+      }
+    });
+
+    await modal.present();
   }
 
   async save() {
@@ -655,6 +686,14 @@ export class WorkerActionsHolder implements ICellRendererAngularComp {
         this.wmc.removePedingChange(this.defaultCellData.cellId)
         this.openInfoSnackBar(Default_PT.SERVICE_VALUES_CHANGED, Default_PT.INFO_BTN)
         this.gridApi_?.hideOverlay()
+
+        if (this.isSmallScreen) {
+          this.wpc.removePendingChange({
+            worker_id: this.defaultCellData.cellId,
+            worker_name: this.defaultCellData.worker_name,
+            action: 'removed',
+          })
+        }
       } else {
         this.openInfoSnackBar(Default_PT.ACTIONS_NOT_SET_FOR_REMOVE_OR_DELETE, Default_PT.INFO_BTN)
       }
@@ -687,6 +726,14 @@ export class WorkerActionsHolder implements ICellRendererAngularComp {
   reload() {
     this.wmc.removePedingChange(this.defaultCellData.cellId)
     this.agGridCom.notifyCellValueChanged(this.defaultCellData)
+
+    if (this.isSmallScreen) {
+      this.wpc.removePendingChange({
+        worker_id: this.defaultCellData.cellId,
+        worker_name: this.defaultCellData.worker_name,
+        action: 'removed',
+      })
+    }
   }
 
   changed(): boolean {

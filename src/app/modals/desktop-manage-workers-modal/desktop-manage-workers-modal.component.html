@@ -23,9 +23,9 @@
   </div>
 
   <div class="flex items-center justify-center border-t border-gray-300 p-4 gap-2">
-    <ion-button [disabled]="processing" (onclick)="addWorker()" class="w-64">
+    <ion-button [disabled]="isProcessing" (click)="addWorker()" class="w-64">
       Adicionar funcionário</ion-button>
-    <ion-button [disabled]="pendingWorkerChanges.size === 0 || processing" (click)="storeAllChanges()" class="w-64">
+    <ion-button [disabled]="pendingWorkerChanges.size === 0 || isProcessing" (click)="storeAllChanges()" class="w-64">
       Guardar Alterações</ion-button>
     <div class="h-[36px] w-[1px] bg-gray-300"></div>
     <ion-button (click)="onGridReady()" matTooltip="Recarregar Tabela"><ion-icon name="reload-outline"></ion-icon>

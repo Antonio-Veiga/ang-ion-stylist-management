@@ -1,3 +1,12 @@
 .remove-margins {
     margin: 0;
 }
+
+#open-forms-holder {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+}
+
+#open-forms-holder::-webkit-scrollbar {
+    display: none;
+}

@@ -15,7 +15,7 @@ import { MultipleChangesComService } from 'src/app/services/service-coms/multipl
 import { MatDrawer, MatDrawerMode } from '@angular/material/sidenav';
 import { Default_PT } from 'src/app/defaults/langs/pt-pt/Defaults';
 import { AgGridUsable } from 'src/app/interfaces/Loadable';
-import * as _ from 'lodash';
+import { clone, isEqual } from 'lodash'
 
 @Component({
   selector: 'app-desktop-services',
@@ -108,7 +108,7 @@ export class DesktopServicesComponent implements AfterViewInit, AgGridUsable {
     });
 
     this.mccs.PendingMapSubject.subscribe((PendingMap) => {
-      this.pendingChanges = _.clone(PendingMap)
+      this.pendingChanges = clone(PendingMap)
     })
 
     this.processable._Processing.subscribe((shouldProcess) => {
@@ -392,7 +392,7 @@ export class ServiceActionsHolder implements ICellRendererAngularComp {
   }
 
   changed(): boolean {
-    return !(_.isEqual(this.defaultCellData, this.updatedCellData))
+    return !(isEqual(this.defaultCellData, this.updatedCellData))
   }
 
   validateCellData(data: ServiceCellData): boolean {

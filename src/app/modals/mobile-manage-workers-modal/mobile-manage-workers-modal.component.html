@@ -1,19 +1,79 @@
-<div class="flex min-w-[584px] flex-col justify-center m-2 shrink p-2">
-  <div class="flex px-4 py-2 w-full uppercase text-gray-500 border-b border-gray-300 items-center space-x-2">
-    <ion-icon name="arrow-back-outline" class="!text-xl" (click)="modalController.dismiss()"></ion-icon>
-    <h2 class="w-full">
-      {{componentTitle}}
-    </h2>
+<div class="absolute inset-0 overflow-y-auto flex flex-col">
+  <div *ngIf="!isSmallScreen" class="h-fit m-2 p-2 overflow-auto">
+    <div data-id="title-holder">
+      <div class="flex px-4 py-2 w-full uppercase text-gray-500 border-b border-gray-300 items-center space-x-2">
+        <ion-icon name="arrow-back-outline" class="!text-xl" (click)="modalController.dismiss('dismissed')"></ion-icon>
+        <h2 class="w-full">
+          {{componentTitle}}
+        </h2>
+      </div>
+    </div>
+
+    <div class="my-2 py-1.5 h-[346px]">
+      <ag-grid-angular class="w-full h-full ag-theme-alpine" [columnDefs]="columnDefs" [defaultColDef]="defaultColDef"
+        [rowSelection]="'single'" [animateRows]="true" [localeText]="AG_GRID_PT_LANG"
+        (gridReady)="onGridReady()"></ag-grid-angular>
+    </div>
+
+    <div [hidden]="!hasCalendarChanges" data-id="pending-changes-panel" class="flex flex-col justify-center">
+      <h2 class="mx-2 mb-2 px-4 py-2 uppercase text-gray-500 border-b border-gray-300">
+        {{pedingChangesTitle}} <span class="text-red-500">(*)</span>
+      </h2>
+
+      <div class="h-fit m-2 p-1.5 mb-4 flex-col">
+        <ng-container *ngComponentOutlet="PendingChangesComponent"></ng-container>
+      </div>
+    </div>
+
+    <div class="flex items-center justify-center border-t border-gray-300 p-4 gap-2">
+      <ion-button [disabled]="isProcessing" (click)="addWorker()" class="w-64">
+        Adicionar Funcionário</ion-button>
+      <ion-button [disabled]="pendingWorkerChanges.size === 0 || isProcessing" (click)="storeAllChanges()" class="w-64">
+        Guardar Alterações</ion-button>
+      <div class="h-[36px] w-[1px] bg-gray-300"></div>
+      <ion-button (click)="onGridReady()" matTooltip="Recarregar Tabela"><ion-icon name="reload-outline"></ion-icon>
+      </ion-button>
+    </div>
   </div>
 
-  <div class="flex-1 h-fit m-2 p-1.5 mb-4">
-    <ag-grid-angular class="w-full h-[418px] ag-theme-alpine" [columnDefs]="columnDefs" [defaultColDef]="defaultColDef"
-      [rowSelection]="'single'" [animateRows]="true" [pagination]="true" [localeText]="AG_GRID_PT_LANG"
-      (gridReady)="onGridReady()"></ag-grid-angular>
-  </div>
 
-  <div class="flex items-center justify-center border-t border-gray-300 p-4">
-    <ion-button>
-      Adicionar novo funcionário</ion-button>
+  <div *ngIf="isSmallScreen" class="flex flex-col justify-center p-2">
+    <div data-id="title-holder" class="flex-col justify-center">
+      <div class="flex px-4 py-2 w-full uppercase text-gray-500 border-b border-gray-300 items-center space-x-2">
+        <ion-icon name="arrow-back-outline" class="!text-xl" (click)="modalController.dismiss()"></ion-icon>
+        <h2 class="w-full">
+          {{componentTitle}}
+        </h2>
+      </div>
+    </div>
+
+    <div class="flex-1 min-h-[600px] shrink-0 m-2 p-1.5">
+      <ag-grid-angular class="w-full h-full ag-theme-alpine" [columnDefs]="columnDefs" [defaultColDef]="defaultColDef"
+        [rowSelection]="'single'" [animateRows]="true" [localeText]="AG_GRID_PT_LANG"
+        (gridReady)="onGridReady()"></ag-grid-angular>
+    </div>
+
+    <div *ngIf="hasCalendarChanges" data-id="pending-changes-panel" class="flex-col justify-center">
+      <h2 class="mx-2 mb-2 px-4 py-2 uppercase text-gray-500 border-b border-gray-300">
+        {{pedingChangesTitle}} <span class="text-red-500">(*)</span>
+      </h2>
+
+      <div class="flex-1 h-fit m-2 p-1.5 mb-4 flex-col">
+        <ng-container *ngComponentOutlet="PendingChangesComponent"></ng-container>
+      </div>
+    </div>
+
+    <div class="flex flex-col items-center justify-center border-t border-gray-300 p-4 gap-2">
+      <ion-button [disabled]="isProcessing" (click)="addWorker()" class="w-full">
+        Adicionar Funcionário</ion-button>
+      <div class="flex w-full gap-2 items-center justify-center">
+        <ion-button [disabled]="pendingWorkerChanges.size === 0 || isProcessing" (click)="storeAllChanges()"
+          class="w-full">
+          Guardar Alterações</ion-button>
+        <div class="h-[36px] w-[1px] bg-gray-300"></div>
+        <ion-button (click)="onGridReady()" matTooltip="Recarregar Tabela"><ion-icon name="reload-outline"></ion-icon>
+        </ion-button>
+      </div>
+    </div>
   </div>
 </div>

@@ -56,14 +56,16 @@
               <label for="c-number"
                 class="block mb-1.5 text-start ml-2 text-[0.65rem] md:text-xs uppercase font-medium text-gray-600">Número
                 de
-                Telemóvel </label>
+                Telemóvel 
+                <span class="text-red-500">*</span>
+              </label>
               <input type="text" inputmode="numeric" id="c-number" [(ngModel)]="modelTemplate.phonenumber"
                 [ngClass]="{ 'is-invalid': controlGroup.get('phonenumber')!.invalid && controlGroup.get('phonenumber')!.touched, 'is-valid': controlGroup.get('phonenumber')!.valid && controlGroup.get('phonenumber')!.touched }"
                 class="bg-gray-50 w-full border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5"
                 formControlName="phonenumber">
               <p class="text-[0.5em] text-start ml-2 text-gray-500 uppercase mt-1">Apenas números Móveis ou fixos
                 portugueses.
-                (campo opcional)</p>
+                (campo obrigatório)</p>
             </div>
             <div class="flex-1 shrink-0">
               <label for="c-born"

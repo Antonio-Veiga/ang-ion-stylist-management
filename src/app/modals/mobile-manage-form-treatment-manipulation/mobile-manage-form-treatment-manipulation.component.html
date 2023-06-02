@@ -1,0 +1,112 @@
+<div data-id="main-content" class="flex flex-col gap-1 h-full max-h-[600px] overflow-y-auto">
+  <div class="flex px-4 py-2 m-2 uppercase text-gray-500 border-b border-gray-300 items-center space-x-2 shrink-0">
+    <ion-icon name="arrow-back-outline" class="!text-xl" (click)="modalController.dismiss()"></ion-icon>
+    <h2 class="w-full">
+      {{componentTitle}}
+    </h2>
+  </div>
+  <div class="mx-6">
+    <div
+      class="flex w-fit max-w-full mb-2 rounded-md overflow-x-auto items-center border border-gray-400 divide-x divide-gray-400 shrink-0">
+      <button *ngFor="let tab of tabsArray" [id]="tab.key"
+        [ngClass]="{'tab-active-btn': loadedTab!.tab_service_id == tab.key }"
+        class="p-2 whitespace-nowrap font-semibold text-center border-solid text-xs uppercase hover:bg-gray-800 duration-150 hover:text-white text-gray-500"
+        (click)="changeTab(tab.key)">{{tab.tab.tab_title}}</button>
+    </div>
+  </div>
+
+
+  <div class="flex-1 shrink-0 flex flex-col w-full overflow-y-auto border-b border-t border-gray-300">
+    <div class="flex-1 max-h-full shrink-0 p-2.5 py-4 gap-4 flex flex-col justify-center items-center my-12">
+      <div class="px-6 w-full">
+        <div class="flex border border-gray-300 rounded-md flex-col gap-4 p-2.5 m-2 my-0 py-0">
+          <h3
+            class="text-[0.65rem] md:text-xs py-4 uppercase font-medium text-gray-600 p-2 text-center border-b border-gray-300">
+            Gestão de associações</h3>
+          <div class="flex flex-col gap-4 p-4 w-full">
+            <div class="flex gap-2 items-center">
+              <input id="selected-form" type="checkbox" [(ngModel)]="loadedTab!.tab_new_form"
+                [disabled]="loadedTab!.tab_assoc_treatment || loadedTab!.tab_new_treatment"
+                class="w-4 h-4 rounded-full disabled:text-gray-300 disabled:bg-gray-500 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 focus:ring-1">
+              <label for="selected-form" class="w-fit text-[0.65rem] md:text-xs text-gray-500 uppercase">Criar apenas
+                um formulário para o serviço.</label>
+            </div>
+            <div class="flex gap-2 items-center">
+              <input id="selected-treatment" type="checkbox" [(ngModel)]="loadedTab!.tab_new_treatment"
+                [disabled]="loadedTab!.tab_assoc_treatment || loadedTab!.tab_new_form"
+                class="w-4 h-4 rounded-full disabled:text-gray-300 disabled:bg-gray-500 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 focus:ring-1">
+              <label for="selected-treatment" class="w-fit text-[0.65rem] md:text-xs text-gray-500 uppercase">Criar um
+                tratamento (sequência de marcações e formulários).</label>
+            </div>
+            <div class="flex gap-2 items-center">
+              <input id="add-to-treatment" type="checkbox" [(ngModel)]="loadedTab!.tab_assoc_treatment"
+                [disabled]="loadedTab!.tab_new_form || loadedTab!.tab_new_treatment"
+                class="w-4 h-4 rounded-full disabled:text-gray-300 disabled:bg-gray-500 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 focus:ring-1">
+              <label for="add-to-treatment" class="w-fit text-[0.65rem] md:text-xs text-gray-500 uppercase">Associar a
+                um tratamento (sequência de marcações e formulários) aberto.</label>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="px-6 w-full"
+        [hidden]="loadedTab!.tab_assoc_treatment || (!loadedTab!.tab_new_treatment && !loadedTab!.tab_new_form)">
+        <div class="flex border border-gray-300 rounded-md flex-col gap-4 p-2.5 m-2 my-0 py-0">
+          <h3
+            class="text-[0.65rem] md:text-xs py-4 uppercase font-medium text-gray-600 p-2 text-center border-b border-gray-300">
+            Estrutura do formulário</h3>
+          <div class="flex flex-col gap-4 p-4 w-full">
+            <div class="flex gap-2 items-center">
+              <input id="objective-field" type="checkbox" [(ngModel)]="loadedTab!.form_structure.objective"
+                class="w-4 h-4 rounded-full disabled:text-gray-300 disabled:bg-gray-500 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 focus:ring-1">
+              <label for="objective-field" class="w-fit text-[0.65rem] md:text-xs text-gray-500 uppercase">Adicionar
+                campo
+                "Objetivo do Cliente".</label>
+            </div>
+            <div class="flex gap-2 items-center">
+              <input id="hair-state-field" type="checkbox" [(ngModel)]="loadedTab!.form_structure.hair_state"
+                class="w-4 h-4 rounded-full disabled:text-gray-300 disabled:bg-gray-500 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 focus:ring-1">
+              <label for="hair-state-field" class="w-fit text-[0.65rem] md:text-xs text-gray-500 uppercase">Adicionar
+                campo de seleção "Estado do cabelo".</label>
+            </div>
+            <div class="flex gap-2 items-center">
+              <input id="advised-treatment-field" type="checkbox"
+                [(ngModel)]="loadedTab!.form_structure.advised_treatment"
+                class="w-4 h-4 rounded-full disabled:text-gray-300 disabled:bg-gray-500 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 focus:ring-1">
+              <label for="advised-treatment-field"
+                class="w-fit text-[0.65rem] md:text-xs text-gray-500 uppercase">Adicionar
+                campo "Tratamento Aconselhado".</label>
+            </div>
+            <div class="flex gap-2 items-center">
+              <input id="products-tab" type="checkbox" [(ngModel)]="loadedTab!.form_structure.product_tab"
+                class="w-4 h-4 rounded-full disabled:text-gray-300 disabled:bg-gray-500 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 focus:ring-1">
+              <label for="products-tab" class="w-fit text-[0.65rem] md:text-xs text-gray-500 uppercase">Adicionar
+                campo "Produtos utilizados".</label>
+            </div>
+            <div class="flex gap-2 items-center">
+              <input id="attachments" type="checkbox" [(ngModel)]="loadedTab!.form_structure.attachments"
+                class="w-4 h-4 rounded-full disabled:text-gray-300 disabled:bg-gray-500 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 focus:ring-1">
+              <label for="attachments" class="w-fit text-[0.65rem] md:text-xs text-gray-500 uppercase">Adicionar
+                campo "Anexos".</label>
+            </div>
+
+            <div class="flex gap-2 items-center justify-center">
+              <p class="text-[0.5em] text-start ml-2 text-red-500 uppercase mt-1"> (*) Pelo menos um dos campos da
+                estrutura deve ser selecionado</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div data-id="action-btn-holder" class="flex flex-row gap-1 items-center justify-center m-2">
+    <ion-button [disabled]="!validate() || submiting" (click)="createFormsAndTreatments()" class="w-64">
+      <ion-spinner name="circles" class="relative left-0" [hidden]="!submiting"></ion-spinner>
+      <div [hidden]="submiting">Guardar Especificações</div>
+    </ion-button>
+    <ion-button [disabled]="submiting" (click)="removeTab()" class="w-64" color="danger">
+      <ion-spinner name="circles" class="relative left-0" [hidden]="!submiting"></ion-spinner>
+      <div [hidden]="submiting">Excluir Serviços</div>
+    </ion-button>
+  </div>
+</div>

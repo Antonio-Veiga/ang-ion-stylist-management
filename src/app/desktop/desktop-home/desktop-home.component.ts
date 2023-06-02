@@ -21,6 +21,7 @@ import { Label } from 'src/app/models/Label';
 import { Service } from 'src/app/models/Service';
 import * as jQuery from 'jquery';
 import { DesktopManageWorkersModalComponent } from 'src/app/modals/desktop-manage-workers-modal/desktop-manage-workers-modal.component';
+import { Form } from 'src/app/models/Form';
 const moment = require('moment');
 
 export type MockupEvent = {
@@ -32,9 +33,11 @@ export type MockupEvent = {
   evt_client: Client,
   evt_label_id: number,
   evt_label: Label,
+  evt_day_id: number,
   evt_duration: number,
   evt_services: Service[],
-  evt_commment: string | null,
+  evt_forms: Form[],
+  evt_comment: string | null,
   evt_created_at: Date | null,
   evt_updated_at: Date | null,
   evt_is_predefined: boolean
@@ -141,14 +144,14 @@ export class DesktopHomeComponent implements FCalendarUsable, AfterViewInit {
 
       this.loadedEvents.push({
         id: event.id,
-        title: event.name,
+        title: event.title,
         start: event.time,
         color: event.label!.color_hex_value,
         end: evtDuration[1],
         extendedProps: {
           evt_id: event.id,
           evt_client_id: event.client!.id,
-          evt_title: event.name,
+          evt_title: event.title,
           evt_start: event.time,
           evt_end: evtDuration[1],
           evt_client: event.client!.name,
@@ -156,7 +159,7 @@ export class DesktopHomeComponent implements FCalendarUsable, AfterViewInit {
           evt_label: event.label!.name,
           evt_duration: evtDuration[0],
           evt_services: event.services!,
-          evt_commment: event.comment,
+          evt_comment: event.comment,
           evt_created_at: moment(event.created_at).format('DD-MM-YYYY HH:mm:ss'),
           evt_updated_at: moment(event.updated_at).format('DD-MM-YYYY HH:mm:ss'),
           evt_is_predefined: false
@@ -200,11 +203,11 @@ export class DesktopHomeComponent implements FCalendarUsable, AfterViewInit {
   makeProperEvent(event: MockupEvent): CalendarEvent {
     return {
       id: event.evt_id,
-      name: event.evt_title,
+      title: event.evt_title,
       time: event.evt_start.toString(),
       label: event.evt_label,
       client: event.evt_client,
-      comment: jQuery.isEmptyObject(event.evt_commment) ? '' : event.evt_commment!,
+      comment: jQuery.isEmptyObject(event.evt_comment) ? '' : event.evt_comment!,
       services: event.evt_services,
       created_at: jQuery.isEmptyObject(event.evt_created_at) ? '' : event.evt_created_at?.toString(),
       updated_at: jQuery.isEmptyObject(event.evt_updated_at) ? '' : event.evt_updated_at?.toString(),

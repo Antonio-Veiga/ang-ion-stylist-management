@@ -564,13 +564,20 @@ ng-select div.ng-select-container{
     background-color: rgb(249 250 251)!important;
     border-width: 1px!important;
     width: 100%!important;
+    min-width: 100%!important;
+    max-width: 100%!important;
     border-color: rgb(209 213 219)!important;
     color: rgb(156 163 175)!important;
     border-radius: 0.5rem/* 8px */!important;
     border-color: rgb(59 130 246)!important;
 }
 
-div.ng-input{
+
+ng-select#product-list div.ng-select-container{
+    background-color: #fff!important;
+}
+
+div.ng-input, div.ng-placeholder{
     top: 10px!important;
     bottom: 10px!important;
 }
@@ -580,8 +587,10 @@ div.ng-input input, div.ng-placeholder{
     line-height: 1.25rem!important;
 }
 
-.ng-select.ng-select-single .ng-select-container{
-    height: 43px!important;
+.ng-select.ng-select-single .ng-select-container,
+.ng-select.ng-select-multiple .ng-select-container {
+    min-height: 43px!important;
+    max-height: 86px!important;
 }
 
 span.ng-value-label{
@@ -606,4 +615,33 @@ ng-select.is-invalid-select div.ng-select-container{
     border-color: rgb(239 68 68 / var(--tw-border-opacity))!important;
     animation: shake 1s!important;
     animation-iteration-count: 1!important;
+}
+
+ion-modal.mobile-create {
+    --height: auto;
+    --width: 405px;
+}
+
+
+#ngx-fs-btn{
+    width: 20px;
+    height: 20px;
+    top: unset!important;
+    bottom: 5px!important;
+    right: 5px!important;
+}
+
+
+.shift-left {
+    animation: ShiftLeftAnim 1s forwards;
+}
+
+@keyframes ShiftLeftAnim {
+    from {
+        transform: translateX(-12.5vw);
+    }
+
+    to {
+        transform: translateX(-25vw);
+    }
 }

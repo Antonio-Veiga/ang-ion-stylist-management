@@ -3,6 +3,7 @@ import { PreloadAllModules, RouterModule, Routes } from '@angular/router';
 import { ClientComponent } from './pages/client/client.component';
 import { HomeComponent } from './pages/home/home.component';
 import { ServiceComponent } from './pages/service/service.component';
+import { AbsenceComponent } from './pages/absence/absence.component';
 
 const routes: Routes = [
   {
@@ -21,6 +22,10 @@ const routes: Routes = [
   {
     path: 'clients',
     component: ClientComponent
+  },
+  {
+    path: 'absences',
+    component: AbsenceComponent
   },
   {
     path: '**',

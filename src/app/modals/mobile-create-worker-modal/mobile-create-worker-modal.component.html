@@ -1,0 +1,71 @@
+<div class="flex max-w-full min-w-[380px] overflow-auto items-center justify-center m-2 pt-2">
+  <div class="w-full h-fit">
+    <h2 class="mx-2 px-4 py-2 uppercase text-gray-500 border-b border-gray-300">
+      {{componentTitle}}
+    </h2>
+
+    <form [formGroup]="controlGroup" (ngSubmit)="createWorker()"
+      class="w-full flex flex-col justify-center items-center">
+      <div class="bg-white rounded-lg mb-4 divide-y gap-2 w-full">
+        <div class="mb-2 mt-4 mx-4">
+          <label for="w-name"
+            class="block mb-1.5 text-start ml-2 text-[0.65rem] md:text-xs uppercase font-medium text-gray-600">Nome do
+            Funcionário<span class="text-red-500">*</span></label>
+          <input type="text" id="w-name"
+            class="bg-gray-50 w-full border border-gray-300 placeholder-gray-400 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5"
+            required formControlName="name"
+            [ngClass]="{ 'is-invalid': controlGroup.get('name')!.invalid && controlGroup.get('name')!.touched, 'is-valid': controlGroup.get('name')!.valid && controlGroup.get('name')!.touched }">
+          <p class="text-[0.5em] text-start ml-2 text-gray-500 uppercase mt-1"> De 2 a 128 carateres. (campo
+            obrigatório)</p>
+        </div>
+
+        <div class="mb-2 pt-3 mx-4">
+          <label for="w-hex-color-title"
+            class="block mb-1.5 text-start ml-2 text-[0.65rem] md:text-xs uppercase font-medium text-gray-600">Selecione
+            a cor do funcionário<span class="text-red-500">*</span></label>
+          <div
+            class="w-full flex gap-2 p-2 divide-x divide-gray-300 border border-gray-300 focus:border-blue-500 rounded-md items-center justify-start"
+            [ngClass]="{ 'is-invalid': controlGroup.get('hex_color_value')!.invalid && controlGroup.get('hex_color_value')!.touched, 'is-valid':controlGroup.get('hex_color_value')!.valid && controlGroup.get('hex_color_value')!.touched }">
+            <div class="w-fit shrink-0 flex gap-2 items-center justify-start">
+              <input id="w-hex-color" type="color" formControlName="hex_color_value"
+                class="w-[24px] h-[24px] rounded-full border border-gray-500" />
+              <label for="w-hex-color"
+                class="block text-start text-[0.65rem] uppercase font-medium text-gray-500">{{controlGroup.get('hex_color_value')?.value}}</label>
+            </div>
+            <div class="flex w-full items-center justify-center">
+              <label for="w-hex-color" class="text-[0.65em] text-start ml-2 text-gray-500 uppercase">[Pressione dentro
+                das bordas para
+                alterar]</label>
+            </div>
+          </div>
+          <p class="text-[0.5em] text-start ml-2 text-gray-500 uppercase mt-1">(campo
+            obrigatório)</p>
+        </div>
+
+        <div class="mb-2 pt-3 mx-4">
+          <label for="w-calendar-selection"
+            class="block mb-1.5 text-start ml-2 text-[0.65rem] md:text-xs uppercase font-medium text-gray-600">Selecione
+            os calendários associados<span class="text-red-500">*</span></label>
+          <ion-skeleton-text [animated]="true" [hidden]="calendarOptions !== undefined"
+            class="h-[38px] w-full rounded-lg"></ion-skeleton-text>
+          <ng-select class="max-w-[360px]" required formControlName="associated_calendars"
+            [hidden]="calendarOptions === undefined" [multiple]="true"
+            placeholder="--- Selecione os calendários associados ---" [compareWith]="compareFn"
+            [ngClass]="{ 'is-invalid-select': controlGroup.get('associated_calendars')!.invalid && controlGroup.get('associated_calendars')!.touched, 'is-valid-select':controlGroup.get('associated_calendars')!.valid && controlGroup.get('associated_calendars')!.touched }">
+            <ng-option *ngFor="let calendar of calendarOptions" [value]="calendar.id">{{calendar.name}}</ng-option>
+          </ng-select>
+          <p class="text-[0.5em] text-start ml-2 text-gray-500 uppercase mt-1">(campo
+            obrigatório)</p>
+        </div>
+      </div>
+
+      <ion-button (click)="createWorker()" [disabled]="
+                    !controlGroup.valid ||
+                     submitting" type="submit" class="w-64 mb-4">
+
+        <ion-spinner name="circles" class="relative left-0" [hidden]="!submitting"></ion-spinner>
+        <div [hidden]="submitting">{{creatWorkerBtnText}}</div>
+      </ion-button>
+    </form>
+  </div>
+</div>

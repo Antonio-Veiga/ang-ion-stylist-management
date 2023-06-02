@@ -14,10 +14,10 @@ import { InfoSnackBarComponent } from 'src/app/partials/info-snack/info-snack.co
 import { APIService } from 'src/app/services/api/api.service';
 import { ProcessableService } from 'src/app/services/app-coms/processable.service';
 import { MultipleChangesComService } from 'src/app/services/service-coms/multiple-changes-com.service';
-import * as _ from 'lodash';
 import { MobileViewServiceModalComponent } from 'src/app/modals/mobile-view-service-modal/mobile-view-service-modal.component';
 import { MobileChangeServiceModalComponent } from 'src/app/modals/mobile-change-service-modal/mobile-change-service-modal.component';
 import { AgGridComService } from 'src/app/services/service-coms/ag-grid-com.service';
+import { isEqual, clone } from 'lodash'
 @Component({
   selector: 'app-mobile-services',
   templateUrl: './mobile-services.component.html',
@@ -43,8 +43,8 @@ export class MobileServicesComponent implements OnInit, AgGridUsable {
   public serviceIcons = {
     1: 'man-outline',
     2: 'woman-outline',
-    3: 'color-fill-outline',
-    4: 'flash-outline'
+    3: 'flash-outline',
+    4: 'color-fill-outline'
   }
   public serviceIcon = this.serviceIcons[`${this.menuSelectedBtn}`]
 
@@ -136,7 +136,7 @@ export class MobileServicesComponent implements OnInit, AgGridUsable {
   constructor(public api: APIService, public _snackBar: MatSnackBar, public processable: ProcessableService, public mccs: MultipleChangesComService, public modalController: ModalController) {
 
     this.mccs.PendingMapSubject.subscribe((PendingMap) => {
-      this.pendingChanges = _.clone(PendingMap)
+      this.pendingChanges = clone(PendingMap)
     })
 
     this.processable._Processing.subscribe((shouldProcess) => {
@@ -279,6 +279,9 @@ export class MobileServicesComponent implements OnInit, AgGridUsable {
   formatData(wrapper: ServiceWrapper): any[] {
     let fdata: any[] = []
     wrapper.data.forEach((service) => {
+      service.duration = Number(service.duration)
+      service.price = Number(service.price)
+      service.active = Boolean(Number(service.active)) ? 1 : 0
       fdata.push({ ...service })
     })
     return fdata
@@ -287,7 +290,7 @@ export class MobileServicesComponent implements OnInit, AgGridUsable {
 
 
 @Component({
-  selector: 'client-actions-holder',
+  selector: 'service-name-holder',
   templateUrl: './micro-components-views/service-name-holder.component.html',
 })
 export class ServiceNameHolder implements ICellRendererAngularComp {
@@ -322,9 +325,7 @@ export class ServiceNameHolder implements ICellRendererAngularComp {
   }
 
   changed(): boolean {
-    console.log(this.defaultCellData)
-    console.log(this.updatedCellData)
-    return !(_.isEqual(this.defaultCellData, this.updatedCellData))
+    return !(isEqual(this.defaultCellData, this.updatedCellData))
   }
 
   refresh(params: ICellRendererParams<any, any>): boolean {

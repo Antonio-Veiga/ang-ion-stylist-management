@@ -37,9 +37,25 @@ import { MobileChangeServiceModalComponent } from './modals/mobile-change-servic
 import { MobileViewEventModalComponent } from './modals/mobile-view-event-modal/mobile-view-event-modal.component';
 import { DesktopViewEventModalComponent } from './modals/desktop-view-event-modal/desktop-view-event-modal.component';
 import { DesktopManageWorkersModalComponent, WorkerActionsHolder, WorkerNameInputSelector, WorkersCalendarSelector, WorkersColorSelector } from './modals/desktop-manage-workers-modal/desktop-manage-workers-modal.component';
-import { MobileManageWorkersModalComponent } from './modals/mobile-manage-workers-modal/mobile-manage-workers-modal.component';
 import { PendingChangesComponent } from './modals/desktop-manage-workers-modal/sub-components/pending-changes/pending-changes.component';
 import { NgSelectModule } from '@ng-select/ng-select';
+import { DesktopCreateWorkerModalComponent } from './modals/desktop-create-worker-modal/desktop-create-worker-modal.component';
+import { MobileManageWorkersModalComponent } from './modals/mobile-manage-workers-modal/mobile-manage-workers-modal.component';
+import { MobileCreateWorkerModalComponent } from './modals/mobile-create-worker-modal/mobile-create-worker-modal.component';
+import { MobileCreateEditPredefinedEventModalComponent } from './modals/mobile-create-edit-predefined-event-modal/mobile-create-edit-predefined-event-modal.component';
+import { MobileAbsencesComponent } from './mobile/mobile-absences/mobile-absences.component';
+import { DesktopAbsencesComponent } from './desktop/desktop-absences/desktop-absences.component';
+import { AbsenceComponent } from './pages/absence/absence.component';
+import { MobileManageFormTreatmentManipulationComponent } from './modals/mobile-manage-form-treatment-manipulation/mobile-manage-form-treatment-manipulation.component';
+import { MobileFillFormComponent } from './modals/mobile-fill-form/mobile-fill-form.component';
+
+// forced install only available for Angular 14
+import { FileUploadModule } from 'ng2-file-upload';
+import { ImageViewerModule } from "ngx-image-viewer";
+
+
+import { Camera } from '@ionic-native/camera/ngx';
+import { ManageWorkerHelperViewComponent } from './modals/mobile-manage-workers-modal/small-screen-helper-components/manage-worker-helper-view/manage-worker-helper-view.component';
 
 @NgModule({
   declarations: [
@@ -49,7 +65,8 @@ import { NgSelectModule } from '@ng-select/ng-select';
     DesktopCreateEditClientModalComponent, InfoSnackBarComponent, DeleteDialog, DesktopServicesComponent, MobileCreateEditClientModalComponent, ServiceNameHolder,
     SegementHolder, PriceInputHolder, DurationInputHolder, ServiceActionsHolder, ClientActionsHolder, NoActionsHolder, MatchersDialog, MobileChangeServiceModalComponent,
     MobileViewEventModalComponent, DesktopViewEventModalComponent, DesktopManageWorkersModalComponent, MobileManageWorkersModalComponent, WorkerActionsHolder, WorkerNameInputSelector,
-    WorkersColorSelector, WorkersCalendarSelector, PendingChangesComponent],
+    WorkersColorSelector, WorkersCalendarSelector, PendingChangesComponent, DesktopCreateWorkerModalComponent, MobileCreateWorkerModalComponent, MobileCreateEditPredefinedEventModalComponent,
+    AbsenceComponent, MobileAbsencesComponent, DesktopAbsencesComponent, MobileManageFormTreatmentManipulationComponent, MobileFillFormComponent, ManageWorkerHelperViewComponent],
   imports: [
     BrowserModule,
     AppRoutingModule,
@@ -59,12 +76,14 @@ import { NgSelectModule } from '@ng-select/ng-select';
     MaterialModule,
     CommonModule,
     FormsModule,
+    FileUploadModule,
     ReactiveFormsModule,
     FullCalendarModule,
     AgGridModule,
     NgSelectModule,
     HttpClientModule,
-    IonicModule.forRoot()
+    IonicModule.forRoot(),
+    ImageViewerModule.forRoot()
   ],
   providers: [
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
@@ -72,7 +91,8 @@ import { NgSelectModule } from '@ng-select/ng-select';
       provide: HTTP_INTERCEPTORS,
       useClass: ErrorHandlingService,
       multi: true,
-    }
+    },
+    Camera
   ],
   bootstrap: [AppComponent],
 })

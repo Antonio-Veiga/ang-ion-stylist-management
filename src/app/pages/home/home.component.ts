@@ -3,6 +3,7 @@ import { Platform, ViewWillEnter, ViewWillLeave } from '@ionic/angular';
 import { DesktopHomeComponent } from 'src/app/desktop/desktop-home/desktop-home.component';
 import { FCalendarUsable } from 'src/app/interfaces/Loadable';
 import { MobileHomeComponent } from 'src/app/mobile/mobile-home/mobile-home.component';
+import { PlaceholderComponent } from 'src/app/placeholder/placeholder.component';
 
 @Component({
   selector: 'app-home',
@@ -11,7 +12,8 @@ import { MobileHomeComponent } from 'src/app/mobile/mobile-home/mobile-home.comp
 })
 export class HomeComponent implements ViewWillEnter, ViewWillLeave, OnInit {
   platform!: Platform
-  component!: FCalendarUsable
+  // component!: FCalendarUsable
+  component!: any
   childCached = false
 
   @ViewChild('ChildComponentRef', { read: ViewContainerRef, static: true }) public childRef!: ViewContainerRef
@@ -35,8 +37,9 @@ export class HomeComponent implements ViewWillEnter, ViewWillLeave, OnInit {
       this.component = this.childRef.createComponent(MobileHomeComponent).instance
       this.childCached = true
     } else {
-      this.component = this.childRef.createComponent(DesktopHomeComponent).instance
-      this.childCached = true
+      this.component = this.childRef.createComponent(PlaceholderComponent).instance
+      // this.component = this.childRef.createComponent(DesktopHomeComponent).instance
+      // this.childCached = true
     }
   }
 }

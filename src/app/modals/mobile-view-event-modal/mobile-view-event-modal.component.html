@@ -46,6 +46,20 @@
 
             <div
                 class="flex gap-2 border items-center border-md boder border-gray-300 rounded-md p-2 mx-1 divide-x divide-gray-300">
+                <ion-icon name="reload-outline" matTooltip="Evento Predefinido" matTooltipPosition="left"
+                    class="p-2 !text-gray-500 shrink-0 rounded-full border border-gray-500"></ion-icon>
+                <p class="text-sm text-gray-500 w-full text-center mx-2">{{isPredefinedText}}</p>
+            </div>
+
+            <div [hidden]="eventTemplate.evt_is_predefined"
+                class="flex gap-2 border items-center border-md boder border-gray-300 rounded-md p-2 mx-1 divide-x divide-gray-300">
+                <ion-icon name="newspaper-outline" matTooltip="Comentário Associado" matTooltipPosition="left"
+                    class="p-2 !text-gray-500 shrink-0 rounded-full border border-gray-500"></ion-icon>
+                <p class="text-sm text-gray-500 w-full text-center mx-2">{{comment}}</p>
+            </div>
+
+            <div
+                class="flex gap-2 border items-center border-md boder border-gray-300 rounded-md p-2 mx-1 divide-x divide-gray-300">
                 <ion-icon name="add-circle-outline" matTooltip="Data de criação" matTooltipPosition="left"
                     class="p-2 !text-gray-500 shrink-0 rounded-full border border-gray-500"></ion-icon>
                 <p class="text-sm text-gray-500 w-full text-center mx-2">{{eventTemplate.evt_created_at}}</p>
@@ -74,17 +88,39 @@
 
             <div [hidden]="collapsed" *ngFor="let evt_service of eventTemplate.evt_services.slice(1)"
                 class="flex gap-2 border items-center border-md boder border-blue-300 rounded-md p-2 mx-2 divide-x divide-blue-300">
-                <ion-icon name="construct-outline" matTooltip="Ultima edição" matTooltipPosition="left"
+                <ion-icon name="construct-outline" matTooltip="Serviço Associado" matTooltipPosition="left"
                     class="p-2 !text-blue-500 shrink-0 rounded-full border border-blue-500"></ion-icon>
                 <p class="text-sm text-blue-500 w-full text-center mx-2">{{evt_service.name}}</p>
             </div>
         </div>
-        <div class="mx-2 mt-2 p-2 border-t gap-2 border-gray-300 flex flex-col md:flex-row items-center justify-center">
-            <div class="flex gap-2 p-2 border-b md:border-b-0 md:border-r border-gray-300">
-                <ion-button class="w-32">Editar</ion-button>
-                <ion-button class="w-32" color="danger">Eliminar</ion-button>
+        <div class="mx-1 mt-2 py-2 border-t gap-2 border-gray-300 flex flex-col items-center justify-center">
+            <div class="w-full flex flex-col lg:flex-row items-center justify-center gap-2">
+                <div
+                    class="w-full items-center justify-center grid grid-cols-2 gap-2 p-2.5 border-b md:border-b-0 md:border-r border-gray-300">
+                    <ion-button [disabled]="processing" (click)="promptEditEvent()"
+                        class="col-span-1 min-w-[40px]">Editar</ion-button>
+                    <ion-button [disabled]="processing" (click)="promptDeleteEvent()" class="col-span-1 min-w-[40px]"
+                        color="danger">Eliminar</ion-button>
+                    <ion-button *ngIf="eventTemplate.evt_is_predefined" [disabled]="processing"
+                        (click)="promptEditPredefinedEvent()" class="col-span-1 items-center justify-start">
+                        Editar
+                        <ion-icon class="ml-1.5" name="reload-outline"></ion-icon>
+                    </ion-button>
+                    <ion-button *ngIf="eventTemplate.evt_is_predefined" [disabled]="processing"
+                        (click)="promptDeletePredefinedEvent()" class="col-span-1" color="danger">
+                        Eliminar
+                        <ion-icon class="ml-1.5" name="reload-outline"></ion-icon>
+                    </ion-button>
+                </div>
+                <ion-button [disabled]="true || processing || !hasForms()" (click)="checkForms()" class="w-64"
+                    color="success">Consultar
+                    Formulários</ion-button>
             </div>
-            <ion-button [disabled]="true" class="w-64" color="success">Consultar Formulários</ion-button>
+
+            <!--
+            <ion-button [disabled]="processing || true" color="success">Consultar Observações de
+                Formulários & Tratamentos Associados ao Cliente</ion-button>
+                -->
         </div>
     </div>
 </div>

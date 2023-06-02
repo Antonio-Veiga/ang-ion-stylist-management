@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ViewContainerRef } from '@angular/core';
 import { Platform } from '@ionic/angular';
 import { DesktopNavComponent } from './navigation/desktop-nav/desktop-nav.component';
 import { MobileNavComponent } from './navigation/mobile-nav/mobile-nav.component';
@@ -9,5 +9,5 @@ import { MobileNavComponent } from './navigation/mobile-nav/mobile-nav.component
 })
 export class AppComponent {
   navComponent: any
-  constructor(platform: Platform) { platform.is('mobile') ? this.navComponent = MobileNavComponent : this.navComponent = DesktopNavComponent }
+  constructor(platform: Platform, public viewContainerRef: ViewContainerRef) { platform.is('mobile') ? this.navComponent = MobileNavComponent : this.navComponent = DesktopNavComponent }
 }
